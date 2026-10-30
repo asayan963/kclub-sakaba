@@ -90,7 +90,7 @@ html,body{height:100%;background:radial-gradient(130% 90% at 50% 0%, #1c1008 0%,
 .evhead .cnt{color:#f5c518;}
 
 /* ===== 仲間をさがす（ボトムシート＋横スクロールカード） ===== */
-#find{top:22%;left:0;right:0;bottom:0;transition:top .38s cubic-bezier(.2,.9,.3,1);border-radius:22px 22px 0 0;border-width:2px 0 0;
+#find{top:22%;left:0;right:0;bottom:0;transition:top .4s cubic-bezier(.2,.9,.3,1);will-change:top;border-radius:22px 22px 0 0;border-width:2px 0 0;
  background:linear-gradient(180deg,rgba(28,17,8,.97),rgba(12,7,3,.99));box-shadow:0 -10px 40px rgba(0,0,0,.6);animation:sheetUp .42s cubic-bezier(.2,.9,.3,1);}
 @keyframes sheetUp{from{transform:translateY(40%);opacity:0}to{transform:none;opacity:1}}
 #find.full{top:4%;}
@@ -100,7 +100,7 @@ html,body{height:100%;background:radial-gradient(130% 90% at 50% 0%, #1c1008 0%,
 #find .fhead h2{font-family:'Dela Gothic One',sans-serif;font-weight:400;color:#f5d97a;font-size:1.02rem;letter-spacing:.06em;}
 #find .fhead .tot{font-size:.76rem;color:#c9b48c;}
 #find .fhead .tot b{color:#f5c518;font-size:.95rem;}
-#find .wbody{padding:0 0 14px;}
+#find .wbody{padding:0 0 14px;overscroll-behavior-y:contain;}
 .fsticky{position:sticky;top:0;z-index:4;padding:4px 16px 8px;background:#1a0f07;box-shadow:0 6px 10px -6px rgba(0,0,0,.6);}
 .sbox{position:relative;}
 .sbox input{width:100%;background:rgba(255,248,230,.08);border:1.5px solid rgba(202,164,90,.55);border-radius:999px;padding:7px 38px 7px 36px;font-family:'Zen Maru Gothic',sans-serif;font-size:16px;color:#f7ecd4;outline:none;transition:border-color .2s,background .2s;}
@@ -589,8 +589,17 @@ function renderFind(){
   list.innerHTML=html||'<div class="fempty"><div class="big">🍺</div>この条件の仲間は、今はいないみたい。</div>';
   bindCards(list,lookup);
 }
-function toggleFindSheet(){document.getElementById('find').classList.toggle('full');}
-(function(){function bind(){var sc=document.getElementById('findScroll');if(!sc||sc._b)return;sc._b=1;sc.addEventListener('scroll',function(){var f=document.getElementById('find');if(sc.scrollTop>24)f.classList.add('full');else if(sc.scrollTop<=0)f.classList.remove('full');},{passive:true});}bind();document.addEventListener('DOMContentLoaded',bind);})();
+var SHEET_BUSY=false;
+function setFindSheet(full){var f=document.getElementById('find');if(!f||SHEET_BUSY||f.classList.contains('full')===full)return;SHEET_BUSY=true;f.classList.toggle('full',full);setTimeout(function(){SHEET_BUSY=false;},450);}
+function toggleFindSheet(){var f=document.getElementById('find');SHEET_BUSY=false;setFindSheet(!f.classList.contains('full'));}
+(function(){function bind(){var sc=document.getElementById('findScroll');if(!sc||sc._b)return;sc._b=1;
+  var y0=null;
+  sc.addEventListener('scroll',function(){if(sc.scrollTop>30)setFindSheet(true);},{passive:true});
+  sc.addEventListener('touchstart',function(e){y0=(sc.scrollTop<=0)?e.touches[0].clientY:null;},{passive:true});
+  sc.addEventListener('touchmove',function(e){if(y0===null)return;if(sc.scrollTop<=0&&e.touches[0].clientY-y0>60){setFindSheet(false);y0=null;}},{passive:true});
+  sc.addEventListener('touchend',function(){y0=null;},{passive:true});
+  sc.addEventListener('wheel',function(e){if(sc.scrollTop<=0&&e.deltaY<-30)setFindSheet(false);},{passive:true});
+}bind();document.addEventListener('DOMContentLoaded',bind);})();
 function toggleFindRow(k){FIND_OPEN[k]=!FIND_OPEN[k];renderFind();}
 function railGo(btn,dir){var t=btn.parentNode.querySelector('.track');t.scrollBy({left:dir*(t.clientWidth-60),behavior:'smooth'});}
 
