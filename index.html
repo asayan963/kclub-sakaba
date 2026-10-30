@@ -71,9 +71,11 @@ html,body{height:100%;background:radial-gradient(130% 90% at 50% 0%, #1c1008 0%,
  box-shadow:0 12px 40px rgba(0,0,0,.65),inset 0 0 0 2px rgba(0,0,0,.4);overflow:hidden;}
 #detail,#board,#mycard,#qdetail,#consent,#qnew,#wizard{top:2%;}
 .wtop{display:flex;align-items:center;gap:8px;padding:11px 14px;border-bottom:1px solid rgba(202,164,90,.4);background:rgba(0,0,0,.2);}
-.wtop .back{position:absolute;left:12px;bottom:12px;z-index:6;background:linear-gradient(180deg,#3a2410,#241406);border:2px solid #caa45a;color:#f5d97a;border-radius:12px;padding:11px 20px;font-family:'Zen Maru Gothic',sans-serif;font-weight:700;font-size:.95rem;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.6);}
+.wtop .back{position:absolute;left:12px;bottom:10px;z-index:6;padding:8px 18px !important;background:linear-gradient(180deg,#3a2410,#241406);border:2px solid #caa45a;color:#f5d97a;border-radius:12px;padding:11px 20px;font-family:'Zen Maru Gothic',sans-serif;font-weight:700;font-size:.95rem;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.6);}
 .wtop .back:active{transform:scale(.97);}
-.win:has(.wtop .back) .wbody{padding-bottom:76px;}
+.win:has(.wtop .back){padding-bottom:64px;}
+.win:has(.wtop .back)::after{content:'';position:absolute;left:0;right:0;bottom:0;height:64px;background:#0e0804;border-top:1px solid rgba(202,164,90,.35);z-index:5;pointer-events:none;}
+.win:has(.wtop .back) .wbody{padding-bottom:16px;}
 .wtop h2{font-family:'Zen Maru Gothic',serif;color:#f5d97a;font-size:1rem;letter-spacing:.08em;}
 .wbody{flex:1;overflow-y:auto;padding:14px;-webkit-overflow-scrolling:touch;}
 .say{color:#f3e7cf;font-size:.92rem;line-height:1.6;margin-bottom:14px;}
@@ -90,18 +92,21 @@ html,body{height:100%;background:radial-gradient(130% 90% at 50% 0%, #1c1008 0%,
 .evhead .cnt{color:#f5c518;}
 
 /* ===== 仲間をさがす（ボトムシート＋横スクロールカード） ===== */
-#find{top:22%;left:0;right:0;bottom:0;transition:top .4s cubic-bezier(.2,.9,.3,1);will-change:top;border-radius:22px 22px 0 0;border-width:2px 0 0;
- background:linear-gradient(180deg,rgba(28,17,8,.97),rgba(12,7,3,.99));box-shadow:0 -10px 40px rgba(0,0,0,.6);animation:sheetUp .42s cubic-bezier(.2,.9,.3,1);}
-@keyframes sheetUp{from{transform:translateY(40%);opacity:0}to{transform:none;opacity:1}}
-#find.full{top:4%;}
-#find .grab{width:38px;height:4px;border-radius:3px;background:rgba(202,164,90,.55);margin:6px auto 0;cursor:pointer;box-sizing:content-box;padding:4px 30px;background-clip:content-box;}
-#find .fbar{position:relative;flex:none;height:58px;z-index:5;background:#0e0804;border-top:1px solid rgba(202,164,90,.35);display:flex;align-items:center;padding:0 12px;}
-#find .fhead{display:flex;align-items:baseline;justify-content:space-between;padding:4px 16px 2px;}
-#find .fhead h2{font-family:'Dela Gothic One',sans-serif;font-weight:400;color:#f5d97a;font-size:1.02rem;letter-spacing:.06em;}
-#find .fhead .tot{font-size:.76rem;color:#c9b48c;}
+#find{position:absolute;inset:0;top:0;left:0;right:0;bottom:0;background:transparent;border:0;border-radius:0;box-shadow:none;overflow:hidden;display:block;}
+#findScroll{position:absolute;top:0;left:0;right:0;bottom:58px;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain;}
+.fspacer{height:21vh;height:21dvh;cursor:pointer;}
+.fsheet{position:relative;min-height:100%;background:linear-gradient(180deg,#1f1309 0,#140c05 260px,#0f0904 100%);border-top:2px solid #caa45a;border-radius:22px 22px 0 0;box-shadow:0 -12px 30px rgba(0,0,0,.55);padding-bottom:22px;animation:sheetUp .45s cubic-bezier(.2,.9,.3,1);}
+@keyframes sheetUp{from{transform:translateY(60px);opacity:0}to{transform:none;opacity:1}}
+#find .grab{display:block;width:38px;height:4px;border-radius:3px;background:rgba(202,164,90,.6);margin:0 auto;cursor:pointer;box-sizing:content-box;padding:9px 40px 7px;background-clip:content-box;border:0;}
+#find .fhead{display:flex;align-items:baseline;justify-content:space-between;padding:0 16px;}
+#find .fhead h2{font-family:'Dela Gothic One',sans-serif;font-weight:400;color:#f5d97a;font-size:1.05rem;letter-spacing:.06em;}
+#find .fhead .tot{font-size:.74rem;color:#c9b48c;}
 #find .fhead .tot b{color:#f5c518;font-size:.95rem;}
-#find .wbody{padding:0 0 14px;overscroll-behavior-y:contain;}
-.fsticky{position:sticky;top:0;z-index:4;padding:4px 16px 8px;background:#1a0f07;box-shadow:0 6px 10px -6px rgba(0,0,0,.6);}
+#find .fhint{padding:3px 16px 0;font-size:.74rem;color:#bba987;line-height:1.5;}
+#find .fhint b{color:#f5d97a;font-weight:700;}
+#find .fbar{position:absolute;left:0;right:0;bottom:0;height:58px;z-index:5;background:#0e0804;border-top:1px solid rgba(202,164,90,.35);display:flex;align-items:center;padding:0 12px;}
+.fsticky{position:sticky;top:0;z-index:4;padding:8px 16px 9px;background:#1c1108;}
+.fsticky.stuck{box-shadow:0 8px 12px -8px rgba(0,0,0,.8);border-bottom:1px solid rgba(202,164,90,.25);}
 .sbox{position:relative;}
 .sbox input{width:100%;background:rgba(255,248,230,.08);border:1.5px solid rgba(202,164,90,.55);border-radius:999px;padding:7px 38px 7px 36px;font-family:'Zen Maru Gothic',sans-serif;font-size:16px;color:#f7ecd4;outline:none;transition:border-color .2s,background .2s;}
 .sbox input:focus{border-color:#f5c518;background:rgba(255,248,230,.13);}
@@ -121,6 +126,8 @@ html,body{height:100%;background:radial-gradient(130% 90% at 50% 0%, #1c1008 0%,
 .frh .t{min-width:0;}
 .frh .k{display:inline-block;vertical-align:2px;font-size:.6rem;font-weight:700;letter-spacing:.06em;color:#2a1808;background:#caa45a;border-radius:5px;padding:1px 6px;margin-right:6px;}
 .frh .k.q{background:#8fc1a9;}
+.frh .k.hot{background:#d9534f;color:#fff;}
+.frow.hot{background:linear-gradient(180deg,rgba(217,83,79,.10),rgba(217,83,79,0));padding-top:8px;margin-top:0;border-top:1px solid rgba(217,83,79,.25);}
 .frh .nm{font-family:'Zen Maru Gothic',sans-serif;font-weight:900;color:#f7ecd4;font-size:.95rem;line-height:1.35;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .frh .sub{font-size:.72rem;color:#b9a67f;margin-top:2px;}
 .frh .all{flex:none;background:none;border:0;color:#f5c518;font-family:'Zen Maru Gothic',sans-serif;font-weight:700;font-size:.8rem;cursor:pointer;padding:4px 0;}
@@ -138,7 +145,7 @@ html,body{height:100%;background:radial-gradient(130% 90% at 50% 0%, #1c1008 0%,
 @keyframes cardIn{from{opacity:0;transform:translateY(10px) scale(.97)}to{opacity:1;transform:none}}
 .pc:active{transform:scale(.96);}
 @media (hover:hover){.pc:hover{transform:translateY(-3px);box-shadow:0 10px 22px rgba(0,0,0,.55);}}
-.pc .ph{height:96px;position:relative;background:radial-gradient(circle at 50% 35%,#d9b56a,#6e4a1e 75%);display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.pc .ph{height:96px;position:relative;background:radial-gradient(circle at 50% 35%,var(--c1,#d9b56a),var(--c2,#6e4a1e) 78%);display:flex;align-items:center;justify-content:center;overflow:hidden;}
 .pc .ph img{width:100%;height:100%;object-fit:cover;display:block;}
 .pc .ph .ini{font-family:'Dela Gothic One',sans-serif;color:#fff7e0;font-size:2.2rem;text-shadow:0 3px 0 rgba(0,0,0,.25);}
 .pc .ph::after{content:'';position:absolute;left:0;right:0;bottom:0;height:42%;background:linear-gradient(180deg,transparent,rgba(30,18,6,.55));}
@@ -155,6 +162,15 @@ html,body{height:100%;background:radial-gradient(130% 90% at 50% 0%, #1c1008 0%,
 @keyframes ping{50%{box-shadow:0 0 0 5px rgba(217,83,79,.25);}}
 .pc.matched{border-color:#3f9b6e;}
 
+.hotbar{margin:8px 16px 6px;padding:10px 12px;border-radius:14px;background:linear-gradient(180deg,rgba(217,83,79,.18),rgba(217,83,79,.08));border:1px solid rgba(217,83,79,.45);}
+.hotbar .hl{font-size:.8rem;color:#ffd9d6;font-weight:700;margin-bottom:8px;}
+.hotbar .hl b{color:#fff;}
+.hots{display:flex;flex-direction:column;gap:7px;}
+.pc.hotp{flex:none;display:flex;align-items:center;gap:10px;background:rgba(255,248,230,.95);border:0;border-radius:11px;padding:7px 10px;box-shadow:none;animation:none;overflow:visible;}
+.hotp .hav{width:34px;height:34px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:.95rem;background:radial-gradient(circle at 50% 35%,var(--c1),var(--c2));overflow:hidden;}
+.hotp .hav img{width:100%;height:100%;object-fit:cover;}
+.hotp .hn{font-weight:900;color:#2e1b09;font-size:.9rem;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.hotp .hgo{flex:none;font-size:.74rem;font-weight:800;color:#fff;background:#d9534f;border-radius:999px;padding:4px 10px;}
 .fgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(128px,1fr));gap:12px;padding:4px 16px 10px;}
 .fgrid .pc{flex:none;}
 .fempty{text-align:center;color:#c9b48c;padding:28px 22px;font-size:.92rem;line-height:1.8;}
@@ -302,14 +318,18 @@ html,body{height:100%;background:radial-gradient(130% 90% at 50% 0%, #1c1008 0%,
 
   <!-- FIND -->
   <div id="find" class="win hidden">
-    <div class="grab" onclick="toggleFindSheet()"></div>
-    <div class="fhead"><h2>仲間をさがす</h2><span class="tot" id="findTot"></span></div>
-    <div class="wbody" id="findScroll">
-      <div class="fsticky">
-        <div class="sbox" id="sbox"><span class="ic">🔍</span><input id="search" placeholder="名前・業種・キーワード" oninput="onFindSearch()" enterkeyhint="search" autocomplete="off"><button class="clr" onclick="clearFindSearch()" aria-label="消す">✕</button></div>
-        <div class="chips" id="fchips"></div>
+    <div id="findScroll">
+      <div class="fspacer" onclick="findSheetUp()"></div>
+      <div class="fsheet">
+        <button class="grab" onclick="toggleFindSheet()" aria-label="広げる・たたむ"></button>
+        <div class="fhead"><h2>仲間をさがす</h2><span class="tot" id="findTot"></span></div>
+        <div class="fhint"><b>あさやん：</b>気になる仲間をタップしてね</div>
+        <div class="fsticky" id="fsticky">
+          <div class="sbox" id="sbox"><span class="ic">🔍</span><input id="search" placeholder="名前・業種・キーワードでさがす" oninput="onFindSearch()" enterkeyhint="search" autocomplete="off"><button class="clr" onclick="clearFindSearch()" aria-label="消す">✕</button></div>
+          <div class="chips" id="fchips"></div>
+        </div>
+        <div id="findList"></div>
       </div>
-      <div id="findList"></div>
     </div>
     <div class="fbar"><button class="back" onclick="show('home')">‹ 戻る</button><span class="note">カードをタップで詳しく</span></div>
   </div>
@@ -485,11 +505,14 @@ document.getElementById('consentOk').addEventListener('click',async function(){
 
 /* panels */
 var panels=['home','find','detail','board','mycard','qdetail','consent','qnew','wizard','chocho','links'];
+var LAST_PANEL=null,CUR_PANEL=null;
 function show(id){
+  if(CUR_PANEL==='find'&&id!=='find')saveFindView();
+  LAST_PANEL=CUR_PANEL;CUR_PANEL=id;
   panels.forEach(function(p){document.getElementById(p).classList.toggle('hidden',p!==id);});
   var b=document.querySelector('#'+id+' .wbody');if(b)b.scrollTop=0;
   if(id==='home')renderHome();
-  if(id==='find')loadFind();
+  if(id==='find')loadFind(LAST_PANEL==='detail');
   if(id==='board')loadQuests();
   if(id==='consent')typeConsent();
   if(id==='links')loadLinks();
@@ -508,14 +531,24 @@ function renderHome(){
 /* ===== 仲間をさがす ===== */
 var FIND_FILTER='all', FIND_OPEN={}, FIND_CHIPS=[];
 var LINK_BADGE={matched:'🤝 つながり',incoming:'📬 申請きてる',outgoing:'⏳ 返事待ち'};
-async function loadFind(){
-  document.getElementById('find').classList.remove('full');document.getElementById('findScroll').scrollTop=0;
-  FIND_FILTER='all';FIND_OPEN={};var se=document.getElementById('search');if(se){se.value='';document.getElementById('sbox').classList.remove('has');}
+var FIND_VIEW=null;
+function saveFindView(){var sc=document.getElementById('findScroll');var tr={};[].forEach.call(document.querySelectorAll('#findList .frow[data-k]'),function(r){var t=r.querySelector('.track');if(t)tr[r.getAttribute('data-k')]=t.scrollLeft;});FIND_VIEW={top:sc?sc.scrollTop:0,tracks:tr};}
+function restoreFindView(){if(!FIND_VIEW)return;var sc=document.getElementById('findScroll');sc.scrollTop=FIND_VIEW.top;[].forEach.call(document.querySelectorAll('#findList .frow[data-k]'),function(r){var t=r.querySelector('.track');var v=FIND_VIEW.tracks[r.getAttribute('data-k')];if(t&&v)t.scrollLeft=v;});}
+async function loadFind(keep){
   var list=document.getElementById('findList');
+  if(keep&&GROUPS.length){
+    renderFind();restoreFindView();
+    var r0=await api('fellows',{});
+    if(r0.ok){saveFindView();GROUPS=r0.groups||[];renderFind(true);restoreFindView();}
+    return;
+  }
+  document.getElementById('findScroll').scrollTop=0;FIND_VIEW=null;
+  FIND_FILTER='all';FIND_OPEN={};var se=document.getElementById('search');if(se){se.value='';document.getElementById('sbox').classList.remove('has');}
   if(!GROUPS.length){list.innerHTML=[1,2].map(function(){return '<div class="frow"><div class="skh"></div><div class="track">'+'<div class="sk"></div>'.repeat(3)+'</div></div>';}).join('');}
+  else renderFind();
   var r=await api('fellows',{});
   if(r.ok){GROUPS=r.groups||[];}
-  renderFind();
+  renderFind(true);
 }
 function fellowText(p){return ((p.name||'')+' '+(p.company||'')+' '+(p.tagline||'')+' '+(p.industry||'')+' '+((p.free_tags||[]).join(' '))+' '+(p.detail||'')).toLowerCase();}
 function passFilter(p){
@@ -537,25 +570,44 @@ function renderChips(){
   Object.keys(inds).sort(function(a,b){return inds[b]-inds[a];}).slice(0,8).forEach(function(k){chips.push(['ind:'+k,k,inds[k]]);});
   if(!chips.some(function(x){return x[0]===FIND_FILTER;}))FIND_FILTER='all';
   FIND_CHIPS=chips;
+  if(FIND_FILTER==='all'){var fc=document.getElementById('fchips');if(fc)fc.scrollLeft=0;}
   document.getElementById('fchips').innerHTML=all.length?chips.map(function(x,i){return '<button class="fchip'+(x[0]===FIND_FILTER?' on':'')+'" onclick="setFindFilter('+i+')">'+escapeHtml(x[1])+'<span class="n">'+x[2]+'</span></button>';}).join(''):'';
   document.getElementById('findTot').innerHTML=all.length?'酒場の仲間 <b>'+all.length+'</b> 人':'';
 }
-function setFindFilter(i){FIND_FILTER=(FIND_FILTER===FIND_CHIPS[i][0]&&i>0)?'all':FIND_CHIPS[i][0];renderFind();var on=document.querySelector('#fchips .fchip.on');if(on&&on.scrollIntoView)on.scrollIntoView({inline:'center',block:'nearest',behavior:'smooth'});}
-function onFindSearch(){document.getElementById('sbox').classList.toggle('has',!!document.getElementById('search').value);renderFind();}
+function setFindFilter(i){FIND_FILTER=(FIND_FILTER===FIND_CHIPS[i][0]&&i>0)?'all':FIND_CHIPS[i][0];renderFind(true);var on=document.querySelector('#fchips .fchip.on');if(on&&on.scrollIntoView)on.scrollIntoView({inline:'center',block:'nearest',behavior:'smooth'});}
+function onFindSearch(){var v=!!document.getElementById('search').value;document.getElementById('sbox').classList.toggle('has',v);if(v)FIND_FILTER='all';renderFind(true);}
 function clearFindSearch(){document.getElementById('search').value='';onFindSearch();}
+var AVA_PAL=[['#c98b4a','#5a3416'],['#b5584a','#4a1a14'],['#6f9a6a','#203a22'],['#5f84a8','#1c2d44'],['#a07ab0','#3a2246'],['#5aa09a','#173a38'],['#c9a24a','#5a4210'],['#9a7a5a','#3a2a1a']];
+function avaPal(p){var s=String(p.id||p.name||''),h=0;for(var i=0;i<s.length;i++)h=(h*31+s.charCodeAt(i))>>>0;return AVA_PAL[h%AVA_PAL.length];}
+function cleanTitle(t){return String(t||'集まり').replace(/^[【\[]\s*/,'').replace(/\s*[】\]]$/,'')||'集まり';}
+var FIND_ANIM=true;
 function pcHtml(p,i){
-  var img=(p.avatar_type==='photo'&&p.avatar_url)?'<img loading="lazy" src="'+escapeHtml(p.avatar_url)+'" alt="">':'<span class="ini">'+escapeHtml(initial(p.name))+'</span>';
+  var photo=(p.avatar_type==='photo'&&p.avatar_url);
+  var img=photo?'<img loading="lazy" src="'+escapeHtml(p.avatar_url)+'" alt="">':'<span class="ini">'+escapeHtml(initial(p.name))+'</span>';
+  var pal=avaPal(p);
   var bdg='';
   if(LINK_BADGE[p.link])bdg='<span class="bdg '+p.link+'">'+LINK_BADGE[p.link]+'</span>';
   else if(p.is_new)bdg='<span class="bdg new">NEW</span>';
-  return '<div class="pc'+(p.link==='matched'?' matched':'')+'" style="animation-delay:'+Math.min(i,8)*45+'ms" data-id="'+escapeHtml(p.id)+'">'+
-    '<div class="ph">'+img+bdg+(p.industry?'<span class="ind">'+escapeHtml(p.industry)+'</span>':'')+'</div>'+
+  var st=FIND_ANIM?'animation-delay:'+Math.min(i,8)*45+'ms':'animation:none';
+  return '<div class="pc'+(p.link==='matched'?' matched':'')+'" style="'+st+'" data-id="'+escapeHtml(p.id)+'">'+
+    '<div class="ph" style="--c1:'+pal[0]+';--c2:'+pal[1]+'">'+img+bdg+(p.industry?'<span class="ind">'+escapeHtml(p.industry)+'</span>':'')+'</div>'+
     '<div class="bd"><div class="nm">'+escapeHtml(p.name||'')+'</div><div class="co">'+escapeHtml(p.company||'')+'</div><div class="tg">'+escapeHtml(p.tagline||'')+'</div></div></div>';
 }
-function bindCards(root,lookup){[].forEach.call(root.querySelectorAll('.pc'),function(el){var x=lookup[el.getAttribute('data-id')];var gi=el.closest('[data-gi]');var g=gi?GROUPS[+gi.getAttribute('data-gi')]:null;if(x)el.onclick=function(){openDetail(x.p,g||x.g);};});}
+function bindCards(root,lookup){[].forEach.call(root.querySelectorAll('.pc'),function(el){var x=lookup[el.getAttribute('data-id')];var gi=el.closest('[data-gi]');var g=gi&&gi.getAttribute('data-gi')!==''?GROUPS[+gi.getAttribute('data-gi')]:null;if(x)el.onclick=function(){saveFindView();openDetail(x.p,g||x.g);};});}
 function fmtEvDate(d){if(!d)return '';var m=String(d).match(/(\d{4})-(\d{1,2})-(\d{1,2})/);if(!m)return d;var dt=new Date(+m[1],+m[2]-1,+m[3]);return (+m[2])+'月'+(+m[3])+'日（'+'日月火水木金土'[dt.getDay()]+'）';}
 function sortFellows(a){var w={incoming:0,matched:2,outgoing:3,none:1};return a.slice().sort(function(x,y){var d=(w[x.link]||1)-(w[y.link]||1);if(d)return d;return (y.is_new?1:0)-(x.is_new?1:0);});}
-function renderFind(){
+function rowHtml(o){
+  var open=!!FIND_OPEN[o.k];
+  var rs=FIND_ANIM?'animation-delay:'+o.ri*70+'ms':'animation:none';
+  return '<div class="frow'+(o.hot?' hot':'')+'" data-k="'+escapeHtml(o.k)+'" data-gi="'+(o.gi==null?'':o.gi)+'" style="'+rs+'"><div class="frh"><div class="t"><div class="nm"><span class="k'+o.kc+'">'+o.kt+'</span>'+escapeHtml(o.title)+'</div><div class="sub">'+escapeHtml(o.sub)+'</div></div>'+
+    (o.fs.length>2?'<button class="all" data-row="'+escapeHtml(o.k)+'">'+(open?'たたむ':'すべて ›')+'</button>':'')+'</div>'+
+    (open
+      ? '<div class="fgrid">'+o.fs.map(function(p,i){return pcHtml(p,i);}).join('')+'</div>'
+      : '<div class="rail"><button class="rnav l" onclick="railGo(this,-1)" aria-label="前へ">‹</button><div class="track">'+o.fs.map(function(p,i){return pcHtml(p,i);}).join('')+'</div><button class="rnav r" onclick="railGo(this,1)" aria-label="次へ">›</button></div>')+
+    '</div>';
+}
+function renderFind(quiet){
+  FIND_ANIM=!quiet;
   renderChips();
   var q=(document.getElementById('search').value||'').trim().toLowerCase();
   var list=document.getElementById('findList');
@@ -568,44 +620,34 @@ function renderFind(){
     var hits=uniqFellows().filter(function(x){return passFilter(x.p)&&fellowText(x.p).indexOf(q)>=0;});
     hits.forEach(function(x){lookup[x.p.id]=x;});
     list.innerHTML=hits.length
-      ? '<div class="frh"><div class="t"><div class="nm">「'+escapeHtml(q)+'」の仲間</div><div class="sub">'+hits.length+'人 見つかったよ</div></div></div><div class="fgrid">'+hits.map(function(x,i){return pcHtml(x.p,i);}).join('')+'</div>'
+      ? '<div class="frh" style="padding-top:8px"><div class="t"><div class="nm">「'+escapeHtml(q)+'」の仲間</div><div class="sub">'+hits.length+'人 見つかったよ</div></div></div><div class="fgrid">'+hits.map(function(x,i){return pcHtml(x.p,i);}).join('')+'</div>'
       : '<div class="fempty"><div class="big">🔍</div>「'+escapeHtml(q)+'」の仲間は<br>見つからなかったよ。<br>ちがう言葉でさがしてみてね。</div>';
     bindCards(list,lookup);return;
   }
   var html='',ri=0;
+  if(FIND_FILTER==='all'){
+    var hot=uniqFellows().filter(function(x){return x.p.link==='incoming';});
+    if(hot.length){
+      hot.forEach(function(x){lookup[x.p.id]=x;});
+      html+='<div class="hotbar" data-gi=""><div class="hl">📬 あなたに会いたい人が <b>'+hot.length+'人</b></div><div class="hots">'+hot.map(function(x){var pal=avaPal(x.p);var ph=(x.p.avatar_type==='photo'&&x.p.avatar_url);return '<div class="pc hotp" data-id="'+escapeHtml(x.p.id)+'"><span class="hav" style="--c1:'+pal[0]+';--c2:'+pal[1]+'">'+(ph?'<img src="'+escapeHtml(x.p.avatar_url)+'" alt="">':escapeHtml(initial(x.p.name)))+'</span><span class="hn">'+escapeHtml(x.p.name)+'</span><span class="hgo">返事する ›</span></div>';}).join('')+'</div></div>';ri++;
+    }
+  }
   GROUPS.forEach(function(g,gi){
     var fs=sortFellows((g.fellows||[]).filter(passFilter));
     if(!fs.length)return;
     fs.forEach(function(p){if(!lookup[p.id])lookup[p.id]={p:p,g:g};});
-    var key=g.kind+':'+g.key, open=!!FIND_OPEN[key];
-    var sub=[fmtEvDate(g.date), fs.length+'人'].filter(Boolean).join(' ・ ');
-    html+='<div class="frow" data-gi="'+gi+'" style="animation-delay:'+(ri++)*70+'ms"><div class="frh"><div class="t"><div class="nm"><span class="k'+(g.kind==='quest'?' q':'')+'">'+(g.kind==='quest'?'クエスト':'集まり')+'</span>'+escapeHtml(g.title||'集まり')+'</div><div class="sub">'+escapeHtml(sub)+'</div></div>'+
-      (fs.length>2?'<button class="all" onclick="toggleFindRow(\''+escapeHtml(key).replace(/'/g,"\\'")+'\')">'+(open?'たたむ':'すべて ›')+'</button>':'')+'</div>'+
-      (open
-        ? '<div class="fgrid">'+fs.map(function(p,i){return pcHtml(p,i);}).join('')+'</div>'
-        : '<div class="rail"><button class="rnav l" onclick="railGo(this,-1)">‹</button><div class="track">'+fs.map(function(p,i){return pcHtml(p,i);}).join('')+'</div><button class="rnav r" onclick="railGo(this,1)">›</button></div>')+
-      '</div>';
+    html+=rowHtml({k:g.kind+':'+g.key,gi:gi,kc:(g.kind==='quest'?' q':''),kt:(g.kind==='quest'?'クエスト':'集まり'),title:cleanTitle(g.title),sub:[fmtEvDate(g.date),fs.length+'人'].filter(Boolean).join(' ・ '),fs:fs,ri:ri++});
   });
-  list.innerHTML=html||'<div class="fempty"><div class="big">🍺</div>この条件の仲間は、今はいないみたい。</div>';
+  list.innerHTML=html||'<div class="fempty"><div class="big">🍺</div>この条件の仲間は、今はいないみたい。<br><button class="fchip" style="margin-top:12px" onclick="setFindFilter(0)">すべて表示に戻す</button></div>';
+  [].forEach.call(list.querySelectorAll('button.all[data-row]'),function(b){b.onclick=function(){toggleFindRow(b.getAttribute('data-row'));};});
   bindCards(list,lookup);
 }
-var SHEET_BUSY=false;
-function setFindSheet(full){var f=document.getElementById('find');if(!f||SHEET_BUSY||f.classList.contains('full')===full)return;SHEET_BUSY=true;f.classList.toggle('full',full);setTimeout(function(){SHEET_BUSY=false;},450);}
-function toggleFindSheet(){var f=document.getElementById('find');SHEET_BUSY=false;setFindSheet(!f.classList.contains('full'));}
-(function(){function bind(){var sc=document.getElementById('findScroll');if(!sc||sc._b)return;sc._b=1;
-  var y0=null;
-  sc.addEventListener('scroll',function(){if(sc.scrollTop>30)setFindSheet(true);},{passive:true});
-  sc.addEventListener('touchstart',function(e){y0=(sc.scrollTop<=0)?e.touches[0].clientY:null;},{passive:true});
-  sc.addEventListener('touchmove',function(e){if(y0===null)return;if(sc.scrollTop<=0&&e.touches[0].clientY-y0>60){setFindSheet(false);y0=null;}},{passive:true});
-  sc.addEventListener('touchend',function(){y0=null;},{passive:true});
-  sc.addEventListener('wheel',function(e){if(sc.scrollTop<=0&&e.deltaY<-30)setFindSheet(false);},{passive:true});
-}bind();document.addEventListener('DOMContentLoaded',bind);})();
-function toggleFindRow(k){FIND_OPEN[k]=!FIND_OPEN[k];renderFind();}
+function toggleFindRow(k){var sc=document.getElementById('findScroll');var top=sc.scrollTop;FIND_OPEN[k]=!FIND_OPEN[k];renderFind(true);sc.scrollTop=top;}
 function railGo(btn,dir){var t=btn.parentNode.querySelector('.track');t.scrollBy({left:dir*(t.clientWidth-60),behavior:'smooth'});}
 
 function openDetail(p,g,from){
   DETAIL_BACK=(from&&from.back)||'find';
-  var metLine=from&&from.questTitle?'<div class="met">📜『'+escapeHtml(from.questTitle)+'』を出した人</div>':(g?'<div class="met">'+(g.kind==='quest'?'📜 ':'🗓 ')+escapeHtml(g.title||'')+' で一緒でした</div>':'');
+  var metLine=from&&from.questTitle?'<div class="met">📜『'+escapeHtml(from.questTitle)+'』を出した人</div>':(g?'<div class="met">'+(g.kind==='quest'?'📜 ':'🗓 ')+escapeHtml(cleanTitle(g.title))+' で一緒でした</div>':'');
   var html='<div class="dhead"><div class="face">'+faceInner(p)+'</div><div class="nm">'+escapeHtml(p.name)+'</div>'+
     (p.company?'<div class="co">'+escapeHtml(p.company)+'</div>':'')+
     (p.industry?'<div class="gy">'+escapeHtml(p.industry)+'</div>':'')+'</div>'+
