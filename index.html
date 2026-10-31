@@ -356,6 +356,10 @@ html,body{height:100%;background:radial-gradient(130% 90% at 50% 0%, #1c1008 0%,
 .evT .cnt{font-size:.72rem;color:#e9d9b6;margin:0 4px 0 2px;}
 .evFace{display:inline-block;margin-right:-6px;}
 .evFace img,.evFace div{border-width:1.5px !important;}
+.evLock{font-size:.68rem;color:#c9b48c;margin-left:10px;}
+.evHidden{background:rgba(0,0,0,.25);border:1.5px dashed rgba(202,164,90,.5);border-radius:12px;padding:10px 12px;margin-bottom:9px;color:#e9d9b6;font-size:.8rem;line-height:1.7;}
+.evHidden b{color:#f5d97a;}
+.evHidden small{display:block;color:#a8977a;font-size:.7rem;}
 .evMore{font-size:.68rem;color:#c9b48c;margin-left:8px;}
 .evNote{font-size:.72rem;color:#a8977a;line-height:1.7;margin-top:10px;}
 .evHead{background:radial-gradient(80% 100% at 50% 0%,rgba(245,197,24,.12),transparent 70%);border:1.5px solid #caa45a;border-radius:14px;padding:12px 14px;margin-bottom:12px;}
@@ -1678,21 +1682,23 @@ var WD=['日','月','火','水','木','金','土'];
 function evDate(e){var q=String(e.date).split('-').map(Number);var wd=new Date(Date.UTC(q[0],q[1]-1,q[2])).getUTCDay();return q[1]+'/'+q[2]+'('+WD[wd]+')'+(e.time?' '+e.time:'');}
 function evDays(e){var a=Date.parse(e.date+'T00:00:00+09:00'),b=Date.parse((EV_TODAY||new Date(Date.now()+9*3600000).toISOString().slice(0,10))+'T00:00:00+09:00');return Math.round((a-b)/86400000);}
 function evWhen(e){var n=evDays(e);return n===0?'今日':n===1?'明日':n===2?'あさって':n+'日後';}
+function evCount(e){return e.going_count!=null?e.going_count:e.going.length;}
+function evRevealAt(e){return evDate(e).split(' ')[0]+(e.time?' '+e.time:'');}
 function evTitle(e){return cleanTitle?cleanTitle(e.name):e.name;}
 function evRefresh(){return api('events_upcoming',{}).then(function(r){if(r.ok){EVENTS=r.events||[];EV_TODAY=r.today||'';if(CUR_PANEL==='home')renderHomeEv();}return r;});}
 function renderHomeEv(){var el=document.getElementById('homeEv');if(!el)return;if(!EVENTS){el.innerHTML='';if(EVENTS===null)evRefresh();return;}
   if(!EVENTS.length){el.innerHTML='';return;}
   var mine=EVENTS.filter(function(e){return e.me_going;});var e=mine[0]||EVENTS[0];var n=evDays(e);
-  var soon=e.me_going&&n<=1;var tm=(e.talk_to_me||[]).length;
-  var line=soon?('<b>'+evWhen(e)+'は『'+escapeHtml(evTitle(e))+'』だね！</b><br>来る仲間 '+e.going.length+'人'+(tm?'・<span class="evHot">あなたと話したい人 '+tm+'人</span>':'')+'。話したい人をチェックしておこう'):('<b>'+escapeHtml(evDate(e))+'</b>　'+escapeHtml(evTitle(e))+'<br><small>'+(e.me_going?'✅ 行きます・':'')+'行く人 '+e.going.length+'人'+(EVENTS.length>1?'・ほか'+(EVENTS.length-1)+'件の予定':'')+'</small>');
+  var soon=e.me_going&&n<=1;var tm=(e.talk_to_me||[]).length+(e.talk_hidden||0);
+  var line=soon?('<b>'+evWhen(e)+'は『'+escapeHtml(evTitle(e))+'』だね！</b><br>来る仲間 '+evCount(e)+'人'+(tm?'・<span class="evHot">あなたと話したい人 '+tm+'人</span>':'')+'。話したい人をチェックしておこう'):('<b>'+escapeHtml(evDate(e))+'</b>　'+escapeHtml(evTitle(e))+'<br><small>'+(e.me_going?'✅ 行きます・':'')+'行く人 '+evCount(e)+'人'+(EVENTS.length>1?'・ほか'+(EVENTS.length-1)+'件の予定':'')+'</small>');
   el.innerHTML='<button class="homeEv'+(soon?' soon':'')+'" onclick="show(\'events\')"><span class="ic">📅</span><span class="tx">'+line+'</span><span class="go">›</span></button>';}
 async function loadEvents(){var b=document.getElementById('evBody');if(!EVENTS)b.innerHTML='<div class="loading">読み込み中…</div>';else renderEvents();var r=await evRefresh();if(!r.ok&&!EVENTS){b.innerHTML='<div class="stub">予定を読み込めなかった…</div>';return;}renderEvents();}
 function goingFaces(list,max){return list.slice(0,max).map(function(p){return '<span class="evFace">'+avaBox((p.avatar_type==='photo')?p.avatar_url:'',p.name,26)+'</span>';}).join('')+(list.length>max?'<span class="evMore">+'+(list.length-max)+'</span>':'');}
 function renderEvents(){var b=document.getElementById('evBody');if(!b)return;
   var h='<div class="say"><b>あさやん：</b>これからのKクラブの集まりだよ。<br>行くなら「行きます」を押しておくと、来る仲間が分かるよ。</div>';
   if(!EVENTS||!EVENTS.length){b.innerHTML=h+'<div class="stub">今わかっている予定はないよ。</div>';return;}
-  EVENTS.forEach(function(e,i){var tm=(e.talk_to_me||[]).length;
-    h+='<div class="evCard'+(e.me_going?' going':'')+'" onclick="openEvent('+i+')"><div class="evD"><b>'+escapeHtml(evDate(e).split('(')[0])+'</b><small>'+escapeHtml('('+evDate(e).split('(')[1])+'</small><i>'+escapeHtml(evWhen(e))+'</i></div><div class="evT"><div class="nm">'+escapeHtml(evTitle(e))+'</div><div class="pl">📍 '+escapeHtml(e.venue_name||e.venue||'場所は未定')+'</div><div class="pp">'+goingFaces(e.going,5)+'<span class="cnt">行く人 '+e.going.length+'人</span>'+(e.me_going?'<span class="chip chipG">行きます</span>':'')+(tm?'<span class="chip chipW">話したい人 '+tm+'</span>':'')+'</div></div></div>';});
+  EVENTS.forEach(function(e,i){var tm=(e.talk_to_me||[]).length+(e.talk_hidden||0);
+    h+='<div class="evCard'+(e.me_going?' going':'')+'" onclick="openEvent('+i+')"><div class="evD"><b>'+escapeHtml(evDate(e).split('(')[0])+'</b><small>'+escapeHtml('('+evDate(e).split('(')[1])+'</small><i>'+escapeHtml(evWhen(e))+'</i></div><div class="evT"><div class="nm">'+escapeHtml(evTitle(e))+'</div><div class="pl">📍 '+escapeHtml(e.venue_name||e.venue||'場所は未定')+'</div><div class="pp">'+goingFaces(e.going,5)+(e.hidden_count?'<span class="evLock">🔒'+e.hidden_count+'</span>':'')+'<span class="cnt">行く人 '+evCount(e)+'人</span>'+(e.me_going?'<span class="chip chipG">行きます</span>':'')+(tm?'<span class="chip chipW">話したい人 '+tm+'</span>':'')+'</div></div></div>';});
   h+='<div class="evNote">※「行きます」は、仲間に知らせるための印だよ。集まりへの申し込みは、今までどおりの方法でしてね。</div>';
   b.innerHTML=h;}
 function openEvent(i){CUR_EV=EVENTS[i];if(!CUR_EV)return;renderEventDetail();show('evdetail');}
@@ -1701,10 +1707,12 @@ function renderEventDetail(){var e=CUR_EV;if(!e)return;var b=document.getElement
     '<div class="evPlace">📍 '+escapeHtml(e.venue_name||e.venue||'場所は未定')+(e.address?'<small>'+escapeHtml(e.address)+'</small>':'')+'</div>'+
     (e.map_url?'<a class="evMap" href="'+escAttr(e.map_url)+'" target="_blank" rel="noopener">🗺 地図をひらく</a>':'')+'</div>';
   var tm=(e.talk_to_me||[]);
+  if(e.me_going&&e.talk_hidden&&!e.revealed)h+='<div class="evTalkMe"><b>🗣 あなたと当日話したい人が '+e.talk_hidden+'人いるよ</b><small>誰なのかは、集まりの時間（'+escapeHtml(evRevealAt(e))+'）になったら分かるよ</small></div>';
   if(e.me_going&&tm.length){var who=e.going.filter(function(p){return tm.indexOf(p.id)>=0;});h+='<div class="evTalkMe"><b>🗣 あなたと当日話したい人</b>'+who.map(function(p){return '<span>'+escapeHtml(p.name)+'さん</span>';}).join('')+'<small>会場で声をかけてみてね</small></div>';}
-  h+='<div class="lkH">🙋 行く人（'+e.going.length+'人）</div>';
-  if(!e.going.length)h+='<div class="lkE">まだ誰も「行きます」を押していないよ'+(e.me_going?'':'。いちばん乗りしよう')+'</div>';
-  else{h+='<div class="evPeople">';e.going.forEach(function(p,k){var me=ME&&p.id===ME.id;var on=(e.my_talks||[]).indexOf(p.id)>=0;var fromThem=tm.indexOf(p.id)>=0;
+  h+='<div class="lkH">🙋 行く人（'+evCount(e)+'人）</div>';
+  if(!evCount(e))h+='<div class="lkE">まだ誰も「行きます」を押していないよ'+(e.me_going?'':'。いちばん乗りしよう')+'</div>';
+  if(e.hidden_count)h+='<div class="evHidden">🔒 '+(e.going.length?'ほかに ':'')+e.hidden_count+'人が行くよ。<br>顔ぶれは、<b>集まりの時間（'+escapeHtml(evRevealAt(e))+'）</b>になったら見られるよ。<small>あなたと、もうつながっている仲間は先に見えているよ</small></div>';
+  if(e.going.length){h+='<div class="evPeople">';e.going.forEach(function(p,k){var me=ME&&p.id===ME.id;var on=(e.my_talks||[]).indexOf(p.id)>=0;var fromThem=tm.indexOf(p.id)>=0;
     h+='<div class="evP"><div class="evPc" onclick="openEvPerson('+k+')">'+avaBox((p.avatar_type==='photo')?p.avatar_url:'',p.name,46)+'<div class="t"><b>'+escapeHtml(p.name)+(me?'（あなた）':'')+'</b><small>'+escapeHtml(p.tagline||p.industry||'')+'</small>'+(fromThem?'<em>🗣 あなたと話したいそうです</em>':'')+'</div></div>'+
       (me||!e.me_going?'':'<button class="evTalk'+(on?' on':'')+'" onclick="evTalk(\''+escAttr(p.id)+'\','+(on?'false':'true')+')">'+(on?'✓ 話したい':'🗣 話したい')+'</button>')+'</div>';});h+='</div>';
     if(!e.me_going)h+='<div class="evNote">「行きます」を押すと、話したい人に印を付けられるよ。</div>';}
