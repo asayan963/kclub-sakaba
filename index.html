@@ -436,6 +436,9 @@ html,body{height:100%;background:radial-gradient(130% 90% at 50% 0%, #1c1008 0%,
 .lnHow ol{margin:8px 0 6px 1.3em;padding:0;line-height:1.8;}
 .lnHow b{color:#f5d97a;}
 .lnHow small{display:block;color:#c9b48c;font-size:.72rem;line-height:1.6;}
+.lnRow{display:flex;gap:8px;margin-top:8px;}
+.lnRow input{flex:1;min-width:0;}
+.lnPaste{flex:none;background:linear-gradient(180deg,#3fbf5a,#259a3f);color:#fff;border:none;border-radius:10px;padding:0 12px;font-family:'Zen Maru Gothic',sans-serif;font-weight:700;font-size:.82rem;cursor:pointer;}
 .lnBtn{display:block;text-align:center;text-decoration:none;background:linear-gradient(180deg,#3fbf5a,#259a3f) !important;color:#fff !important;}
 .mcfin b{color:#f5d97a;font-size:.86rem;display:block;margin-bottom:6px;font-family:'Zen Maru Gothic',serif;}
 .mcfin button{display:flex;align-items:center;gap:8px;width:100%;background:none;border:none;border-top:1px solid rgba(202,164,90,.2);color:#f3e6c8;font-family:'Zen Maru Gothic',sans-serif;font-size:.84rem;padding:8px 2px;cursor:pointer;text-align:left;}
@@ -1336,21 +1339,28 @@ function renderMycard(){
     '<div class="field"><label>どんな人？（任意）</label><textarea id="f_detail"'+inp+' placeholder="仕事やサービスの中身、こんな相談OKなど">'+escapeHtml(m.detail||'')+'</textarea></div>'+
     '<div class="field"><label>キーワード（任意・カンマ区切り）</label><div class="ex">さがすときの手がかりになります</div><input id="f_tags"'+inp+' value="'+escapeHtml((m.free_tags||[]).join(','))+'" placeholder="例：日本酒,浅草,ゴルフ好き"></div>'+
     '<div class="fgh">つながった人だけ <small>🔒 ほかの人には見えません</small></div>'+
-    '<div class="field"><label>LINE ID か 友だち追加リンク（任意）</label>'+
-      '<div class="lnSafe">🔒 ここに入れたLINEは、<b>「会いたい」がおたがいに成立して、つながった相手にだけ</b>見えます。<br>ほかの仲間には見えません。<br>つながったときは、公式LINEからお知らせが届きます。</div>'+
-      '<input id="f_line"'+inp+' value="'+escapeHtml(m.line_id||'')+'" placeholder="IDかリンクを貼り付け" autocapitalize="off" autocorrect="off" spellcheck="false">'+
-      '<details class="lnHow"><summary>📱 LINE IDはどこにある？</summary><ol><li>LINEを開いて、下の「<b>ホーム</b>」</li><li>右上の <b>歯車</b>（設定）</li><li>「<b>プロフィール</b>」</li><li>「<b>LINE ID</b>」に書いてある文字が、あなたのIDです</li></ol><small>「未設定」と出たら、まだIDがありません。IDは一度決めると<b>変えられない</b>ので、下の「友だち追加リンク」を使うのがおすすめです。</small></details>'+
-      '<details class="lnHow"><summary>🔗 友だち追加リンクの出し方（おすすめ）</summary><ol><li>LINEの「<b>ホーム</b>」で、上の <b>QRコードのマーク</b></li><li>「<b>マイQRコード</b>」</li><li>「<b>リンクをコピー</b>」</li><li>この欄に<b>貼り付け</b>（長押し →「ペースト」）</li></ol><small>リンクなら、相手はタップするだけで友だち追加できます（年齢確認もいりません）。<br>※マイQRコードの画面で「更新」を押すと、前のリンクは使えなくなります。押したら貼り直してね。</small></details>'+
+    '<div class="field"><label>LINEの友だち追加リンク（任意）</label>'+
+      '<div class="lnSafe">🔒 ここに入れたLINEは、<b>「会いたい」がおたがいに成立して、つながった相手にだけ</b>見えます。<br>ほかの仲間には見えません。<br>つながったときは、公式LINEからお知らせが届きます。<br>相手はボタンを押すだけで、あなたを友だち追加できます。</div>'+
+      '<details class="lnHow"'+(m.line_id?'':' open')+'><summary>🔗 リンクの出し方（10秒でできます）</summary><ol><li>LINEを開いて、下の「<b>ホーム</b>」</li><li>上のほうにある <b>QRコードのマーク</b> をタップ</li><li>「<b>マイQRコード</b>」</li><li>「<b>リンクをコピー</b>」</li><li>この画面にもどって、下の「<b>📋 貼り付ける</b>」</li></ol><small>※マイQRコードの画面で「更新」を押すと、前のリンクは使えなくなります。押したときは、もう一度貼り直してね。</small></details>'+
+      '<div class="lnRow"><input id="f_line"'+inp+' value="'+escapeHtml(m.line_id||'')+'" placeholder="https://line.me/ti/p/…" autocapitalize="off" autocorrect="off" spellcheck="false"><button type="button" class="lnPaste" onclick="lnPaste()">📋 貼り付ける</button></div>'+
+      '<div id="lnMsg" class="nrauto"></div>'+
     '</div>'+
     '<div class="field"><label>「会いたい」の受付</label><div class="toggle"><button id="ct_on" class="'+(CONTACT?'on':'')+'" onclick="setContact(true)">受け取る</button><button id="ct_off" class="'+(!CONTACT?'on':'')+'" onclick="setContact(false)">今はオフ</button></div></div>';
   var sb=document.getElementById('saveBtn');sb.classList.remove('dirty');sb.textContent='保存する';
   mcNorenRender();mcPreview();
 }
+function lnExtract(t){var m=String(t||'').match(/https:\/\/(line\.me|lin\.ee)\/\S+/i);return m?m[0]:'';}
+function lnSet(v){var i=document.getElementById('f_line'),msg=document.getElementById('lnMsg');var u=lnExtract(v);
+  if(u){i.value=u;mcChanged(true);saveProfile().then(function(){if(ME&&ME.line_id===u)msg.innerHTML='<span style="color:#a8e0a8">✓ LINEのリンクを保存したよ。つながった相手に見えるようになったよ</span>';});}
+  else{msg.innerHTML='<span style="color:#f0a080">LINEのリンクが見つからなかったよ。「リンクをコピー」をしてから押してね</span>';}}
+function lnPaste(){var msg=document.getElementById('lnMsg');
+  if(navigator.clipboard&&navigator.clipboard.readText){navigator.clipboard.readText().then(lnSet,function(){msg.innerHTML='うまく読めなかったよ。欄を長押しして「ペースト」してね';document.getElementById('f_line').focus();});}
+  else{msg.innerHTML='欄を長押しして「ペースト」してね';document.getElementById('f_line').focus();}}
 function mcFinHtml(m){var it=[];
   if(m.avatar_type!=='photo')it.push(['📷','顔写真をのせる','mcAva','声をかけやすくなる']);
   if(!m.detail)it.push(['📝','「どんな人？」を書く','f_detail','カードを開いた人に']);
   if(!(m.free_tags||[]).length)it.push(['🔎','キーワードを足す','f_tags','見つけてもらえる']);
-  if(!m.line_id)it.push(['💬','LINEを登録する','f_line','つながった人だけ']);
+  if(!m.line_id)it.push(['💬','LINEの友だち追加リンクを入れる','f_line','つながった人だけ']);
   if(!it.length)return '';
   return '<div class="mcfin"><b>🍺 あと少しで、もっと見つけてもらえるよ（任意）</b>'+it.map(function(x){return '<button onclick="mcGo(\''+x[2]+'\')"><span>'+x[0]+'</span>'+x[1]+'<small>'+x[3]+' ›</small></button>';}).join('')+'</div>';}
 function mcGo(id){var e=document.getElementById(id);if(!e)return;e.scrollIntoView({behavior:'smooth',block:'center'});if(e.focus&&e.tagName!=='DIV')setTimeout(function(){e.focus();},350);var f=e.closest('.field');if(f){f.classList.add('flash');setTimeout(function(){f.classList.remove('flash');},1400);}}
@@ -1371,8 +1381,8 @@ async function saveProfile(){
   var btn=document.getElementById('saveBtn');btn.disabled=true;btn.textContent='保存中…';
   var tags=(document.getElementById('f_tags').value||'').split(',').map(function(s){return s.trim();}).filter(Boolean);
   var patch={name:document.getElementById('f_name').value,company:document.getElementById('f_company').value,tagline:document.getElementById('f_tagline').value,detail:document.getElementById('f_detail').value,industry:document.getElementById('f_industry').value,free_tags:tags,contact_ok:CONTACT,noren:MC_NOREN||null,noren_custom:(MC_CUSTOM&&MC_CUSTOM!==true)?MC_CUSTOM:null,line_id:(document.getElementById('f_line').value||'').trim()};
-  patch.line_id=isLineUrl(patch.line_id)?patch.line_id:patch.line_id.replace(/^[@＠]/,'');
-  if(patch.line_id&&!(/^https:\/\/(line\.me|lin\.ee)\/\S+$/i.test(patch.line_id)||/^[A-Za-z0-9._-]{1,40}$/.test(patch.line_id))){btn.disabled=false;btn.textContent='変更を保存する';toastMsg('LINEの欄には、LINE ID（英数字）か<br>「https://line.me/」で始まるリンクを入れてね');mcGo('f_line');return;}
+  patch.line_id=lnExtract(patch.line_id)||patch.line_id;
+  if(patch.line_id&&!/^https:\/\/(line\.me|lin\.ee)\/\S+$/i.test(patch.line_id)){btn.disabled=false;btn.textContent='変更を保存する';toastMsg('LINEの「マイQRコード」→「リンクをコピー」で<br>出たリンクを貼ってね');mcGo('f_line');return;}
   var r=await api('save_profile',{patch:patch});
   btn.disabled=false;btn.textContent='保存する';
   if(r.ok){ME=r.member;btn.classList.remove('dirty');toastMsg('あさやん：「カード、更新しておいたよ」');}
