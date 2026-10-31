@@ -329,6 +329,12 @@ html,body{height:100%;background:radial-gradient(130% 90% at 50% 0%, #1c1008 0%,
 .lockBtn{display:block;width:100%;background:linear-gradient(180deg,#f0c060,#c98f2a);color:#2a1600;border:none;border-radius:12px;padding:14px;font-family:'Zen Maru Gothic',sans-serif;font-weight:800;font-size:1rem;cursor:pointer;text-decoration:none;}
 .lockBtn:disabled{opacity:.6;}
 .lockTop{margin-left:auto;background:rgba(0,0,0,.25);border:1px solid rgba(202,164,90,.6);color:#c9b48c;border-radius:8px;padding:4px 9px;font-size:.7rem;font-family:'Zen Maru Gothic',sans-serif;cursor:pointer;}
+.bkBox{background:rgba(0,0,0,.25);border:1.5px solid #6e4a1e;border-radius:12px;padding:6px 12px;margin:10px 0;}
+.bkRow{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px dashed rgba(202,164,90,.25);font-size:.84rem;color:#e9d9b6;}
+.bkRow:last-child{border-bottom:none;}
+.bkRow b{color:#f5d97a;}
+.bkNote{font-size:.74rem;color:#c9b48c;line-height:1.7;margin-top:10px;}
+.bkNote b{color:#f5d97a;}
 .lnAdd{border-top:1px dashed rgba(202,164,90,.25);padding-top:10px;}
 .lnAdd .a{display:flex;gap:6px;margin-top:6px;}
 .fnoren{padding:6px 0 2px;}
@@ -703,6 +709,7 @@ html,body{height:100%;background:radial-gradient(130% 90% at 50% 0%, #1c1008 0%,
         <button id="chT_bc" class="chTab" style="display:none" onclick="choTab('bc')">お知らせ</button>
         <button id="chT_ln" class="chTab" style="display:none" onclick="choTab('ln')">セリフ</button>
         <button id="chT_qa" class="chTab" style="display:none" onclick="choTab('qa')">質問<span id="qaBadge" class="badge hidden" style="margin-left:4px"></span></button>
+        <button id="chT_bk" class="chTab" style="display:none" onclick="choTab('bk')">控え</button>
         <button id="chT_nr" class="chTab" style="display:none" onclick="choTab('nr')">のれん<span id="nrBadge" class="badge hidden" style="margin-left:4px"></span></button>
       </div>
       <div id="chBody"><div class="loading">読み込み中…</div></div>
@@ -1492,8 +1499,8 @@ async function saveProfile(){
 function toastMsg(html){var t=document.getElementById('toast');t.innerHTML=html;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},3400);}
 
 /* ===== 帳場 (admin / owner) ===== */
-function openChocho(){show('chocho');if(!STAFF_SS){renderChoLock();return;}var tb=document.querySelector('#chocho .chTabs');if(tb)tb.style.display='';var lt=document.querySelector('#chocho .lockTop');if(lt)lt.style.display='';if(ME&&ME.role==='owner')nrBadgeRefresh();['chT_bc','chT_ln','chT_nr','chT_qa'].forEach(function(i){var bt=document.getElementById(i);if(bt)bt.style.display=(ME&&ME.role==='owner')?'':'none';});choTab('req');}
-function choTab(t){['req','today','mem','bc','ln','nr','qa'].forEach(function(x){document.getElementById('chT_'+x).classList.toggle('on',x===t);});document.getElementById('chBody').innerHTML='<div class="loading">読み込み中…</div>';if(t==='req')loadChoRequests();else if(t==='today')loadChoToday();else if(t==='bc')loadChoBc();else if(t==='ln')loadChoLines();else if(t==='nr')loadChoNoren();else if(t==='qa')loadChoQa();else loadChoMembers();}
+function openChocho(){show('chocho');if(!STAFF_SS){renderChoLock();return;}var tb=document.querySelector('#chocho .chTabs');if(tb)tb.style.display='';var lt=document.querySelector('#chocho .lockTop');if(lt)lt.style.display='';if(ME&&ME.role==='owner')nrBadgeRefresh();['chT_bc','chT_ln','chT_nr','chT_qa','chT_bk'].forEach(function(i){var bt=document.getElementById(i);if(bt)bt.style.display=(ME&&ME.role==='owner')?'':'none';});choTab('req');}
+function choTab(t){['req','today','mem','bc','ln','nr','qa','bk'].forEach(function(x){document.getElementById('chT_'+x).classList.toggle('on',x===t);});document.getElementById('chBody').innerHTML='<div class="loading">読み込み中…</div>';if(t==='req')loadChoRequests();else if(t==='today')loadChoToday();else if(t==='bc')loadChoBc();else if(t==='ln')loadChoLines();else if(t==='nr')loadChoNoren();else if(t==='qa')loadChoQa();else if(t==='bk')loadChoBk();else loadChoMembers();}
 var CHO_STATUS={pending:['返事待ち','chipW'],matched:['つながった','chipG'],declined:['見送り','chipN']};
 function fmtJ(d){return d?new Date(d).toLocaleString('ja-JP',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}):'';}
 async function loadChoRequests(){var r=await api('admin_requests',{});var b=document.getElementById('chBody');if(!r.ok){b.innerHTML='<div class="stub">読み込めなかった…</div>';return;}var reqs=r.requests||[];var c={pending:0,matched:0,declined:0};reqs.forEach(function(x){if(c[x.status]!==undefined)c[x.status]++;});var h='<div class="say" style="font-size:.84rem">「会いたい」の申請は、自動で相手に届くよ。<br>ここでは、誰が誰に申請したかを見守れるよ。</div>';h+='<div class="choSum"><div><b>'+reqs.length+'</b>申請</div><div><b>'+c.pending+'</b>返事待ち</div><div><b>'+c.matched+'</b>つながった</div><div><b>'+c.declined+'</b>見送り</div></div>';if(!reqs.length)h+='<div class="stub">まだ申請はないよ。</div>';reqs.forEach(function(x){h+=reqCardHtml(x);});b.innerHTML=h;}
@@ -1688,6 +1695,23 @@ async function qaDel(id){var f=qaFind(id);if(!f)return;if(!window.confirm||!conf
 async function qaAdd(){var q=(document.getElementById('qaNq').value||'').trim(),a=(document.getElementById('qaNa').value||'').trim();if(!q||!a){toastMsg('質問と答えを書いてね');return;}
   var r=await api('faq_save',{question:q,answer:a,cat:document.getElementById('qaNc').value,go:document.getElementById('qaNg').value||null,active:true});if(r.ok)qaReloadFaq('あさやん：「新しい質問、覚えたよ」');else toastMsg('うまく足せなかった…');}
 
+
+
+/* 帳場：控え（バックアップ） */
+async function loadChoBk(){var b=document.getElementById('chBody');var r=await api('backup_info',{});
+  if(!r.ok){b.innerHTML='<div class="stub">読み込めなかった…</div>';return;}
+  var last=r.last_taken?new Date(r.last_taken).toLocaleString('ja-JP',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}):'まだ';
+  b.innerHTML='<div class="say" style="font-size:.84rem">酒場のデータの控えだよ。<br>毎晩3時すぎに、自動で控えを取っているよ（14日分）。</div>'+
+    '<div class="bkBox"><div class="bkRow"><span>最後の自動の控え</span><b>'+escapeHtml(last)+'</b></div><div class="bkRow"><span>残っている日数</span><b>'+escapeHtml(String(r.days||0))+'日分</b></div><div class="bkRow"><span>控えの中の仲間</span><b>'+escapeHtml(String(r.members==null?'-':r.members))+'人</b></div></div>'+
+    '<div class="lnG">📦 手元にも控えを残す<small>月に1回くらい、ダウンロードして保管しておくと安心だよ</small></div>'+
+    '<button class="okbtn" id="bkBtn" onclick="bkDownload()">控えをダウンロードする</button>'+
+    '<div class="bkNote">・仲間のプロフィールやLINEのリンクが入っているので、<b>人に渡さず、大事に保管</b>してね（iPhoneなら「ファイル」に保存されるよ）。<br>・安全のため、入口リンクは控えに入れていないよ。<br>・控えから戻したいときは、開発の担当にお願いしてね。</div>';}
+async function bkDownload(){var bt=document.getElementById('bkBtn');bt.disabled=true;bt.textContent='控えを作っています…';
+  var r=await api('backup_export',{});bt.disabled=false;bt.textContent='控えをダウンロードする';
+  if(!r.ok){toastMsg('うまく作れなかった…');return;}
+  try{var d=new Date(),pad=function(n){return (n<10?'0':'')+n;};var name='sakaba-backup-'+d.getFullYear()+pad(d.getMonth()+1)+pad(d.getDate())+'.json';
+    var blob=new Blob([JSON.stringify(r,null,1)],{type:'application/json'});var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove();},1500);
+    toastMsg('あさやん：「控えを作ったよ。大事にしまっておいてね」');}catch(e){toastMsg('ダウンロードできなかった…');}}
 
 /* ===== 帳場の鍵（Face ID / パスキー） ===== */
 function waLib(){return window.SimpleWebAuthnBrowser?Promise.resolve(window.SimpleWebAuthnBrowser):Promise.reject(new Error('lib'));}
