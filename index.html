@@ -344,6 +344,15 @@ html,body{height:100%;background:radial-gradient(130% 90% at 50% 0%, #1c1008 0%,
 .nr.on .nrimg{filter:drop-shadow(0 0 8px rgba(245,197,24,.7));}
 .nr.swing .nrimg{animation:nrSway .55s ease;transform-origin:50% 8%;}
 @keyframes nrSway{25%{transform:rotate(4deg)}55%{transform:rotate(-3deg)}80%{transform:rotate(1deg)}100%{transform:none}}
+.nrRow{background:linear-gradient(180deg,#2a1810,#1b0f07);border:1.5px solid #6e4a1e;border-radius:12px;padding:10px 12px;margin-bottom:8px;}
+.nrW b{color:#f5d97a;font-size:.95rem;}
+.nrW small{display:block;color:#a8977a;font-size:.72rem;margin-top:2px;}
+.nrDot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:-1px;}
+.nrA{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;align-items:center;}
+.nrsel2{flex:1;min-width:130px;background:rgba(255,250,235,.96);border:2px solid #caa45a;border-radius:9px;padding:6px 8px;font-family:'Zen Maru Gothic',sans-serif;font-size:.85rem;color:#3a2410;}
+.nrA button{background:rgba(0,0,0,.25);border:1.5px solid #6e4a1e;color:#e9d9b6;border-radius:8px;padding:6px 11px;font-family:'Zen Maru Gothic',sans-serif;font-size:.78rem;font-weight:700;cursor:pointer;}
+.nrA button.pri{background:linear-gradient(180deg,#f0c060,#c98f2a);color:#2a1600;border-color:#c98f2a;}
+.nrA button.del{border-color:#a55;color:#f1b0a8;}
 .dhead{background:linear-gradient(180deg,#f7eeda,#e9d9b6);margin:-14px -14px 14px;padding:20px 16px 16px;text-align:center;border-bottom:2px solid #b8925a;}
 .dhead .face{width:76px;height:76px;border-radius:15px;margin:0 auto 10px;background:radial-gradient(circle at 50% 30%,#caa45a,#6e4a1e);display:flex;align-items:center;justify-content:center;font-family:'Zen Maru Gothic',serif;font-weight:800;color:#fff;font-size:2rem;border:3px solid #7a5520;overflow:hidden;}
 .dhead .face img{width:100%;height:100%;object-fit:cover;}
@@ -580,6 +589,7 @@ html,body{height:100%;background:radial-gradient(130% 90% at 50% 0%, #1c1008 0%,
         <button id="chT_mem" class="chTab" onclick="choTab('mem')">会員</button>
         <button id="chT_bc" class="chTab" style="display:none" onclick="choTab('bc')">お知らせ</button>
         <button id="chT_ln" class="chTab" style="display:none" onclick="choTab('ln')">セリフ</button>
+        <button id="chT_nr" class="chTab" style="display:none" onclick="choTab('nr')">のれん<span id="nrBadge" class="badge hidden" style="margin-left:4px"></span></button>
       </div>
       <div id="chBody"><div class="loading">読み込み中…</div></div>
     </div>
@@ -794,21 +804,23 @@ function fellowText(p){return ((p.name||'')+' '+(p.company||'')+' '+(p.tagline||
 /* ===== のれん（業種） ===== */
 var NOREN=[
  {k:'shigyo',c:'士',n:'士業',a:'#2a4686',b:'#16264a',kw:['弁護士','司法書士','行政書士','税理士','公認会計士','会計士','社会保険労務士','社労士','弁理士','中小企業診断士','診断士','土地家屋調査士','不動産鑑定士','鑑定士','通関士','海事代理士','法律事務所','法務','士業','会計事務所','税務','労務','登記','特許','知財','相続','遺言','許認可','ビザ']},
- {k:'money',c:'金',n:'お金・保険',a:'#94741c',b:'#5a440c',kw:['保険','生命保険','損害保険','金融','銀行','信金','信用金庫','証券','投資','資産運用','資産形成','ファイナンシャル','FP','ローン','融資','リース','クレジット','決済','仮想通貨','暗号資産','年金','iDeCo','NISA','不動産投資','ファンド','財務','経理','会計','記帳','給与計算']},
+ {k:'money',c:'金',n:'お金・保険',a:'#94741c',b:'#5a440c',kw:['保険','生命保険','損害保険','金融','銀行','信金','信用金庫','証券','投資','資産運用','資産形成','ファイナンシャル','FP','住宅ローン','カードローン','ローン相談','融資','リース','クレジット','決済','仮想通貨','暗号資産','年金','iDeCo','NISA','不動産投資','ファンド','財務','経理','会計','記帳','給与計算']},
  {k:'consult',c:'経',n:'コンサル・経営',a:'#3e5a6e',b:'#1e3040',kw:['コンサル','コンサルタント','経営','顧問','アドバイザー','起業','創業','事業承継','M&A','補助金','助成金','資金調達','事業計画','人事','採用','人材','組織','営業代行','営業支援','販路','マーケティング','ブランディング','PR','広報','戦略','DX支援','業務改善','BPO','代行','秘書','社長','経営者','CEO','代表']},
  {k:'food',c:'食',n:'飲食',a:'#a32a2a',b:'#6a1916',kw:['飲食','居酒屋','料理','カフェ','喫茶','バー','BAR','酒','ワイン','日本酒','レストラン','台所','食堂','ラーメン','寿司','鮨','弁当','パン','ベーカリー','菓子','スイーツ','ケーキ','ケータリング','キッチン','焼肉','焼鳥','焼き鳥','そば','蕎麦','うどん','和食','洋食','中華','イタリアン','フレンチ','割烹','料亭','小料理','スナック','食品','食材','フード','給食','キッチンカー']},
  {k:'care',c:'療',n:'医療・介護・福祉',a:'#3f86a8',b:'#1d4a62',kw:['医療','医師','病院','クリニック','診療','歯科','歯医者','看護','薬','薬局','薬剤','介護','福祉','デイサービス','訪問','障害','保育','ケアマネ','リハビリ','理学療法','作業療法','言語聴覚','柔道整復','獣医','動物病院','ヘルパー','医療機器']},
  {k:'beauty',c:'癒',n:'美容・健康',a:'#a8406a',b:'#6a2c45',kw:['整体','整骨','接骨','鍼','灸','マッサージ','美容','エステ','サロン','ネイル','まつ','アイラッシュ','ヘア','美容室','美容院','理容','床屋','脱毛','健康','ヨガ','ピラティス','ジム','パーソナル','フィットネス','トレーナー','ダイエット','栄養','アロマ','リラク','カイロ','睡眠','温活','占い','スピリチュアル','化粧品','コスメ']},
  {k:'house',c:'家',n:'住まい・建築',a:'#6e4524',b:'#45310f',kw:['不動産','建築','リフォーム','リノベ','工務店','設計','住宅','建設','内装','塗装','電気工事','電気','水道','設備','空調','解体','土木','外構','造園','庭','左官','大工','屋根','板金','防水','清掃','ハウスクリーニング','引越','引っ越し','管理会社','賃貸','売買','仲介','民泊','ホテル','旅館','宿']},
  {k:'it',c:'技',n:'IT・Web',a:'#17706f',b:'#0d3c3c',kw:['IT','Web','WEB','ウェブ','ホームページ','HP','システム','DX','アプリ','エンジニア','プログラ','開発','AI','人工知能','SNS','インスタ','YouTube','ユーチューブ','広告','EC','ネット','通販','サーバー','セキュリティ','クラウド','SaaS','データ','LINE','Lステップ','ノーコード','パソコン','PC','IT導入']},
- {k:'create',c:'創',n:'デザイン・制作',a:'#6e3c8c',b:'#432450',kw:['デザイン','デザイナー','写真','撮影','フォト','カメラ','映像','動画','印刷','制作','クリエイ','イラスト','漫画','マンガ','編集','ライター','ライティング','コピー','音楽','作曲','ナレーション','声優','アート','画家','書道','陶芸','Photo','Design','グラフィック','ロゴ','チラシ','名刺','出版','ラジオ','テレビ','タレント','モデル','アナウンサー','司会','MC']},
+ {k:'create',c:'創',n:'デザイン・制作',a:'#6e3c8c',b:'#432450',kw:['デザイン','デザイナー','写真','撮影','フォト','カメラ','映像','動画','ドローン','空撮','印刷','制作','クリエイ','イラスト','漫画','マンガ','編集','ライター','ライティング','コピー','音楽','作曲','ナレーション','声優','アート','画家','書道','陶芸','Photo','Design','グラフィック','ロゴ','チラシ','名刺','出版','ラジオ','テレビ','タレント','モデル','アナウンサー','司会','MC']},
  {k:'learn',c:'学',n:'学び・教室',a:'#2f7340',b:'#1f4222',kw:['教育','講師','研修','コーチ','コーチング','塾','学習','セミナー','スクール','カウンセ','先生','教室','レッスン','ピアノ','英会話','英語','語学','そろばん','書き方','プログラミング教室','家庭教師','大学','学校','専門学校','キャリア','就活','講演','トレーニング']},
  {k:'shop',c:'商',n:'お店・ものづくり',a:'#a8641a',b:'#5a3a0a',kw:['小売','販売','卸','製造','物販','メーカー','工場','農','農業','農家','漁','漁業','畜産','雑貨','アパレル','服','呉服','着物','花','フラワー','ショップ','商店','職人','工芸','家具','インテリア','車','自動車','中古車','整備','バイク','自転車','輸入','輸出','貿易','物流','運送','配送','印鑑','眼鏡','メガネ','時計','宝石','ジュエリー','ペット']},
  {k:'community',c:'縁',n:'地域・団体',a:'#5f6c26',b:'#363e12',kw:['コミュニティ','団体','NPO','地域','社団','財団','協会','組合','自治','町会','商店街','観光','イベント','まちづくり','地方創生','議員','政治','行政','市役所','役所','公務','ボランティア','子ども食堂','こども食堂','冠婚葬祭','葬儀','結婚','婚活','神社','寺','お寺']},
  {k:'other',c:'他',n:'そのほか',a:'#55504a',b:'#2e2824',kw:[]}
 ];
 var NOREN_BY={};NOREN.forEach(function(x){NOREN_BY[x.k]=x;});
+function norenRule(k){var rs=(OKAMI&&OKAMI.noren_rules)||[];for(var i=0;i<rs.length;i++){if(rs[i].word===k)return rs[i].cat;}return null;}
 function guessNoren(p){
+  var rk=normInd(p.industry);if(rk){var rc=norenRule(rk);if(rc&&NOREN_BY[rc])return rc;}
   var txts=[String(p.industry||'').replace(/[Ａ-Ｚａ-ｚ０-９]/g,function(c){return String.fromCharCode(c.charCodeAt(0)-0xFEE0);}),(p.company||'')+' '+(p.tagline||'')];
   for(var t=0;t<txts.length;t++){var s=txts[t];if(!s.trim())continue;for(var i=0;i<NOREN.length;i++){var d=NOREN[i];for(var j=0;j<d.kw.length;j++){if(s.indexOf(d.kw[j])>=0)return d.k;}}}
   return 'other';
@@ -1239,8 +1251,8 @@ async function saveProfile(){
 function toastMsg(html){var t=document.getElementById('toast');t.innerHTML=html;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},3400);}
 
 /* ===== 帳場 (admin / owner) ===== */
-function openChocho(){show('chocho');['chT_bc','chT_ln'].forEach(function(i){var bt=document.getElementById(i);if(bt)bt.style.display=(ME&&ME.role==='owner')?'':'none';});choTab('req');}
-function choTab(t){['req','today','mem','bc','ln'].forEach(function(x){document.getElementById('chT_'+x).classList.toggle('on',x===t);});document.getElementById('chBody').innerHTML='<div class="loading">読み込み中…</div>';if(t==='req')loadChoRequests();else if(t==='today')loadChoToday();else if(t==='bc')loadChoBc();else if(t==='ln')loadChoLines();else loadChoMembers();}
+function openChocho(){show('chocho');if(ME&&ME.role==='owner')nrBadgeRefresh();['chT_bc','chT_ln','chT_nr'].forEach(function(i){var bt=document.getElementById(i);if(bt)bt.style.display=(ME&&ME.role==='owner')?'':'none';});choTab('req');}
+function choTab(t){['req','today','mem','bc','ln','nr'].forEach(function(x){document.getElementById('chT_'+x).classList.toggle('on',x===t);});document.getElementById('chBody').innerHTML='<div class="loading">読み込み中…</div>';if(t==='req')loadChoRequests();else if(t==='today')loadChoToday();else if(t==='bc')loadChoBc();else if(t==='ln')loadChoLines();else if(t==='nr')loadChoNoren();else loadChoMembers();}
 var CHO_STATUS={pending:['返事待ち','chipW'],matched:['つながった','chipG'],declined:['見送り','chipN']};
 function fmtJ(d){return d?new Date(d).toLocaleString('ja-JP',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}):'';}
 async function loadChoRequests(){var r=await api('admin_requests',{});var b=document.getElementById('chBody');if(!r.ok){b.innerHTML='<div class="stub">読み込めなかった…</div>';return;}var reqs=r.requests||[];var c={pending:0,matched:0,declined:0};reqs.forEach(function(x){if(c[x.status]!==undefined)c[x.status]++;});var h='<div class="say" style="font-size:.84rem">「会いたい」の申請は、自動で相手に届くよ。<br>ここでは、誰が誰に申請したかを見守れるよ。</div>';h+='<div class="choSum"><div><b>'+reqs.length+'</b>申請</div><div><b>'+c.pending+'</b>返事待ち</div><div><b>'+c.matched+'</b>つながった</div><div><b>'+c.declined+'</b>見送り</div></div>';if(!reqs.length)h+='<div class="stub">まだ申請はないよ。</div>';reqs.forEach(function(x){h+=reqCardHtml(x);});b.innerHTML=h;}
@@ -1431,6 +1443,38 @@ async function lnSaveEdit(id){var x=lnFind(id);var t=(document.getElementById('l
 async function lnToggle(id){var x=lnFind(id);if(!x)return;await lnSend({id:id,scene:x.scene,text:x.text,active:!x.active},x.active?'お休みにしたよ':'また出すようにしたよ');}
 async function lnAdd(sc){var ta=document.getElementById('lna_'+sc);var t=(ta.value||'').trim();if(!t){toastMsg('セリフを書いてね');return;}LN_OPEN[sc]=true;await lnSend({scene:sc,text:t,active:true},'あさやん：「新しいセリフ、覚えたよ」');}
 async function lnDel(id){var x=lnFind(id);if(!x)return;if(!window.confirm||!confirm('このセリフを消しますか？\n\n'+x.text))return;var r=await api('line_remove',{id:id});if(r.ok){var ok=await api('okami',{});if(ok.ok)OKAMI=ok;toastMsg('消したよ');loadChoLines();}else toastMsg('うまく消せなかった…');}
+
+/* 帳場：のれんの振り分け */
+var NR_MEMBERS=[];
+function nrWords(){var m={};NR_MEMBERS.forEach(function(x){if(!x.active||!x.industry)return;var k=normInd(x.industry);if(!k)return;if(!m[k])m[k]={k:k,n:0,names:[],cat:guessNoren({industry:x.industry,company:x.company,tagline:x.tagline}),rule:norenRule(k)};m[k].n++;if(m[k].names.length<4)m[k].names.push(x.name);});return Object.keys(m).map(function(k){return m[k];});}
+async function nrBadgeRefresh(){var r=await api('admin_members',{});if(!r.ok)return;NR_MEMBERS=r.members||[];var n=nrWords().filter(function(w){return w.cat==='other'&&!w.rule;}).length;var b=document.getElementById('nrBadge');if(b){if(n){b.textContent=n;b.classList.remove('hidden');}else b.classList.add('hidden');}}
+function nrSelect(id,cur){return '<select id="'+id+'" class="nrsel2">'+NOREN.map(function(d){return '<option value="'+d.k+'"'+(d.k===cur?' selected':'')+'>'+d.n+'</option>';}).join('')+'</select>';}
+async function loadChoNoren(){
+  var b=document.getElementById('chBody');
+  var r=await api('admin_members',{});
+  if(!r.ok){b.innerHTML='<div class="stub">読み込めなかった…</div>';return;}
+  NR_MEMBERS=r.members||[];renderChoNoren();
+}
+function renderChoNoren(){
+  var b=document.getElementById('chBody');var ws=nrWords();
+  var unk=ws.filter(function(w){return w.cat==='other'&&!w.rule;}).sort(function(a,c){return c.n-a.n;});
+  var rules=((OKAMI&&OKAMI.noren_rules)||[]).slice().sort(function(a,c){return a.word.localeCompare(c.word,'ja');});
+  var h='<div class="say" style="font-size:.84rem">みんなが書いた業種は、自動で13色ののれんに振り分けているよ。<br>振り分けられずに「そのほか」になった業種を、ここで決めてあげてね。<br>決めると、すぐにみんなの画面の色が変わるよ。</div>';
+  h+='<div class="lkH">「そのほか」になっている業種（'+unk.length+'）</div>';
+  if(!unk.length)h+='<div class="lkE">今はないよ。全部の業種が振り分けられているよ</div>';
+  unk.forEach(function(w,i){h+='<div class="nrRow"><div class="nrW"><b>'+escapeHtml(w.k)+'</b><small>'+w.n+'人（'+w.names.map(escapeHtml).join('・')+(w.n>w.names.length?' ほか':'')+'）</small></div><div class="nrA">'+nrSelect('nru_'+i,'consult')+'<button class="pri" onclick="nrSaveRule('+i+')">このグループにする</button></div></div>';});
+  h+='<div class="lkH" style="margin-top:18px">あさやんが決めた振り分け（'+rules.length+'）</div>';
+  if(!rules.length)h+='<div class="lkE">まだないよ</div>';
+  rules.forEach(function(x,i){var d=NOREN_BY[x.cat]||NOREN_BY.other;h+='<div class="nrRow"><div class="nrW"><b>'+escapeHtml(x.word)+'</b><small><span class="nrDot" style="background:'+d.a+'"></span>'+d.n+'</small></div><div class="nrA">'+nrSelect('nrr_'+i,x.cat)+'<button onclick="nrChangeRule('+i+')">変える</button><button class="del" onclick="nrDelRule('+i+')">外す</button></div></div>';});
+  h+='<div class="meetNote" style="margin-top:14px">13のどのグループにも合わない業種が出てきたら、Claudeに「新しい色ののれんを足して」と頼んでね。</div>';
+  b.innerHTML=h;
+  NR_UNK=unk;NR_RULES=rules;
+}
+var NR_UNK=[],NR_RULES=[];
+async function nrSend(word,cat,msg){var r=await api('noren_rule_save',{word:word,cat:cat});if(r.ok){var ok=await api('okami',{});if(ok.ok)OKAMI=ok;toastMsg(msg);renderChoNoren();nrBadgeRefresh();}else toastMsg('うまく決められなかった…');}
+function nrSaveRule(i){var w=NR_UNK[i];if(!w)return;var cat=document.getElementById('nru_'+i).value;nrSend(w.k,cat,'あさやん：「「'+escapeHtml(w.k)+'」は'+NOREN_BY[cat].n+'ののれんにしたよ」');}
+function nrChangeRule(i){var x=NR_RULES[i];if(!x)return;var cat=document.getElementById('nrr_'+i).value;nrSend(x.word,cat,'変えたよ');}
+async function nrDelRule(i){var x=NR_RULES[i];if(!x)return;if(!window.confirm||!confirm('「'+x.word+'」の振り分けを外しますか？\n（自動の振り分けに戻ります）'))return;var r=await api('noren_rule_delete',{word:x.word});if(r.ok){var ok=await api('okami',{});if(ok.ok)OKAMI=ok;toastMsg('外したよ');renderChoNoren();nrBadgeRefresh();}else toastMsg('うまく外せなかった…');}
 
 /* boot */
 (async function boot(){
