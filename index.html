@@ -363,6 +363,7 @@ html,body{height:100%;background:radial-gradient(130% 90% at 50% 0%, #1c1008 0%,
 .nrp2.on{background:rgba(245,197,24,.16);box-shadow:0 0 0 1.5px #f5c518 inset;}
 .nrp2.on .nrl{color:#f5d97a;}
 .nrp2:active{transform:scale(.94);}
+.nrc2 .nrpen{width:46px;height:49px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;border:1.5px dashed rgba(202,164,90,.6);border-radius:8px;}
 .dhead{background:linear-gradient(180deg,#f7eeda,#e9d9b6);margin:-14px -14px 14px;padding:20px 16px 16px;text-align:center;border-bottom:2px solid #b8925a;}
 .dhead .face{width:76px;height:76px;border-radius:15px;margin:0 auto 10px;background:radial-gradient(circle at 50% 30%,#caa45a,#6e4a1e);display:flex;align-items:center;justify-content:center;font-family:'Zen Maru Gothic',serif;font-weight:800;color:#fff;font-size:2rem;border:3px solid #7a5520;overflow:hidden;}
 .dhead .face img{width:100%;height:100%;object-fit:cover;}
@@ -861,8 +862,13 @@ var NOREN_IMG={money:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAADACAMA
 function norenImg(word,cat,w){w=w||62;var isA=/^[\x00-\x7F]+$/.test(word);var n=word.length;
   var fs=isA?Math.min(15,46/(n*0.62)):(n<=2?15:n===3?13:n===4?10.5:9);
   return '<span class="nrimg" style="width:'+w+'px;height:'+Math.round(w*192/180)+'px"><img src="'+NOREN_IMG[cat]+'" alt=""><span class="nrw'+(isA?' h':'')+'" style="font-size:'+fs+'px">'+(isA?escapeHtml(word):word.split('').map(escapeHtml).join('<br>'))+'</span></span>';}
-function nrPickerHtml(cur,fn){return '<div class="nrpick2">'+NOREN.map(function(d){return '<button type="button" class="nrp2'+(cur===d.k?' on':'')+'" onclick="'+fn+'(\''+d.k+'\',this)"><span class="nrimg" style="width:46px;height:49px"><img src="'+NOREN_IMG[d.k]+'" alt=""></span><span class="nrl">'+d.n+'</span></button>';}).join('')+'</div>';}
-function nrPreviewHtml(word,cat,auto){var d=NOREN_BY[cat];return '<div class="nrprev">'+norenImg(word?indShort(normInd(word)||word):'ほか',cat,64)+'<div class="nrpt"><b>'+escapeHtml(d.n)+'</b>ののれんに並ぶよ<small>'+(auto?'業種の言葉から自動で選んでいます。違ったら下から選び直してね':'あなたが選んだグループです')+'</small></div></div>';}
+function groupName(p){return (p&&p.noren_custom)?p.noren_custom:NOREN_BY[norenOf(p)].n;}
+function nrPickerHtml(cur,fn,custom,inputId,inputFn){
+  var h='<div class="nrpick2">'+NOREN.map(function(d){return '<button type="button" class="nrp2'+(!custom&&cur===d.k?' on':'')+'" onclick="'+fn+'(\''+d.k+'\',this)"><span class="nrimg" style="width:46px;height:49px"><img src="'+NOREN_IMG[d.k]+'" alt=""></span><span class="nrl">'+d.n+'</span></button>';}).join('')+
+    '<button type="button" class="nrp2 nrc2'+(custom!==null&&custom!==undefined&&custom!==false&&custom!==0&&custom!=='__off'?' on':'')+'" onclick="'+fn+'(\'__custom\',this)"><span class="nrpen">✏️</span><span class="nrl">自分で書く</span></button></div>';
+  if(custom!==null&&custom!==undefined&&custom!==false&&custom!=='__off')h+='<div class="field" style="margin-top:8px"><input id="'+inputId+'" maxlength="10" value="'+escapeHtml(custom===true?'':custom)+'" placeholder="例：占い・スピリチュアル（10文字まで）" oninput="'+inputFn+'(this.value)"></div><div class="nrauto">今ある13のどれにも合わないときに書いてね。色は「そのほか」になります。人数が増えたら、あさやんが新しい色ののれんを作ってくれるよ</div>';
+  return h;}
+function nrPreviewHtml(word,cat,auto,custom){var d=NOREN_BY[cat];var nm=(custom&&custom!==true)?custom:d.n;return '<div class="nrprev">'+norenImg(word?indShort(normInd(word)||word):'ほか',cat,64)+'<div class="nrpt"><b>'+escapeHtml(nm)+'</b>ののれんに並ぶよ<small>'+(custom?'あなたが書いたグループです':(auto?'業種の言葉から自動で選んでいます。違ったら下から選び直してね':'あなたが選んだグループです'))+'</small></div></div>';}
 var NR_LIST=[];
 function renderNoren(){
   var el=document.getElementById('fnoren');if(!el)return;
@@ -999,7 +1005,7 @@ function openDetail(p,g,from){
       '<div class="dface">'+(ph?'<img src="'+escapeHtml(p.avatar_url)+'" alt="">':'<span>'+escapeHtml(initial(p.name))+'</span>')+'</div>'+
     '</div>'+
     '<div class="dname"><div class="nm">'+escapeHtml(p.name||'')+'</div>'+(p.company?'<div class="co">'+escapeHtml(p.company)+'</div>':'')+
-      '<div class="dchips"><span class="dnr" style="--na:'+nd.a+';--nb:'+nd.b+'"><i>'+nd.c+'</i>'+nd.n+'</span>'+(p.industry?'<span class="dind">'+escapeHtml(p.industry)+'</span>':'')+'</div></div>'+
+      '<div class="dchips"><span class="dnr" style="--na:'+nd.a+';--nb:'+nd.b+'"><i>'+(p.noren_custom?escapeHtml(p.noren_custom.charAt(0)):nd.c)+'</i>'+escapeHtml(groupName(p))+'</span>'+(p.industry?'<span class="dind">'+escapeHtml(p.industry)+'</span>':'')+'</div></div>'+
     metLine+
     (p.tagline?'<div class="dsign"><span class="q">“</span>'+escapeHtml(p.tagline)+'</div>':'')+
     (p.detail?'<div class="dsec dcard"><h3>どんな人？</h3><p>'+escapeHtml(p.detail)+'</p></div>':'')+
@@ -1211,11 +1217,11 @@ async function openMycard(){
   if(r.ok)ME=r.member;
   renderMycard();
 }
-var CONTACT=true,MC_NOREN='';
+var CONTACT=true,MC_NOREN='',MC_CUSTOM=null;
 function renderMycard(){
   var b=document.getElementById('mycardBody');
   if(!ME){b.innerHTML='<div class="stub">カードがまだないよ</div>';return;}
-  var m=ME;CONTACT=m.contact_ok!==false;MC_NOREN=m.noren||'';
+  var m=ME;CONTACT=m.contact_ok!==false;MC_NOREN=m.noren||'';MC_CUSTOM=m.noren_custom||null;
   var okamiIntro=JUST_REGISTERED?'できたね！ これであなたも、この酒場の仲間だよ。<br>これがあなたのカード。みんなには、こう見えているよ。直したいところは、いつでもここで直せるからね。':'これがあなたのカード。みんなには、こう見えているよ。直したいところは、いつでもここで直せるからね。';
   JUST_REGISTERED=false;
   var inp=' oninput="mcChanged()"';
@@ -1239,13 +1245,14 @@ function renderMycard(){
   mcNorenRender();mcPreview();
 }
 function mcGuess(){var v=function(id){var e=document.getElementById(id);return e?e.value:'';};return guessNoren({industry:v('f_industry'),company:v('f_company'),tagline:v('f_tagline')});}
-function mcNorenRender(){var el=document.getElementById('mcNoren');if(!el)return;var cur=MC_NOREN||mcGuess();var ind=(document.getElementById('f_industry')||{}).value||'';
-  el.innerHTML=nrPreviewHtml(ind,cur,!MC_NOREN)+nrPickerHtml(cur,'mcPickNoren')+(MC_NOREN?'<div class="nrauto"><a href="javascript:void(0)" onclick="mcPickNoren(\'\')" style="color:#f5d97a">自動で選ぶにもどす</a></div>':'');}
-function mcPickNoren(k,btn){MC_NOREN=k;mcNorenRender();mcChanged();}
+function mcNorenRender(){var el=document.getElementById('mcNoren');if(!el)return;var cur=MC_CUSTOM?'other':(MC_NOREN||mcGuess());var ind=(document.getElementById('f_industry')||{}).value||'';
+  el.innerHTML=nrPreviewHtml(ind,cur,!MC_NOREN,MC_CUSTOM)+nrPickerHtml(cur,'mcPickNoren',MC_CUSTOM,'mcCustom','mcCustomIn')+((MC_NOREN||MC_CUSTOM)?'<div class="nrauto"><a href="javascript:void(0)" onclick="mcPickNoren(\'\')" style="color:#f5d97a">自動で選ぶにもどす</a></div>':'');}
+function mcPickNoren(k,btn){if(k==='__custom'){MC_CUSTOM=MC_CUSTOM||true;MC_NOREN='other';mcNorenRender();var i=document.getElementById('mcCustom');if(i)i.focus();mcChanged(true);return;}MC_CUSTOM=null;MC_NOREN=k;mcNorenRender();mcChanged(true);}
+function mcCustomIn(v){MC_CUSTOM=v.trim()?v:true;var pv=document.querySelector('#mcNoren .nrprev');if(pv){var ind=(document.getElementById('f_industry')||{}).value||'';pv.outerHTML=nrPreviewHtml(ind,'other',false,MC_CUSTOM);}mcChanged(true);}
 function mcPreview(){var el=document.getElementById('mcPrev');if(!el||!ME)return;var v=function(id){var e=document.getElementById(id);return e?e.value:'';};
-  var p={id:ME.id,noren:MC_NOREN||null,name:v('f_name')||'なまえ',company:v('f_company'),industry:v('f_industry'),tagline:v('f_tagline')||'（ひとことを書くとここに出ます）',avatar_type:ME.avatar_type,avatar_url:ME.avatar_url,link:'none'};
+  var p={id:ME.id,noren:MC_NOREN||null,noren_custom:(MC_CUSTOM&&MC_CUSTOM!==true)?MC_CUSTOM:null,name:v('f_name')||'なまえ',company:v('f_company'),industry:v('f_industry'),tagline:v('f_tagline')||'（ひとことを書くとここに出ます）',avatar_type:ME.avatar_type,avatar_url:ME.avatar_url,link:'none'};
   FIND_ANIM=false;el.innerHTML=pcHtml(p,0);}
-function mcChanged(){mcNorenRender();mcPreview();var sb=document.getElementById('saveBtn');sb.classList.add('dirty');sb.textContent='変更を保存する';}
+function mcChanged(keep){if(!keep)mcNorenRender();mcPreview();var sb=document.getElementById('saveBtn');sb.classList.add('dirty');sb.textContent='変更を保存する';}
 function setContact(v){if(CONTACT!==v)setTimeout(mcChanged,0);CONTACT=v;document.getElementById('ct_on').classList.toggle('on',v);document.getElementById('ct_off').classList.toggle('on',!v);}
 function mcPhoto(input){var file=input.files&&input.files[0];if(!file)return;
   resizeImage(file,360,function(dataUrl){if(!dataUrl){toastMsg('この画像は読めなかった…');return;}
@@ -1253,7 +1260,7 @@ function mcPhoto(input){var file=input.files&&input.files[0];if(!file)return;
 async function saveProfile(){
   var btn=document.getElementById('saveBtn');btn.disabled=true;btn.textContent='保存中…';
   var tags=(document.getElementById('f_tags').value||'').split(',').map(function(s){return s.trim();}).filter(Boolean);
-  var patch={name:document.getElementById('f_name').value,company:document.getElementById('f_company').value,tagline:document.getElementById('f_tagline').value,detail:document.getElementById('f_detail').value,industry:document.getElementById('f_industry').value,free_tags:tags,contact_ok:CONTACT,noren:MC_NOREN||null,line_id:(document.getElementById('f_line').value||'').trim()};
+  var patch={name:document.getElementById('f_name').value,company:document.getElementById('f_company').value,tagline:document.getElementById('f_tagline').value,detail:document.getElementById('f_detail').value,industry:document.getElementById('f_industry').value,free_tags:tags,contact_ok:CONTACT,noren:MC_NOREN||null,noren_custom:(MC_CUSTOM&&MC_CUSTOM!==true)?MC_CUSTOM:null,line_id:(document.getElementById('f_line').value||'').trim()};
   var r=await api('save_profile',{patch:patch});
   btn.disabled=false;btn.textContent='保存する';
   if(r.ok){ME=r.member;btn.classList.remove('dirty');toastMsg('あさやん：「カード、更新しておいたよ」');}
@@ -1316,8 +1323,9 @@ function renderWiz(){
   document.getElementById('wizBtns').innerHTML=btns;
   setTimeout(function(){var inp=document.getElementById('wizInput');if(inp)inp.focus();},60);
 }
-function wizNrRender(){var el=document.getElementById('wizNr');if(!el)return;var w=(document.getElementById('wizInput')||{}).value||'';if(!w.trim()){el.innerHTML='<div class="nrauto">書くと、どののれんに並ぶか出てくるよ</div>';return;}var cur=wizData.noren||guessNoren({industry:w});el.innerHTML=nrPreviewHtml(w,cur,!wizData.noren)+nrPickerHtml(cur,'wizPickNoren');}
-function wizPickNoren(k){wizData.noren=k;wizNrRender();}
+function wizNrRender(){var el=document.getElementById('wizNr');if(!el)return;var w=(document.getElementById('wizInput')||{}).value||'';if(!w.trim()){el.innerHTML='<div class="nrauto">書くと、どののれんに並ぶか出てくるよ</div>';return;}var cur=wizData.noren_custom?'other':(wizData.noren||guessNoren({industry:w}));el.innerHTML=nrPreviewHtml(w,cur,!wizData.noren,wizData.noren_custom)+nrPickerHtml(cur,'wizPickNoren',wizData.noren_custom,'wizCustom','wizCustomIn');}
+function wizPickNoren(k){if(k==='__custom'){wizData.noren_custom=wizData.noren_custom||true;wizData.noren='other';wizNrRender();var i=document.getElementById('wizCustom');if(i)i.focus();return;}wizData.noren_custom=null;wizData.noren=k;wizNrRender();}
+function wizCustomIn(v){wizData.noren_custom=v.trim()?v:true;var pv=document.querySelector('#wizNr .nrprev');if(pv)pv.outerHTML=nrPreviewHtml((document.getElementById('wizInput')||{}).value||'','other',false,wizData.noren_custom);}
 function wizContact(v){wizData.contact_ok=v;document.getElementById('wc_on').classList.toggle('on',v);document.getElementById('wc_off').classList.toggle('on',!v);}
 function saveWizCurrent(){var s=WIZ[wizI];var inp=document.getElementById('wizInput');
   if(s.type==='text'||s.type==='textarea'){if(inp)wizData[s.key]=inp.value.trim();}
@@ -1339,7 +1347,7 @@ function wizPhoto(input){var file=input.files&&input.files[0];if(!file)return;
       if(r.ok){ME=r.member;document.getElementById('wizAva').innerHTML=avaBox(ME.avatar_url,wizData.name||NIPPO_NAME,90);document.getElementById('wizPhotoMsg').textContent='写真を設定したよ！';}
       else{document.getElementById('wizPhotoMsg').textContent='うまく上げられなかった…もう一度試してね';}});});}
 async function finishWiz(){
-  var patch={name:wizData.name,company:wizData.company||'',tagline:wizData.tagline,detail:wizData.detail||'',industry:wizData.industry,noren:wizData.noren||null,free_tags:wizData.free_tags||[],contact_ok:wizData.contact_ok!==false,line_id:(wizData.line_id||'').trim()};
+  var patch={name:wizData.name,company:wizData.company||'',tagline:wizData.tagline,detail:wizData.detail||'',industry:wizData.industry,noren:wizData.noren||null,noren_custom:(wizData.noren_custom&&wizData.noren_custom!==true)?wizData.noren_custom:null,free_tags:wizData.free_tags||[],contact_ok:wizData.contact_ok!==false,line_id:(wizData.line_id||'').trim()};
   var r=await api('save_profile',{patch:patch});if(r.ok)ME=r.member;
   JUST_REGISTERED=true;
   openMycard();
@@ -1478,6 +1486,11 @@ function renderChoNoren(){
   h+='<div class="lkH">「そのほか」になっている業種（'+unk.length+'）</div>';
   if(!unk.length)h+='<div class="lkE">今はないよ。全部の業種が振り分けられているよ</div>';
   unk.forEach(function(w,i){h+='<div class="nrRow"><div class="nrW"><b>'+escapeHtml(w.k)+'</b><small>'+w.n+'人（'+w.names.map(escapeHtml).join('・')+(w.n>w.names.length?' ほか':'')+'）</small></div><div class="nrA">'+nrSelect('nru_'+i,'consult')+'<button class="pri" onclick="nrSaveRule('+i+')">このグループにする</button></div></div>';});
+  var cg={};NR_MEMBERS.forEach(function(x){if(x.active&&x.noren_custom){var k=x.noren_custom;if(!cg[k])cg[k]=[];cg[k].push(x.name);}});var cks=Object.keys(cg).sort(function(a,c){return cg[c].length-cg[a].length;});
+  h+='<div class="lkH" style="margin-top:18px">本人が自分で書いたグループ（'+cks.length+'）</div>';
+  if(!cks.length)h+='<div class="lkE">まだないよ</div>';
+  cks.forEach(function(k){h+='<div class="nrRow"><div class="nrW"><b>'+escapeHtml(k)+'</b><small>'+cg[k].length+'人（'+cg[k].slice(0,4).map(escapeHtml).join('・')+(cg[k].length>4?' ほか':'')+'）</small></div></div>';});
+  if(cks.length)h+='<div class="meetNote" style="margin-bottom:6px">人数が増えたグループは、Claudeに「◯◯ののれんを正式に作って」と頼めば、新しい色で足せるよ</div>';
   h+='<div class="lkH" style="margin-top:18px">あさやんが決めた振り分け（'+rules.length+'）</div>';
   if(!rules.length)h+='<div class="lkE">まだないよ</div>';
   rules.forEach(function(x,i){var d=NOREN_BY[x.cat]||NOREN_BY.other;h+='<div class="nrRow"><div class="nrW"><b>'+escapeHtml(x.word)+'</b><small><span class="nrDot" style="background:'+d.a+'"></span>'+d.n+'</small></div><div class="nrA">'+nrSelect('nrr_'+i,x.cat)+'<button onclick="nrChangeRule('+i+')">変える</button><button class="del" onclick="nrDelRule('+i+')">外す</button></div></div>';});
