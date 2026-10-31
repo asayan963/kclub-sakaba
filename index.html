@@ -69,7 +69,7 @@ html,body{height:100%;background:radial-gradient(130% 90% at 50% 0%, #1c1008 0%,
 .win{position:absolute;left:3%;right:3%;top:40%;bottom:3%;z-index:12;display:flex;flex-direction:column;
  background:linear-gradient(180deg,rgba(24,14,7,.96),rgba(12,7,3,.98));border:3px solid #caa45a;border-radius:16px;
  box-shadow:0 12px 40px rgba(0,0,0,.65),inset 0 0 0 2px rgba(0,0,0,.4);overflow:hidden;}
-#detail,#board,#mycard,#qdetail,#consent,#qnew,#wizard,#chocho{top:2%;}
+#detail,#board,#mycard,#qdetail,#consent,#qnew,#wizard,#chocho,#faq{top:2%;}
 .wtop{display:flex;align-items:center;gap:8px;padding:11px 14px;border-bottom:1px solid rgba(202,164,90,.4);background:rgba(0,0,0,.2);}
 .wtop .back{position:absolute;left:12px;bottom:10px;z-index:6;padding:8px 18px !important;background:linear-gradient(180deg,#3a2410,#241406);border:2px solid #caa45a;color:#f5d97a;border-radius:12px;padding:11px 20px;font-family:'Zen Maru Gothic',sans-serif;font-weight:700;font-size:.95rem;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.6);}
 .wtop .back:active{transform:scale(.97);}
@@ -284,6 +284,43 @@ html,body{height:100%;background:radial-gradient(130% 90% at 50% 0%, #1c1008 0%,
 .lnR .a button.pri,.lnAdd button.pri{background:linear-gradient(180deg,#f0c060,#c98f2a);color:#2a1600;border-color:#c98f2a;}
 .lnR .a button.del{border-color:#a55;color:#f1b0a8;margin-left:auto;}
 .lnR textarea,.lnAdd textarea{width:100%;min-height:64px;background:rgba(255,250,235,.96);border:2px solid #caa45a;border-radius:9px;padding:8px 10px;font-family:'Zen Maru Gothic',sans-serif;font-size:.9rem;color:#3a2410;}
+.fqMine{background:rgba(245,197,24,.06);border:1.5px solid rgba(245,197,24,.4);border-radius:12px;padding:10px 12px;margin:10px 0;}
+.fqH{font-family:'Zen Maru Gothic',sans-serif;font-weight:900;color:#f5d97a;font-size:.86rem;margin-bottom:6px;}
+.fqAsk{border-top:1px dashed rgba(202,164,90,.3);padding:8px 0;font-size:.82rem;line-height:1.6;}
+.fqAsk:first-of-type{border-top:none;}
+.fqAsk .q{color:#f3e6c8;font-weight:700;}
+.fqAsk .a{color:#e8f3dc;margin-top:4px;background:rgba(80,160,90,.12);border-radius:9px;padding:6px 9px;}
+.fqAsk.new .a{box-shadow:0 0 0 2px rgba(245,197,24,.6);}
+.fqAsk .w{color:#a8977a;margin-top:3px;font-size:.76rem;}
+.fqSearch{margin:12px 0 8px;}
+.fqSearch input{width:100%;background:rgba(255,250,235,.96);border:2px solid #caa45a;border-radius:999px;padding:9px 14px;font-family:'Zen Maru Gothic',sans-serif;font-size:.88rem;color:#3a2410;}
+.fqCats{display:flex;gap:6px;overflow-x:auto;padding-bottom:8px;margin:0 -2px;scrollbar-width:none;}
+.fqCats::-webkit-scrollbar{display:none;}
+.fqCats button{flex:none;background:rgba(0,0,0,.25);border:1.5px solid rgba(202,164,90,.5);color:#c9b48c;border-radius:999px;padding:6px 12px;font-family:'Zen Maru Gothic',sans-serif;font-size:.76rem;font-weight:700;cursor:pointer;}
+.fqCats button.on{background:linear-gradient(180deg,#f0c060,#c98f2a);color:#2a1600;border-color:#c98f2a;}
+.fqItem{background:linear-gradient(180deg,#2a1810,#1b0f07);border:1.5px solid #6e4a1e;border-radius:12px;margin-bottom:7px;overflow:hidden;}
+.fqItem.open{border-color:#caa45a;}
+.fqQ{display:flex;align-items:center;gap:9px;width:100%;background:none;border:none;color:#f3e7cf;font-family:'Zen Maru Gothic',sans-serif;font-weight:700;font-size:.86rem;text-align:left;padding:11px 12px;cursor:pointer;line-height:1.45;}
+.fqQ span{flex:none;width:22px;height:22px;border-radius:50%;background:#caa45a;color:#2a1600;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:900;}
+.fqQ i{margin-left:auto;font-style:normal;color:#caa45a;font-size:1rem;flex:none;}
+.fqA{display:flex;gap:9px;padding:0 12px 12px;}
+.fqAv{flex:none;width:30px;height:30px;border-radius:50%;background:radial-gradient(circle,#5a3a1a,#2a1608);border:1.5px solid #caa45a;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:900;color:#f5d97a;font-family:"Zen Maru Gothic",sans-serif;}
+.fqAt{flex:1;background:rgba(255,250,235,.95);color:#3a2410;border-radius:4px 12px 12px 12px;padding:9px 11px;font-size:.84rem;line-height:1.7;}
+.fqAt b{color:#8a3a10;}
+.fqGo{display:block;width:100%;margin-top:9px;background:linear-gradient(180deg,#3a2410,#241406);color:#f5d97a;border:1.5px solid #caa45a;border-radius:9px;padding:8px;font-family:'Zen Maru Gothic',sans-serif;font-weight:700;font-size:.8rem;cursor:pointer;}
+.fqEmpty{text-align:center;color:#c9b48c;font-size:.82rem;padding:16px 0;line-height:1.7;}
+.fqAskBox{margin-top:16px;border-top:1px dashed rgba(202,164,90,.4);padding-top:12px;}
+.fqAskBox textarea{width:100%;min-height:70px;background:rgba(255,250,235,.96);border:2px solid #caa45a;border-radius:10px;padding:9px 11px;font-family:'Zen Maru Gothic',sans-serif;font-size:.88rem;color:#3a2410;margin-bottom:8px;}
+.fqNote{font-size:.72rem;color:#a8977a;margin-top:6px;line-height:1.6;}
+.qaCard{background:linear-gradient(180deg,#2a1810,#1b0f07);border:1.5px solid #caa45a;border-radius:12px;padding:10px 12px;margin-bottom:10px;}
+.qaCard .m{font-size:.72rem;color:#a8977a;}
+.qaCard .q{color:#f7ecd4;font-size:.9rem;font-weight:700;margin:4px 0 8px;line-height:1.6;white-space:pre-wrap;}
+.qaCard textarea{width:100%;min-height:70px;background:rgba(255,250,235,.96);border:2px solid #caa45a;border-radius:9px;padding:8px 10px;font-family:'Zen Maru Gothic',sans-serif;font-size:.88rem;color:#3a2410;}
+.qaCard .a{display:flex;margin-top:8px;}
+.qaCard .a button{flex:1;background:linear-gradient(180deg,#f0c060,#c98f2a);color:#2a1600;border:none;border-radius:9px;padding:9px;font-family:'Zen Maru Gothic',sans-serif;font-weight:800;cursor:pointer;}
+.qaChk{display:flex;align-items:center;gap:6px;font-size:.78rem;color:#e9d9b6;margin-top:7px;}
+.qaL{font-size:.72rem;color:#c9b48c;margin:7px 0 4px;}
+.qaIn{width:100%;background:rgba(255,250,235,.96);border:2px solid #caa45a;border-radius:9px;padding:8px 10px;font-family:'Zen Maru Gothic',sans-serif;font-size:.86rem;color:#3a2410;margin-bottom:6px;}
 .lnAdd{border-top:1px dashed rgba(202,164,90,.25);padding-top:10px;}
 .lnAdd .a{display:flex;gap:6px;margin-top:6px;}
 .fnoren{padding:6px 0 2px;}
@@ -544,8 +581,9 @@ html,body{height:100%;background:radial-gradient(130% 90% at 50% 0%, #1c1008 0%,
       <div class="tiles">
         <button class="tile" onclick="show('find')"><div class="ti">🍺</div><div class="tn">仲間を<br>さがす</div><div class="td">集まりで一緒だった仲間</div></button>
         <button class="tile" onclick="show('board')"><div class="ti">📜</div><div class="tn">クエスト<br>掲示板</div><div class="td">案内を見る・出す</div></button>
-        <button class="tile" onclick="show('links')"><span id="linkBadge" class="badge hidden"></span><div class="ti">📬</div><div class="tn">つながり<br>&nbsp;</div><div class="td">「会いたい」とLINE ID</div></button>
+        <button class="tile" onclick="show('links')"><span id="linkBadge" class="badge hidden"></span><div class="ti">📬</div><div class="tn">つながり<br>&nbsp;</div><div class="td">「会いたい」とLINE</div></button>
         <button class="tile" onclick="openMycard()"><div class="ti">🪪</div><div class="tn">自分の<br>カード</div><div class="td">プロフィールを直す</div></button>
+        <button class="tile wide" id="faqMenu" onclick="show('faq')"><span id="faqBadge" class="badge hidden"></span><div class="ti">❓</div><div><div class="tn">あさやんに聞く</div><div class="td">使い方・困ったとき・質問を送る</div></div></button>
         <button class="tile wide" id="chochoMenu" style="display:none" onclick="openChocho()"><div class="ti">🏮</div><div><div class="tn">帳場（管理）</div><div class="td">申請の様子・ひとこと・会員</div></div></button>
       </div>
     </div>
@@ -625,6 +663,12 @@ html,body{height:100%;background:radial-gradient(130% 90% at 50% 0%, #1c1008 0%,
     <div class="actbar" id="mcAct"><button id="saveBtn" onclick="saveProfile()">保存する</button></div>
   </div>
 
+  <!-- FAQ (あさやんに聞く) -->
+  <div id="faq" class="win hidden">
+    <div class="wtop"><button class="back" onclick="show('home')">‹ 戻る</button><h2>あさやんに聞く</h2></div>
+    <div class="wbody" id="faqBody"><div class="loading">読み込み中…</div></div>
+  </div>
+
   <!-- LINKS (つながり) -->
   <div id="links" class="win sheetwin hidden">
     <div class="fscroll">
@@ -650,6 +694,7 @@ html,body{height:100%;background:radial-gradient(130% 90% at 50% 0%, #1c1008 0%,
         <button id="chT_mem" class="chTab" onclick="choTab('mem')">会員</button>
         <button id="chT_bc" class="chTab" style="display:none" onclick="choTab('bc')">お知らせ</button>
         <button id="chT_ln" class="chTab" style="display:none" onclick="choTab('ln')">セリフ</button>
+        <button id="chT_qa" class="chTab" style="display:none" onclick="choTab('qa')">質問<span id="qaBadge" class="badge hidden" style="margin-left:4px"></span></button>
         <button id="chT_nr" class="chTab" style="display:none" onclick="choTab('nr')">のれん<span id="nrBadge" class="badge hidden" style="margin-left:4px"></span></button>
       </div>
       <div id="chBody"><div class="loading">読み込み中…</div></div>
@@ -767,7 +812,7 @@ document.getElementById('consentOk').addEventListener('click',async function(){
 });
 
 /* panels */
-var panels=['home','find','detail','board','mycard','qdetail','consent','qnew','wizard','chocho','links'];
+var panels=['home','find','detail','board','mycard','qdetail','consent','qnew','wizard','chocho','links','faq'];
 var LAST_PANEL=null,CUR_PANEL=null;
 function show(id){
   if(CUR_PANEL==='find'&&id!=='find')saveFindView();
@@ -780,6 +825,7 @@ function show(id){
   if(id==='board')loadQuests();
   if(id==='consent')typeConsent();
   if(id==='links')loadLinks();
+  if(id==='faq')loadFaq();
 }
 
 /* home */
@@ -788,6 +834,7 @@ function todayKey(){var d=new Date();return d.getFullYear()+'-'+(d.getMonth()+1)
 function seedPick(arr,salt){if(!arr.length)return null;var s=todayKey()+(ME&&ME.id||'')+salt,h=0;for(var i=0;i<s.length;i++)h=(h*31+s.charCodeAt(i))>>>0;return arr[h%arr.length];}
 function homeSituation(){
   var all=uniqFellows();
+  if(ASK_UNSEEN)return 'あなたの質問に、返事を書いておいたよ。<br>「❓ あさやんに聞く」を見てね。';
   var inc=all.filter(function(x){return x.p.link==='incoming';});
   if(inc.length)return inc[0].p.name+'さんから「会いたい」が届いてるよ。<br>下の「つながり」を見てごらん。';
   var opts=[];
@@ -808,6 +855,7 @@ function renderHome(){
   var cm=document.getElementById('chochoMenu');if(cm){cm.style.display=(ME&&(ME.role==='owner'||ME.role==='admin'))?'flex':'none';}
   refreshLinkBadge();
   if(Date.now()-HOME_AT>60000){HOME_AT=Date.now();
+    askRefresh();
     Promise.all([api('fellows',{}),api('quest_list',{})]).then(function(rs){
       if(rs[0].ok)GROUPS=rs[0].groups||[];if(rs[1].ok)QUESTS=rs[1].quests||[];
       if(CUR_PANEL==='home'&&!(OKAMI&&OKAMI.today)){var sit=homeSituation();if(sit)document.getElementById('homeSay').innerHTML='<b>あさやん：</b>'+sit;}
@@ -1414,8 +1462,8 @@ async function saveProfile(){
 function toastMsg(html){var t=document.getElementById('toast');t.innerHTML=html;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},3400);}
 
 /* ===== 帳場 (admin / owner) ===== */
-function openChocho(){show('chocho');if(ME&&ME.role==='owner')nrBadgeRefresh();['chT_bc','chT_ln','chT_nr'].forEach(function(i){var bt=document.getElementById(i);if(bt)bt.style.display=(ME&&ME.role==='owner')?'':'none';});choTab('req');}
-function choTab(t){['req','today','mem','bc','ln','nr'].forEach(function(x){document.getElementById('chT_'+x).classList.toggle('on',x===t);});document.getElementById('chBody').innerHTML='<div class="loading">読み込み中…</div>';if(t==='req')loadChoRequests();else if(t==='today')loadChoToday();else if(t==='bc')loadChoBc();else if(t==='ln')loadChoLines();else if(t==='nr')loadChoNoren();else loadChoMembers();}
+function openChocho(){show('chocho');if(ME&&ME.role==='owner')nrBadgeRefresh();['chT_bc','chT_ln','chT_nr','chT_qa'].forEach(function(i){var bt=document.getElementById(i);if(bt)bt.style.display=(ME&&ME.role==='owner')?'':'none';});choTab('req');}
+function choTab(t){['req','today','mem','bc','ln','nr','qa'].forEach(function(x){document.getElementById('chT_'+x).classList.toggle('on',x===t);});document.getElementById('chBody').innerHTML='<div class="loading">読み込み中…</div>';if(t==='req')loadChoRequests();else if(t==='today')loadChoToday();else if(t==='bc')loadChoBc();else if(t==='ln')loadChoLines();else if(t==='nr')loadChoNoren();else if(t==='qa')loadChoQa();else loadChoMembers();}
 var CHO_STATUS={pending:['返事待ち','chipW'],matched:['つながった','chipG'],declined:['見送り','chipN']};
 function fmtJ(d){return d?new Date(d).toLocaleString('ja-JP',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}):'';}
 async function loadChoRequests(){var r=await api('admin_requests',{});var b=document.getElementById('chBody');if(!r.ok){b.innerHTML='<div class="stub">読み込めなかった…</div>';return;}var reqs=r.requests||[];var c={pending:0,matched:0,declined:0};reqs.forEach(function(x){if(c[x.status]!==undefined)c[x.status]++;});var h='<div class="say" style="font-size:.84rem">「会いたい」の申請は、自動で相手に届くよ。<br>ここでは、誰が誰に申請したかを見守れるよ。</div>';h+='<div class="choSum"><div><b>'+reqs.length+'</b>申請</div><div><b>'+c.pending+'</b>返事待ち</div><div><b>'+c.matched+'</b>つながった</div><div><b>'+c.declined+'</b>見送り</div></div>';if(!reqs.length)h+='<div class="stub">まだ申請はないよ。</div>';reqs.forEach(function(x){h+=reqCardHtml(x);});b.innerHTML=h;}
@@ -1513,6 +1561,101 @@ async function finishWiz(){
   ME=r.member;JUST_REGISTERED=true;
   openMycard();
 }
+
+
+/* ===== あさやんに聞く（よくある質問＋質問箱） ===== */
+var FAQ_CATS=[['all','すべて'],['start','はじめに'],['meet','仲間・会いたい'],['line','LINE'],['quest','クエスト'],['card','カード'],['help','困ったとき']];
+var FAQ_GO={find:['🍺','仲間をさがす'],board:['📜','クエスト掲示板'],links:['📬','つながり'],mycard:['🪪','自分のカード']};
+var FAQ_CAT='all',FAQ_Q='',FAQ_OPEN=null,ASK_ITEMS=[],ASK_UNSEEN=0,ASK_PENDING=0;
+function fmtAns(t){return escapeHtml(t||'').replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/\n/g,'<br>');}
+function askBadges(){var b=document.getElementById('faqBadge');if(b){if(ASK_UNSEEN){b.textContent=ASK_UNSEEN;b.classList.remove('hidden');}else b.classList.add('hidden');}
+  var q=document.getElementById('qaBadge');if(q){if(ASK_PENDING){q.textContent=ASK_PENDING;q.classList.remove('hidden');}else q.classList.add('hidden');}
+  var cm=document.getElementById('chochoMenu');if(cm){var cb=document.getElementById('choBadge');if(!cb){cm.insertAdjacentHTML('afterbegin','<span id="choBadge" class="badge hidden"></span>');cb=document.getElementById('choBadge');}if(ASK_PENDING){cb.textContent=ASK_PENDING;cb.classList.remove('hidden');}else cb.classList.add('hidden');}}
+function askRefresh(){return api('ask_mine',{}).then(function(r){if(!r.ok)return r;ASK_ITEMS=r.items||[];ASK_UNSEEN=r.unseen||0;ASK_PENDING=r.pending||0;askBadges();
+  if(CUR_PANEL==='home'&&ASK_UNSEEN&&!(OKAMI&&OKAMI.today))document.getElementById('homeSay').innerHTML='<b>あさやん：</b>'+homeSituation();return r;});}
+async function loadFaq(){
+  if(!OKAMI||!OKAMI.faq){var o=await api('okami',{});if(o.ok)OKAMI=o;}
+  FAQ_OPEN=null;renderFaq();
+  await askRefresh();renderFaq();
+  if(ASK_UNSEEN){api('ask_seen',{}).then(function(){ASK_UNSEEN=0;askBadges();});}
+}
+function faqList(){var q=FAQ_Q.trim().toLowerCase();return ((OKAMI&&OKAMI.faq)||[]).filter(function(f){
+  if(q)return (f.question+' '+f.answer).toLowerCase().indexOf(q)>=0;return FAQ_CAT==='all'||f.cat===FAQ_CAT;});}
+function renderFaq(){
+  var b=document.getElementById('faqBody');if(!b)return;
+  var h='<div class="say"><b>あさやん：</b>なんでも聞いてね。<br>下から選ぶか、言葉でさがしてごらん。</div>';
+  if(ASK_ITEMS.length){
+    h+='<div class="fqMine"><div class="fqH">📮 あなたが送った質問</div>';
+    ASK_ITEMS.slice(0,5).forEach(function(x){
+      h+='<div class="fqAsk'+(x.answer&&!x.seen_at?' new':'')+'"><div class="q">Q. '+escapeHtml(x.question)+'</div>'+
+        (x.answer?'<div class="a"><b>あさやん：</b>'+fmtAns(x.answer)+'</div>':'<div class="w">あさやんが返事を考え中だよ…</div>')+'</div>';});
+    h+='</div>';
+  }
+  h+='<div class="fqSearch"><input id="fqIn" type="search" placeholder="🔍 言葉でさがす（例：LINE、写真）" value="'+escAttr(FAQ_Q)+'" oninput="FAQ_Q=this.value;FAQ_OPEN=null;renderFaqList()"></div>';
+  h+='<div class="fqCats" id="fqCats"></div><div id="fqList"></div>';
+  h+='<div class="fqAskBox"><div class="fqH">💬 ここにないことを、あさやんに聞く</div><textarea id="fqAskIn" maxlength="300" placeholder="例：イベントの写真はどこで見られる？"></textarea><button class="okbtn" id="fqAskBtn" onclick="askSend()">あさやんに送る</button><div class="fqNote">返事は、この画面に届くよ。少し時間がかかることもあるから、気長に待っててね。</div></div>';
+  b.innerHTML=h;renderFaqList();
+}
+function renderFaqList(){
+  var c=document.getElementById('fqCats');if(c)c.innerHTML=FAQ_Q.trim()?'':FAQ_CATS.map(function(x){return '<button class="'+(FAQ_CAT===x[0]?'on':'')+'" onclick="FAQ_CAT=\''+x[0]+'\';FAQ_OPEN=null;renderFaqList()">'+x[1]+'</button>';}).join('');
+  var l=document.getElementById('fqList');if(!l)return;var list=faqList();
+  if(!list.length){l.innerHTML='<div class="fqEmpty">見つからなかったよ。<br>下の「あさやんに聞く」から送ってみてね。</div>';return;}
+  l.innerHTML=list.map(function(f){var op=FAQ_OPEN===f.id;var g=f.go&&FAQ_GO[f.go];
+    return '<div class="fqItem'+(op?' open':'')+'"><button class="fqQ" onclick="FAQ_OPEN=('+(op?'null':f.id)+');renderFaqList()"><span>Q</span>'+escapeHtml(f.question)+'<i>'+(op?'−':'＋')+'</i></button>'+
+      (op?'<div class="fqA"><div class="fqAv">あ</div><div class="fqAt">'+fmtAns(f.answer)+(g?'<button class="fqGo" onclick="faqGo(\''+f.go+'\')">'+g[0]+' 「'+g[1]+'」をひらく ›</button>':'')+'</div></div>':'')+'</div>';}).join('');
+}
+function faqGo(k){if(k==='mycard')openMycard();else show(k);}
+async function askSend(){var t=document.getElementById('fqAskIn');var q=(t.value||'').trim();if(q.length<2){toastMsg('聞きたいことを書いてね');t.focus();return;}
+  var bt=document.getElementById('fqAskBtn');bt.disabled=true;bt.textContent='送っています…';
+  var r=await api('ask_post',{question:q});bt.disabled=false;bt.textContent='あさやんに送る';
+  if(r.ok){t.value='';toastMsg('あさやん：「受け取ったよ。返事はこの画面に書くね」');await askRefresh();renderFaq();var w=document.querySelector('#faq .wbody');if(w)w.scrollTop=0;}
+  else if(r.error==='too_many')toastMsg('今日はたくさん送ってくれたね。<br>続きは、また明日聞かせてね');
+  else toastMsg('うまく送れなかった…もう一度ためしてね');}
+
+/* 帳場：質問箱とよくある質問の編集 */
+var QA_ASKS=[],QA_FAQ=[];
+var FAQ_CAT_NAME={start:'はじめに',meet:'仲間・会いたい',line:'LINE',quest:'クエスト',card:'カード',help:'困ったとき'};
+function qaCatSel(id,cur){return '<select id="'+id+'" class="nrsel2">'+FAQ_CATS.slice(1).map(function(c){return '<option value="'+c[0]+'"'+(c[0]===cur?' selected':'')+'>'+c[1]+'</option>';}).join('')+'</select>';}
+function qaGoSel(id,cur){var o=[['','（なし）']].concat(Object.keys(FAQ_GO).map(function(k){return [k,FAQ_GO[k][1]];}));return '<select id="'+id+'" class="nrsel2">'+o.map(function(c){return '<option value="'+c[0]+'"'+(c[0]===(cur||'')?' selected':'')+'>'+c[1]+'</option>';}).join('')+'</select>';}
+async function loadChoQa(){var b=document.getElementById('chBody');
+  var rs=await Promise.all([api('ask_list',{}),api('faq_all',{})]);
+  if(!rs[0].ok||!rs[1].ok){b.innerHTML='<div class="stub">読み込めなかった…</div>';return;}
+  QA_ASKS=rs[0].items||[];QA_FAQ=rs[1].items||[];ASK_PENDING=QA_ASKS.filter(function(x){return !x.answer;}).length;askBadges();renderChoQa();}
+function renderChoQa(){var b=document.getElementById('chBody');
+  var pend=QA_ASKS.filter(function(x){return !x.answer;}),done=QA_ASKS.filter(function(x){return x.answer;});
+  var h='<div class="say" style="font-size:.84rem">仲間から届いた質問に、ここで返事を書けるよ。<br>返事は、その人の「あさやんに聞く」に届くよ。<br>みんなに役立ちそうなら「よくある質問にも載せる」にチェックしてね。</div>';
+  h+='<div class="lnG">📮 返事待ちの質問<small>'+pend.length+'件</small></div>';
+  if(!pend.length)h+='<div class="lkE" style="padding:6px 0 10px">今は、返事待ちの質問はないよ。</div>';
+  pend.forEach(function(x){h+='<div class="qaCard"><div class="m">'+escapeHtml(x.name)+'さん ・ '+fmtJ(x.created_at)+'</div><div class="q">'+escapeHtml(x.question)+'</div>'+
+    '<textarea id="qaA_'+x.id+'" maxlength="600" placeholder="返事を書く（改行もそのまま出ます）"></textarea>'+
+    '<label class="qaChk"><input type="checkbox" id="qaF_'+x.id+'" onchange="document.getElementById(\'qaFx_'+x.id+'\').style.display=this.checked?\'\':\'none\'"> よくある質問にも載せる</label>'+
+    '<div id="qaFx_'+x.id+'" style="display:none"><div class="qaL">みんなに見せる質問の文（直してOK）</div><input id="qaFq_'+x.id+'" class="qaIn" maxlength="100" value="'+escAttr(x.question.slice(0,100))+'"><div class="qaL">分類</div>'+qaCatSel('qaFc_'+x.id,'start')+'</div>'+
+    '<div class="a"><button class="pri" onclick="qaAnswer('+x.id+')">返事する</button></div></div>';});
+  if(done.length){h+='<details class="lnS"><summary>返事した質問<span class="n">'+done.length+'件</span></summary><div class="lnB">';
+    done.forEach(function(x){h+='<div class="lnR"><div class="m" style="font-size:.72rem;color:#a8977a">'+escapeHtml(x.name)+'さん ・ '+fmtJ(x.created_at)+(x.seen_at?' ・ 読んだ ✓':' ・ まだ読んでいない')+'</div><div class="t"><b>Q.</b> '+escapeHtml(x.question)+'</div><div class="t" style="color:#c9e6b8">'+fmtAns(x.answer)+'</div></div>';});
+    h+='</div></details>';}
+  h+='<div class="lnG">❓ よくある質問<small>みんなの「あさやんに聞く」に出ます。**ことば** と書くと太字になるよ</small></div>';
+  FAQ_CATS.slice(1).forEach(function(c){var rows=QA_FAQ.filter(function(f){return f.cat===c[0];});
+    h+='<details class="lnS"><summary>'+c[1]+'<span class="n">'+rows.length+'こ</span></summary><div class="lnB">';
+    rows.forEach(function(f){h+='<div class="lnR'+(f.active?'':' off')+'" id="qaR_'+f.id+'"><div class="t"><b>Q. '+escapeHtml(f.question)+'</b></div><div class="t" style="font-size:.82rem">'+fmtAns(f.answer)+'</div>'+(f.go?'<div style="font-size:.7rem;color:#a8977a;margin-top:3px">→ 「'+FAQ_GO[f.go][1]+'」へのボタン付き</div>':'')+
+      '<div class="a"><button onclick="qaEdit('+f.id+')">直す</button><button onclick="qaToggle('+f.id+')">'+(f.active?'止める':'また出す')+'</button><button class="del" onclick="qaDel('+f.id+')">消す</button></div></div>';});
+    h+='</div></details>';});
+  h+='<div class="lnAdd"><div class="qaL">＋ よくある質問を足す</div><input id="qaNq" class="qaIn" maxlength="100" placeholder="質問（例：イベントの写真はどこ？）"><textarea id="qaNa" maxlength="600" placeholder="あさやんの答え"></textarea><div class="qaL">分類 ／ 案内するボタン</div><div style="display:flex;gap:6px">'+qaCatSel('qaNc','start')+qaGoSel('qaNg','')+'</div><div class="a"><button class="pri" onclick="qaAdd()">＋ 足す</button></div></div>';
+  b.innerHTML=h;}
+function qaFind(id){return QA_FAQ.filter(function(f){return f.id===id;})[0];}
+async function qaReloadFaq(msg){var o=await api('okami',{});if(o.ok)OKAMI=o;if(msg)toastMsg(msg);loadChoQa();}
+async function qaAnswer(id){var a=(document.getElementById('qaA_'+id).value||'').trim();if(!a){toastMsg('返事を書いてね');return;}
+  var r=await api('ask_answer',{id:id,answer:a});if(!r.ok){toastMsg('うまく返事できなかった…');return;}
+  if(document.getElementById('qaF_'+id).checked){var q=(document.getElementById('qaFq_'+id).value||'').trim();if(q)await api('faq_save',{question:q,answer:a,cat:document.getElementById('qaFc_'+id).value,go:null,active:true});}
+  qaReloadFaq('あさやん：「返事、届けておいたよ」');}
+function qaEdit(id){var f=qaFind(id);if(!f)return;var el=document.getElementById('qaR_'+id);
+  el.innerHTML='<input id="qaEq" class="qaIn" maxlength="100" value="'+escAttr(f.question)+'"><textarea id="qaEa" maxlength="600">'+escapeHtml(f.answer)+'</textarea><div style="display:flex;gap:6px;margin-top:6px">'+qaCatSel('qaEc',f.cat)+qaGoSel('qaEg',f.go)+'</div><div class="a"><button class="pri" onclick="qaSaveEdit('+id+')">保存</button><button onclick="renderChoQa()">やめる</button></div>';}
+async function qaSaveEdit(id){var f=qaFind(id);var r=await api('faq_save',{id:id,question:document.getElementById('qaEq').value,answer:document.getElementById('qaEa').value,cat:document.getElementById('qaEc').value,go:document.getElementById('qaEg').value||null,active:f.active});
+  if(r.ok)qaReloadFaq('直したよ');else toastMsg('うまく保存できなかった…質問と答えは両方いるよ');}
+async function qaToggle(id){var f=qaFind(id);if(!f)return;var r=await api('faq_save',{id:id,question:f.question,answer:f.answer,cat:f.cat,go:f.go,active:!f.active});if(r.ok)qaReloadFaq(f.active?'お休みにしたよ':'また出すようにしたよ');}
+async function qaDel(id){var f=qaFind(id);if(!f)return;if(!window.confirm||!confirm('この質問を消しますか？\n\n'+f.question))return;var r=await api('faq_remove',{id:id});if(r.ok)qaReloadFaq('消したよ');}
+async function qaAdd(){var q=(document.getElementById('qaNq').value||'').trim(),a=(document.getElementById('qaNa').value||'').trim();if(!q||!a){toastMsg('質問と答えを書いてね');return;}
+  var r=await api('faq_save',{question:q,answer:a,cat:document.getElementById('qaNc').value,go:document.getElementById('qaNg').value||null,active:true});if(r.ok)qaReloadFaq('あさやん：「新しい質問、覚えたよ」');else toastMsg('うまく足せなかった…');}
 
 /* ===== あさやんからのお知らせ（ポップアップ） ===== */
 var BC_Q=[],BC_SHOW=null,BC_BUSY=false;
