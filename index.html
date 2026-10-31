@@ -1708,10 +1708,10 @@ function renderEvents(){var b=document.getElementById('evBody');if(!b)return;
     '<ol><li><span>集まりの前</span><p>来る人は<b>まだ見えない</b>よ。</p></li>'+
     '<li><span>集まりの時間</span><p>来る人の<b>顔ぶれが開く</b>よ。会場で声をかけてね。</p></li>'+
     '<li><span>会ったあと</span><p>「仲間をさがす」から<b>「会いたい」</b>でLINEがつながるよ。</p></li></ol>'+
-    '<small>※もうつながっている仲間は、前から見えるよ。<br>※見えるのは、酒場で「行きます」を押した人だけだよ（全員ではないよ）</small></div>';
+    '<small>※もうつながっている仲間は、前から見えるよ。<br>※見えるのは、このアプリに登録している人だけだよ（参加者全員ではないよ）</small></div>';
   if(!EVENTS||!EVENTS.length){b.innerHTML=h+'<div class="stub">今わかっている予定はないよ。</div>';return;}
   EVENTS.forEach(function(e,i){var tm=(e.talk_to_me||[]).length+(e.talk_hidden||0);
-    h+='<div class="evCard'+(e.me_going?' going':'')+'" onclick="openEvent('+i+')"><div class="evD"><b>'+escapeHtml(evDate(e).split('(')[0])+'</b><small>'+escapeHtml('('+evDate(e).split('(')[1])+'</small><i>'+escapeHtml(evWhen(e))+'</i></div><div class="evT"><div class="nm">'+escapeHtml(evTitle(e))+'</div><div class="pl">📍 '+escapeHtml(e.venue_name||e.venue||'場所は未定')+'</div><div class="pp">'+(e.going.length?goingFaces(e.going,5)+'<span class="cnt">'+(e.revealed?'押した人':'つながっている仲間')+'</span>':(e.revealed?'':'<span class="evLock">🔒 顔ぶれは集まりの時間に開くよ</span>'))+(e.me_going?'<span class="chip chipG">行きます</span>':'')+(tm?'<span class="chip chipW">話したい人 '+tm+'</span>':'')+'</div></div></div>';});
+    h+='<div class="evCard'+(e.me_going?' going':'')+'" onclick="openEvent('+i+')"><div class="evD"><b>'+escapeHtml(evDate(e).split('(')[0])+'</b><small>'+escapeHtml('('+evDate(e).split('(')[1])+'</small><i>'+escapeHtml(evWhen(e))+'</i></div><div class="evT"><div class="nm">'+escapeHtml(evTitle(e))+'</div><div class="pl">📍 '+escapeHtml(e.venue_name||e.venue||'場所は未定')+'</div><div class="pp">'+(e.going.length?goingFaces(e.going,5)+'<span class="cnt">'+(e.revealed?'アプリに登録している参加者':'つながっている仲間')+'</span>':(e.revealed?'':'<span class="evLock">🔒 顔ぶれは集まりの時間に開くよ</span>'))+(e.me_going?'<span class="chip chipG">行きます</span>':'')+(tm?'<span class="chip chipW">話したい人 '+tm+'</span>':'')+'</div></div></div>';});
   h+='<div class="evNote">※「行きます」は、仲間に知らせるための印だよ。集まりへの申し込みは、今までどおりの方法でしてね。</div>';
   b.innerHTML=h;}
 function openEvent(i){CUR_EV=EVENTS[i];if(!CUR_EV)return;renderEventDetail();show('evdetail');}
@@ -1722,7 +1722,7 @@ function renderEventDetail(){var e=CUR_EV;if(!e)return;var b=document.getElement
   var tm=(e.talk_to_me||[]);
   if(e.me_going&&e.talk_hidden&&!e.revealed)h+='<div class="evTalkMe"><b>🗣 あなたと当日話したい人が '+e.talk_hidden+'人いるよ</b><small>誰なのかは、集まりの時間（'+escapeHtml(evRevealAt(e))+'）になったら分かるよ</small></div>';
   if(e.me_going&&tm.length){var who=e.going.filter(function(p){return tm.indexOf(p.id)>=0;});h+='<div class="evTalkMe"><b>🗣 あなたと当日話したい人</b>'+who.map(function(p){return '<span>'+escapeHtml(p.name)+'さん</span>';}).join('')+'<small>会場で声をかけてみてね</small></div>';}
-  if(e.revealed){h+='<div class="lkH">🙋 酒場で「行きます」を押した人</div>';if(!e.going.length)h+='<div class="lkE">まだ誰も押していないよ</div>';}
+  if(e.revealed){h+='<div class="lkH">🙋 参加する人（このアプリに登録している人）</div>';if(!e.going.length)h+='<div class="lkE">アプリに登録している参加者は、まだいないよ</div>';}
   else{h+='<div class="evHidden">🔒 来る人の顔ぶれは、<b>集まりの時間（'+escapeHtml(evRevealAt(e))+'）</b>に開くよ。<br>この酒場は<b>「会った人とつながる」</b>場所だから、当日、会場で会えるのを楽しみにしててね。</div>';
     if(e.going.length)h+='<div class="lkH">🤝 行く予定の、つながっている仲間</div>';}
   if(e.going.length){h+='<div class="evPeople">';e.going.forEach(function(p,k){var me=ME&&p.id===ME.id;var on=(e.my_talks||[]).indexOf(p.id)>=0;var fromThem=tm.indexOf(p.id)>=0;
