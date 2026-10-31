@@ -546,6 +546,15 @@ html,body{height:100%;background:radial-gradient(130% 90% at 50% 0%, #1c1008 0%,
 .mcfin{background:rgba(245,197,24,.07);border:1.5px dashed rgba(245,197,24,.5);border-radius:12px;padding:10px 12px;margin:4px 0 12px;}
 .field.flash{animation:fflash 1.4s ease;border-radius:12px;}
 @keyframes fflash{0%,60%{box-shadow:0 0 0 3px rgba(245,197,24,.6);background:rgba(245,197,24,.08);}100%{box-shadow:0 0 0 0 rgba(245,197,24,0);}}
+.lvBox{margin:26px 0 70px;text-align:center;}
+.lvLink{background:none;border:none;color:#9c8a68;font-size:.8rem;text-decoration:underline;padding:8px;cursor:pointer;font-family:inherit;}
+.lvPanel{text-align:left;border:1px solid rgba(220,110,90,.55);background:rgba(120,30,20,.18);border-radius:12px;padding:12px 14px;}
+.lvT{font-weight:700;color:#f5b8a0;margin-bottom:6px;}
+.lvTx{font-size:.8rem;color:#e8dcc0;line-height:1.7;margin:6px 0;}
+.lvTx b{color:#f5b8a0;}
+.lvUl{font-size:.8rem;color:#e8dcc0;line-height:1.7;margin:4px 0 6px;padding-left:1.3em;}
+.lvGo{display:block;width:100%;margin-top:10px;padding:12px;border-radius:10px;border:2px solid #d26a50;background:#5a1d12;color:#ffd8c8;font-weight:700;font-size:.95rem;font-family:inherit;cursor:pointer;}
+.lvNo{display:block;width:100%;margin-top:8px;padding:11px;border-radius:10px;border:2px solid #caa45a;background:#2a1a0a;color:#f5d97a;font-weight:700;font-size:.9rem;font-family:inherit;cursor:pointer;}
 .lnSafe{font-size:.76rem;color:#e8dcc0;background:rgba(80,160,90,.12);border:1px solid rgba(110,190,120,.4);border-radius:10px;padding:8px 10px;margin-bottom:8px;line-height:1.6;}
 .lnSafe b{color:#a8e0a8;}
 .lnHow{margin-top:8px;background:rgba(0,0,0,.2);border:1px solid rgba(202,164,90,.35);border-radius:10px;padding:8px 10px;font-size:.8rem;color:#f3e6c8;}
@@ -1533,10 +1542,27 @@ function renderMycard(){
       '<div class="lnRow"><input id="f_line"'+inp+' value="'+escapeHtml(m.line_id||'')+'" placeholder="https://line.me/ti/p/…" autocapitalize="off" autocorrect="off" spellcheck="false"><button type="button" class="lnPaste" onclick="lnPaste()">📋 貼り付ける</button></div>'+
       '<div id="lnMsg" class="nrauto"></div>'+
     '</div>'+
-    '<div class="field"><label>「会いたい」の受付</label><div class="toggle"><button id="ct_on" class="'+(CONTACT?'on':'')+'" onclick="setContact(true)">受け取る</button><button id="ct_off" class="'+(!CONTACT?'on':'')+'" onclick="setContact(false)">今はオフ</button></div></div>';
+    '<div class="field"><label>「会いたい」の受付</label><div class="toggle"><button id="ct_on" class="'+(CONTACT?'on':'')+'" onclick="setContact(true)">受け取る</button><button id="ct_off" class="'+(!CONTACT?'on':'')+'" onclick="setContact(false)">今はオフ</button></div></div>'+(m.role==='owner'?'':lvHtml());
   var sb=document.getElementById('saveBtn');sb.classList.remove('dirty');sb.textContent='保存する';
   mcNorenRender();mcPreview();
 }
+function lvHtml(){return '<div class="lvBox" id="lvBox"><button class="lvLink" onclick="lvOpen()">🚪 酒場をやめる（カードを消す）</button></div>';}
+function lvOpen(){var b=document.getElementById('lvBox');if(!b)return;
+  b.innerHTML='<div class="lvPanel"><div class="lvT">🚪 酒場をやめますか？</div>'+
+  '<div class="lvTx">やめると、次のものが<b>すべて消えます</b>。元にはもどせません。</div>'+
+  '<ul class="lvUl"><li>あなたのカード（顔写真・LINEのリンクもふくむ）</li><li>つながった仲間と、「会いたい」のやりとり</li><li>集まりの「行きます」と「当日話したい」</li><li>あなたが書いたメモ</li><li>あなたが出したクエストと、コメント</li></ul>'+
+  '<div class="lvTx">※仲間のほうからも、あなたのカードは見えなくなります。<br>※Kクラブの会員をやめることではないよ（酒場のカードが消えるだけ）。<br>※安全のための控え（バックアップ）からも、2週間で消えます。<br>※また来たくなったら、日報のリンクから入れば、新しくカードを作り直せるよ。</div>'+
+  '<button class="lvGo" id="lvGo" onclick="lvDo()">消して、やめる</button><button class="lvNo" onclick="lvCancel()">やめない（もどる）</button></div>';
+  b.scrollIntoView({behavior:'smooth',block:'center'});}
+function lvCancel(){var b=document.getElementById('lvBox');if(b)b.outerHTML=lvHtml();}
+async function lvDo(){var g=document.getElementById('lvGo');if(!g||g.disabled)return;g.disabled=true;g.textContent='消しています…';
+  var r=await api('leave_sakaba',{confirm:'leave'});
+  if(!r.ok){g.disabled=false;g.textContent='消して、やめる';toastMsg(r.error==='is_owner'?'あさやんのカードは消せないよ':'うまく消せなかったよ。もう一度ためしてね');return;}
+  try{localStorage.removeItem('sakaba_token');}catch(e){}
+  TOKEN='';ME=null;
+  document.getElementById('mycardBody').innerHTML='<div class="stub">🍺<br><b>カードを消したよ。</b><br>今までありがとう。<br><br>また来たくなったら、<br>日報のリンクから、いつでも入ってきてね。</div>';
+  var act=document.getElementById('mcAct');if(act)act.style.display='none';
+  var bk=document.querySelector('#mycard .back');if(bk)bk.style.display='none';}
 function lnExtract(t){var m=String(t||'').match(/https:\/\/(line\.me|lin\.ee)\/\S+/i);return m?m[0]:'';}
 function lnSet(v){var i=document.getElementById('f_line'),msg=document.getElementById('lnMsg');var u=lnExtract(v);
   if(u){i.value=u;LN_FIXED=true;mcChanged(true);saveProfile().then(function(){if(ME&&ME.line_id===u)msg.innerHTML='<span style="color:#a8e0a8">✓ LINEのリンクを保存したよ。つながった相手に見えるようになったよ</span>';});}
