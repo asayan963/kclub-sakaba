@@ -69,7 +69,7 @@ html,body{height:100%;background:radial-gradient(130% 90% at 50% 0%, #1c1008 0%,
 .win{position:absolute;left:3%;right:3%;top:40%;bottom:3%;z-index:12;display:flex;flex-direction:column;
  background:linear-gradient(180deg,rgba(24,14,7,.96),rgba(12,7,3,.98));border:3px solid #caa45a;border-radius:16px;
  box-shadow:0 12px 40px rgba(0,0,0,.65),inset 0 0 0 2px rgba(0,0,0,.4);overflow:hidden;}
-#detail,#board,#mycard,#qdetail,#consent,#qnew,#wizard{top:2%;}
+#detail,#board,#mycard,#qdetail,#consent,#qnew,#wizard,#chocho{top:2%;}
 .wtop{display:flex;align-items:center;gap:8px;padding:11px 14px;border-bottom:1px solid rgba(202,164,90,.4);background:rgba(0,0,0,.2);}
 .wtop .back{position:absolute;left:12px;bottom:10px;z-index:6;padding:8px 18px !important;background:linear-gradient(180deg,#3a2410,#241406);border:2px solid #caa45a;color:#f5d97a;border-radius:12px;padding:11px 20px;font-family:'Zen Maru Gothic',sans-serif;font-weight:700;font-size:.95rem;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.6);}
 .wtop .back:active{transform:scale(.97);}
@@ -243,6 +243,28 @@ html,body{height:100%;background:radial-gradient(130% 90% at 50% 0%, #1c1008 0%,
 .rec .rt b{color:#2e1b09;font-size:.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .rec .rt small{color:#6a4c26;font-size:.7rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .rec .rgo{flex:none;font-size:.72rem;font-weight:800;color:#fff;background:#6e4a1e;border-radius:999px;padding:4px 10px;}
+.bcov{position:absolute;inset:0;z-index:45;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;padding:22px;animation:bcFade .25s both;}
+@keyframes bcFade{from{opacity:0}to{opacity:1}}
+.bcbox{width:100%;max-width:380px;background:linear-gradient(180deg,rgba(32,19,9,.99),rgba(16,9,4,.99));border:3px solid #f5c518;border-radius:16px;box-shadow:0 0 0 2px rgba(0,0,0,.6),0 0 40px rgba(245,197,24,.25);padding:18px 18px 16px;animation:bcPop .35s cubic-bezier(.2,1.2,.4,1) both;}
+@keyframes bcPop{from{transform:scale(.85);opacity:0}to{transform:none;opacity:1}}
+.bcbox .bch{display:flex;align-items:center;gap:8px;color:#f5d97a;font-family:'Dela Gothic One',sans-serif;font-size:1rem;letter-spacing:.06em;margin-bottom:10px;}
+.bcbox .bch small{margin-left:auto;font-family:'Zen Maru Gothic',sans-serif;font-size:.7rem;color:#a8977a;letter-spacing:0;}
+.bcbox .bct{color:#f7ecd4;font-size:1rem;line-height:1.8;white-space:pre-wrap;word-break:break-word;max-height:50vh;overflow:auto;}
+.bcbox .bcn{font-size:.7rem;color:#a8977a;margin-top:8px;text-align:right;}
+.bcbox button{width:100%;margin-top:14px;border:0;border-radius:12px;padding:12px;font-family:'Zen Maru Gothic',sans-serif;font-weight:900;font-size:1rem;background:linear-gradient(180deg,#f0c060,#c98f2a);color:#2a1600;cursor:pointer;}
+.bcItem{background:linear-gradient(180deg,#2a1810,#1b0f07);border:1.5px solid #6e4a1e;border-radius:12px;padding:12px;margin-bottom:10px;}
+.bcItem.live{border-color:#caa45a;}
+.bcItem .bit{color:#f3e7cf;font-size:.9rem;line-height:1.65;white-space:pre-wrap;word-break:break-word;}
+.bcItem .bim{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:8px;font-size:.72rem;color:#a8977a;}
+.bcItem .bst{font-weight:800;border-radius:999px;padding:2px 9px;font-size:.66rem;}
+.bcItem .bst.on{background:#3f9b6e;color:#fff;}.bcItem .bst.off{background:#5a4a3a;color:#ddd;}
+.bcItem .brd{margin-left:auto;color:#f5d97a;font-weight:800;}
+.bcItem details{margin-top:8px;font-size:.78rem;color:#d9c9a8;}
+.bcItem summary{cursor:pointer;color:#f5d97a;font-weight:700;}
+.bcItem .bnames{margin-top:6px;line-height:1.9;}
+.bcItem .bnames span{display:inline-block;background:rgba(255,255,255,.07);border-radius:999px;padding:1px 9px;margin:0 4px 4px 0;}
+.bcItem .bwd{margin-top:10px;background:none;border:1.5px solid #a55;color:#f1b0a8;border-radius:9px;padding:7px 12px;font-family:'Zen Maru Gothic',sans-serif;font-weight:700;font-size:.8rem;cursor:pointer;}
+.bcCount{font-size:.72rem;color:#a8977a;text-align:right;margin-top:-6px;margin-bottom:8px;}
 .dhead{background:linear-gradient(180deg,#f7eeda,#e9d9b6);margin:-14px -14px 14px;padding:20px 16px 16px;text-align:center;border-bottom:2px solid #b8925a;}
 .dhead .face{width:76px;height:76px;border-radius:15px;margin:0 auto 10px;background:radial-gradient(circle at 50% 30%,#caa45a,#6e4a1e);display:flex;align-items:center;justify-content:center;font-family:'Zen Maru Gothic',serif;font-weight:800;color:#fff;font-size:2rem;border:3px solid #7a5520;overflow:hidden;}
 .dhead .face img{width:100%;height:100%;object-fit:cover;}
@@ -475,6 +497,7 @@ html,body{height:100%;background:radial-gradient(130% 90% at 50% 0%, #1c1008 0%,
         <button id="chT_req" class="chTab on" onclick="choTab('req')">申請</button>
         <button id="chT_today" class="chTab" onclick="choTab('today')">ひとこと</button>
         <button id="chT_mem" class="chTab" onclick="choTab('mem')">会員</button>
+        <button id="chT_bc" class="chTab" style="display:none" onclick="choTab('bc')">お知らせ</button>
       </div>
       <div id="chBody"><div class="loading">読み込み中…</div></div>
     </div>
@@ -497,6 +520,7 @@ html,body{height:100%;background:radial-gradient(130% 90% at 50% 0%, #1c1008 0%,
     </div>
   </div>
 
+  <div id="bcModal" class="bcov hidden"><div class="bcbox"><div class="bch">📣 あさやんから<small id="bcWhen"></small></div><div class="bct" id="bcText"></div><div class="bcn" id="bcMore"></div><button onclick="bcOk()">わかった</button></div></div>
   <div id="toast" class="toast"></div>
 </div>
 
@@ -594,7 +618,7 @@ var panels=['home','find','detail','board','mycard','qdetail','consent','qnew','
 var LAST_PANEL=null,CUR_PANEL=null;
 function show(id){
   if(CUR_PANEL==='find'&&id!=='find')saveFindView();
-  LAST_PANEL=CUR_PANEL;CUR_PANEL=id;
+  var firstShow=!CUR_PANEL;LAST_PANEL=CUR_PANEL;CUR_PANEL=id;if(firstShow)setTimeout(bcCheck,600);
   panels.forEach(function(p){document.getElementById(p).classList.toggle('hidden',p!==id);});
   var b=document.querySelector('#'+id+' .wbody');if(b)b.scrollTop=0;
   if(id!=='find'){var fs=document.querySelector('#'+id+' .fscroll');if(fs&&!(id==='board'&&LAST_PANEL==='qdetail'))fs.scrollTop=0;}
@@ -1031,8 +1055,8 @@ async function saveProfile(){
 function toastMsg(html){var t=document.getElementById('toast');t.innerHTML=html;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},3400);}
 
 /* ===== 帳場 (admin / owner) ===== */
-function openChocho(){show('chocho');choTab('req');}
-function choTab(t){['req','today','mem'].forEach(function(x){document.getElementById('chT_'+x).classList.toggle('on',x===t);});document.getElementById('chBody').innerHTML='<div class="loading">読み込み中…</div>';if(t==='req')loadChoRequests();else if(t==='today')loadChoToday();else loadChoMembers();}
+function openChocho(){show('chocho');var bt=document.getElementById('chT_bc');if(bt)bt.style.display=(ME&&ME.role==='owner')?'':'none';choTab('req');}
+function choTab(t){['req','today','mem','bc'].forEach(function(x){document.getElementById('chT_'+x).classList.toggle('on',x===t);});document.getElementById('chBody').innerHTML='<div class="loading">読み込み中…</div>';if(t==='req')loadChoRequests();else if(t==='today')loadChoToday();else if(t==='bc')loadChoBc();else loadChoMembers();}
 var CHO_STATUS={pending:['返事待ち','chipW'],matched:['つながった','chipG'],declined:['見送り','chipN']};
 function fmtJ(d){return d?new Date(d).toLocaleString('ja-JP',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}):'';}
 async function loadChoRequests(){var r=await api('admin_requests',{});var b=document.getElementById('chBody');if(!r.ok){b.innerHTML='<div class="stub">読み込めなかった…</div>';return;}var reqs=r.requests||[];var c={pending:0,matched:0,declined:0};reqs.forEach(function(x){if(c[x.status]!==undefined)c[x.status]++;});var h='<div class="say" style="font-size:.84rem">「会いたい」の申請は、自動で相手に届くよ。<br>ここでは、誰が誰に申請したかを見守れるよ。</div>';h+='<div class="choSum"><div><b>'+reqs.length+'</b>申請</div><div><b>'+c.pending+'</b>返事待ち</div><div><b>'+c.matched+'</b>つながった</div><div><b>'+c.declined+'</b>見送り</div></div>';if(!reqs.length)h+='<div class="stub">まだ申請はないよ。</div>';reqs.forEach(function(x){h+=reqCardHtml(x);});b.innerHTML=h;}
@@ -1108,6 +1132,72 @@ async function finishWiz(){
   var r=await api('save_profile',{patch:patch});if(r.ok)ME=r.member;
   JUST_REGISTERED=true;
   openMycard();
+}
+
+/* ===== あさやんからのお知らせ（ポップアップ） ===== */
+var BC_Q=[],BC_SHOW=null,BC_BUSY=false;
+function fmtWhen(d){return d?new Date(d).toLocaleString('ja-JP',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}):'';}
+async function bcCheck(){
+  if(BC_BUSY||!TOKEN||!ME||!CUR_PANEL||document.hidden)return;
+  BC_BUSY=true;
+  try{
+    var r=await api('bc_current',{});
+    if(r.ok){
+      BC_Q=r.items||[];
+      if(BC_SHOW&&!BC_Q.some(function(x){return x.id===BC_SHOW.id;})){BC_SHOW=null;document.getElementById('bcModal').classList.add('hidden');}
+      if(!BC_SHOW&&BC_Q.length)bcShow(BC_Q[0]);
+      else if(BC_SHOW)bcMore();
+    }
+  }finally{BC_BUSY=false;}
+}
+function bcMore(){var n=BC_Q.filter(function(x){return !BC_SHOW||x.id!==BC_SHOW.id;}).length;document.getElementById('bcMore').textContent=n?('このあと、もう'+n+'通あるよ'):'';}
+function bcShow(it){BC_SHOW=it;document.getElementById('bcText').textContent=it.text;document.getElementById('bcWhen').textContent=fmtWhen(it.created_at);bcMore();document.getElementById('bcModal').classList.remove('hidden');}
+async function bcOk(){
+  var it=BC_SHOW;if(!it)return;
+  BC_SHOW=null;document.getElementById('bcModal').classList.add('hidden');
+  BC_Q=BC_Q.filter(function(x){return x.id!==it.id;});
+  api('bc_read',{id:it.id});
+  if(BC_Q.length)setTimeout(function(){if(!BC_SHOW&&BC_Q.length)bcShow(BC_Q[0]);},350);
+}
+setInterval(bcCheck,20000);
+document.addEventListener('visibilitychange',function(){if(!document.hidden)bcCheck();});
+/* 帳場：お知らせ */
+async function loadChoBc(){
+  var b=document.getElementById('chBody');
+  var r=await api('bc_list',{});
+  if(!r.ok){b.innerHTML='<div class="stub">読み込めなかった…</div>';return;}
+  var h='<div class="say" style="font-size:.84rem">ここに書いた言葉は、あさやんのセリフとして<b>みんなの画面にすぐ出る</b>よ。<br>開いている人にも20秒以内に出る。取り消すと、まだ見ていない人には出なくなるよ。</div>'+
+    '<div class="field"><textarea id="bcInput" maxlength="300" style="min-height:96px" placeholder="例：今夜19時から、浅草で集まりがあるよ。来られる人はおいで！" oninput="document.getElementById(\'bcCnt\').textContent=this.value.length+\' / 300\'"></textarea></div><div class="bcCount" id="bcCnt">0 / 300</div>'+
+    '<button class="okbtn" id="bcBtn" onclick="bcPost()">📣 みんなに出す</button>'+
+    '<div class="lkH" style="margin-top:20px">これまでのお知らせ</div>';
+  var items=r.items||[];
+  if(!items.length)h+='<div class="lkE">まだ出したお知らせはないよ</div>';
+  items.forEach(function(x){
+    var rn=x.readers.length;
+    h+='<div class="bcItem'+(x.active?' live':'')+'"><div class="bit">'+escapeHtml(x.text)+'</div>'+
+      '<div class="bim"><span class="bst '+(x.active?'on':'off')+'">'+(x.active?'出しています':'取り消し済み')+'</span><span>'+fmtWhen(x.created_at)+'</span><span class="brd">既読 '+rn+' / '+x.total+'人</span></div>'+
+      '<details><summary>読んだ人（'+rn+'）</summary><div class="bnames">'+(rn?x.readers.map(function(p){return '<span>'+escapeHtml(p.name)+' <small style="opacity:.6">'+fmtWhen(p.at)+'</small></span>';}).join(''):'まだいないよ')+'</div></details>'+
+      '<details><summary>まだ読んでいない人（'+x.unread.length+'）</summary><div class="bnames">'+(x.unread.length?x.unread.map(function(n){return '<span>'+escapeHtml(n)+'</span>';}).join(''):'全員読んだよ！')+'</div></details>'+
+      (x.active?'<button class="bwd" onclick="bcWithdraw('+x.id+')">取り消す（まだの人に出さない）</button>':'')+
+    '</div>';
+  });
+  b.innerHTML=h;
+}
+async function bcPost(){
+  var ta=document.getElementById('bcInput');var t=(ta.value||'').trim();
+  if(!t){toastMsg('言葉を書いてね');return;}
+  if(!window.confirm||!confirm('この言葉を、みんなの画面に出しますか？\n\n'+t))return;
+  var btn=document.getElementById('bcBtn');btn.disabled=true;btn.textContent='出しています…';
+  var r=await api('bc_post',{text:t});
+  btn.disabled=false;btn.textContent='📣 みんなに出す';
+  if(r.ok){toastMsg('あさやん：「みんなに伝えておくね」');loadChoBc();}
+  else if(r.error==='too_long')toastMsg('300文字までにしてね');
+  else toastMsg('うまく出せなかった…');
+}
+async function bcWithdraw(id){
+  if(!window.confirm||!confirm('このお知らせを取り消しますか？\nまだ読んでいない人には出なくなります。'))return;
+  var r=await api('bc_withdraw',{id:id});
+  if(r.ok){toastMsg('取り消したよ');loadChoBc();}else toastMsg('うまく取り消せなかった…');
 }
 
 /* boot */
