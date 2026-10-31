@@ -745,7 +745,7 @@ async function api(action,extra){
     return await r.json();
   }catch(e){return {ok:false,error:'network'};}
 }
-function escapeHtml(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function escapeHtml(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
 function initial(n){return String(n||'？').replace(/\s/g,'').charAt(0);}
 function faceInner(p){
   if(p.avatar_type==='photo'&&p.avatar_url)return '<img src="'+escapeHtml(p.avatar_url)+'">';
@@ -1116,7 +1116,7 @@ function openDetail(p,g,from){
   DETAIL_P=p;renderLinkArea(p);
 }
 var DETAIL_P=null;
-function escAttr(s){return escapeHtml(s).replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
+function escAttr(s){return escapeHtml(s);}
 function copyText(t){
   function done(){toastMsg('あさやん：「コピーしたよ。LINEの友だち追加で使ってね」');}
   try{if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(done,function(){fallback();});return;}}catch(e){}
@@ -1134,7 +1134,7 @@ function lnWarnHtml(m,where){if(!m||!m.line_broken_at||!m.line_id)return '';
   return '<div class="lnWarn" id="'+(where==='home'?'homeLnWarn':'lnWarn')+'"><b>⚠️ LINEのリンクが古くなっているかも</b>'+who+'、あなたのLINEのリンクを開けなかったみたい。<br>LINEで「マイQRコード」→「リンクをコピー」して、貼り直してね。'+
     '<div class="lnWarnBtns">'+(where==='home'?'<button class="lnWfix" onclick="lnGoFix()">貼り直す</button>':'<button class="lnWfix" onclick="lnPaste()">📋 貼り付ける</button>')+'<button class="lnWok" onclick="lnClear()">そのままで大丈夫</button></div></div>';}
 function lnGoFix(){openMycard().then(function(){setTimeout(function(){var w=document.getElementById('lnWarn');if(w)w.scrollIntoView({behavior:'smooth',block:'start'});else mcGo('f_line');},250);});}
-function lnClear(){api('line_broken_clear',{}).then(function(r){if(r.ok){ME=r.member;['homeLnWarn','lnWarn'].forEach(function(i){var e=document.getElementById(i);if(e)e.remove();});toastMsg('あさやん：「わかった、そのままにしておくね」');}});}
+function lnClear(){api('line_broken_clear',{}).then(function(r){if(!r.ok){toastMsg('うまくできなかった…もう一度押してね');return;}if(r.ok){ME=r.member;['homeLnWarn','lnWarn'].forEach(function(i){var e=document.getElementById(i);if(e)e.remove();});toastMsg('あさやん：「わかった、そのままにしておくね」');}});}
 function lineIdBox(lid,nm,tid){
   if(!lid)return '<div class="lbL">'+nm+'さんは、まだLINEを登録していないみたい。<br><small style="color:#c9b48c">酒場のクエストのコメントなどで声をかけてみてね。</small></div>';
   if(isLineUrl(lid))return '<div class="lbL">'+nm+'さんのLINEの友だち追加リンクだよ。</div><a class="reqBtn lnBtn" href="'+escAttr(lid)+'" target="_blank" rel="noopener">💬 LINEで友だち追加する</a>'+(tid?'<button class="lnBroke" onclick="lnBroken(this,\''+escAttr(tid)+'\')">リンクが開けなかったときは、ここで本人に知らせる</button>':'');
@@ -1145,7 +1145,7 @@ async function renderLinkArea(p){
   var el=document.getElementById('linkArea');if(!el)return;
   var act=document.getElementById('dtAct'),st=document.getElementById('dtState');
   var r=await api('connection_info',{target_id:p.id});
-  if(!r.ok){el.innerHTML='';act.innerHTML='';return;}
+  if(!r.ok){el.innerHTML='<div class="linkBox"><div class="lbL">つながりの様子を読み込めなかった…<br><button class="reqBtn" onclick="renderLinkArea(DETAIL_P)">もう一度読み込む</button></div></div>';act.innerHTML='';return;}
   var nm=escapeHtml(p.name),h='',a='',badge='';
   if(r.state==='matched'){
     badge='<span class="bdg matched">🤝 つながり</span>';
@@ -1174,16 +1174,20 @@ async function renderLinkArea(p){
   }
   el.innerHTML=h;act.innerHTML=a;if(st)st.innerHTML=badge;
 }
+var MEET_BUSY=false;
 async function meet(id){
+  if(MEET_BUSY)return;MEET_BUSY=true;
   toastMsg('あさやん：「ちょっと待っててね…」');
-  var r=await api('want_to_meet',{target_id:id});
+  var r;try{r=await api('want_to_meet',{target_id:id});}finally{MEET_BUSY=false;}
   if(r.ok){toastMsg('あさやん：「'+escapeHtml(r.message||'申請したよ')+'」');if(DETAIL_P)renderLinkArea(DETAIL_P);refreshLinkBadge();}
   else if(r.error==='contact_off'){toastMsg('この方は今、連絡の受付をお休みしているよ');}
   else if(r.error==='not_same_event'){toastMsg('一緒になった仲間にだけ、声をかけられるよ');}
   else{toastMsg('うまく届けられなかったよ。もう一度試してね');}
 }
+var RESP_BUSY=false;
 async function respond(rid,accept){
-  var r=await api('respond_request',{request_id:rid,accept:accept});
+  if(RESP_BUSY)return;RESP_BUSY=true;
+  var r;try{r=await api('respond_request',{request_id:rid,accept:accept});}finally{RESP_BUSY=false;}
   if(!r.ok){toastMsg('うまくできなかった…もう一度試してね');return;}
   if(r.state==='matched')toastMsg('あさやん：「つながったね！<br>お互いのLINE IDが見られるよ」');
   else toastMsg('あさやん：「わかった、今回は見送っておくね」');
@@ -1398,13 +1402,13 @@ function renderMycard(){
     mcFinHtml(m)+
     '<div class="fgh">カードに出ること <small>みんなに見えます</small></div>'+
     '<div class="field"><label>顔写真</label><div style="display:flex;align-items:center;gap:12px"><div id="mcAva">'+avaBox((m.avatar_type==='photo')?m.avatar_url:'',m.name,64)+'</div><label class="newbtn" style="width:auto;padding:9px 16px;margin:0;cursor:pointer">📷 写真を変える<input type="file" accept="image/*" style="display:none" onchange="mcPhoto(this)"></label></div></div>'+
-    '<div class="field"><label>なまえ</label><input id="f_name"'+inp+' value="'+escapeHtml(m.name||'')+'"></div>'+
-    '<div class="field"><label>会社名・屋号（任意）</label><input id="f_company"'+inp+' value="'+escapeHtml(m.company||'')+'"></div>'+
-    '<div class="field"><label>業種（任意・自由に）</label><div class="ex">この言葉が、そのまま「仲間をさがす」ののれんになるよ（短く書くと読みやすい）</div><input id="f_industry"'+inp+' value="'+escapeHtml(m.industry||'')+'" placeholder="例：保険業／不動産投資"></div>'+
+    '<div class="field"><label>なまえ</label><input id="f_name" maxlength="40"'+inp+' value="'+escapeHtml(m.name||'')+'"></div>'+
+    '<div class="field"><label>会社名・屋号（任意）</label><input id="f_company" maxlength="60"'+inp+' value="'+escapeHtml(m.company||'')+'"></div>'+
+    '<div class="field"><label>業種（任意・自由に）</label><div class="ex">この言葉が、そのまま「仲間をさがす」ののれんになるよ（短く書くと読みやすい）</div><input id="f_industry" maxlength="40"'+inp+' value="'+escapeHtml(m.industry||'')+'" placeholder="例：保険業／不動産投資"></div>'+
     '<div class="field"><label>のれんのグループ</label><div id="mcNoren"></div></div>'+
-    '<div class="field"><label>ひとこと（カードの看板）</label><div class="ex">何をしている人か、ひと目で分かる一行</div><input id="f_tagline"'+inp+' value="'+escapeHtml(m.tagline||'')+'" placeholder="例：浅草で居酒屋をやっています"></div>'+
+    '<div class="field"><label>ひとこと（カードの看板）</label><div class="ex">何をしている人か、ひと目で分かる一行</div><input id="f_tagline" maxlength="60"'+inp+' value="'+escapeHtml(m.tagline||'')+'" placeholder="例：浅草で居酒屋をやっています"></div>'+
     '<div class="fgh">くわしく <small>カードをタップした人に見えます</small></div>'+
-    '<div class="field"><label>どんな人？（任意）</label><textarea id="f_detail"'+inp+' placeholder="仕事やサービスの中身、こんな相談OKなど">'+escapeHtml(m.detail||'')+'</textarea></div>'+
+    '<div class="field"><label>どんな人？（任意）</label><textarea id="f_detail" maxlength="1000"'+inp+' placeholder="仕事やサービスの中身、こんな相談OKなど">'+escapeHtml(m.detail||'')+'</textarea></div>'+
     '<div class="field"><label>キーワード（任意・カンマ区切り）</label><div class="ex">さがすときの手がかりになります</div><input id="f_tags"'+inp+' value="'+escapeHtml((m.free_tags||[]).join(','))+'" placeholder="例：日本酒,浅草,ゴルフ好き"></div>'+
     '<div class="fgh">つながった人だけ <small>🔒 ほかの人には見えません</small></div>'+
     '<div class="field"><label>LINEの友だち追加リンク（任意）</label>'+lnWarnHtml(m,'mc')+
@@ -1484,6 +1488,7 @@ var WIZ=[
 var TG_EX={shigyo:['会社づくりと相続の相談にのります','創業融資と節税ならおまかせください'],money:['ご家族に合う保険を一緒に考えます','お金の困りごと、気軽に相談してください'],consult:['中小企業の売上づくりを手伝っています','経営の悩みを一緒に整理します'],food:['日本酒に合う小料理屋をやっています','地元の食材でお弁当をつくっています'],care:['肩こり・腰痛、デスクワークの方に','からだの不調、気軽に相談してください'],beauty:['髪とお肌のことならおまかせ','大人の女性のための美容室です'],house:['住まいの困りごと、なんでも相談ください','店舗物件さがしならおまかせ'],it:['小さな会社のホームページをつくります','パソコン・スマホの困りごと解決します'],create:['ロゴとチラシで、お店の顔をつくります','プロフィール写真、撮ります'],learn:['大人の学び直しを応援しています','子どもの「できた！」を増やす教室です'],shop:['こだわりの雑貨を扱うお店です','地元の名産品を届けています'],community:['地域の人がつながる場をつくっています','イベントの企画・運営をしています'],other:['はじめての方も気軽に声かけてください','こんなことで役に立てます']};
 var wizI=0, wizData={free_tags:[],contact_ok:true};
 function avaBox(url,nm,sz){
+  if(url&&!/^https:\/\//i.test(url))url='';
   if(url)return '<img src="'+escapeHtml(url)+'" style="width:'+sz+'px;height:'+sz+'px;object-fit:cover;border-radius:14px;border:3px solid #caa45a">';
   var pal=avaPal({name:nm});
   return '<div style="width:'+sz+'px;height:'+sz+'px;border-radius:14px;border:2px solid rgba(255,255,255,.18);background:radial-gradient(circle at 50% 30%,'+pal[0]+','+pal[1]+' 80%);display:flex;align-items:center;justify-content:center;color:#fff;font-family:\'Zen Maru Gothic\',sans-serif;font-weight:900;font-size:'+Math.max(12,Math.round(sz*0.42))+'px">'+escapeHtml(initial(nm))+'</div>';
