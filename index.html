@@ -1724,7 +1724,7 @@ function renderHomeEv(){var el=document.getElementById('homeEv');if(!el)return;i
   if(!EVENTS.length){el.innerHTML='';return;}
   var mine=EVENTS.filter(function(e){return e.me_going;});var e=mine[0]||EVENTS[0];var n=evDays(e);
   var soon=e.me_going&&n<=1;var tm=(e.talk_to_me||[]).length+(e.talk_hidden||0);
-  var line=soon?('<b>'+evWhen(e)+'は『'+escapeHtml(evTitle(e))+'』だね！</b><br>'+(tm?'<span class="evHot">あなたと話したい人が '+tm+'人いるよ。</span>':'')+(e.revealed?'来る仲間をチェックしておこう':'顔ぶれは集まりの時間に開くよ')):('<b>'+escapeHtml(evDate(e))+'</b>　'+escapeHtml(evTitle(e))+'<br><small>'+(e.me_going?'✅ 行きます':'')+(EVENTS.length>1?(e.me_going?'・':'')+'ほか'+(EVENTS.length-1)+'件の予定':'')+'</small>');
+  var line=soon?('<b>'+evWhen(e)+'は『'+escapeHtml(evTitle(e))+'』だね！</b><br>'+(tm?'<span class="evHot">あなたと話したい人が '+tm+'人いるよ。</span>':'')+(e.revealed?'来る仲間をチェックしておこう':'顔ぶれは集まりの時間に開くよ')):('<b>'+escapeHtml(evDate(e))+'</b>　'+escapeHtml(evTitle(e))+'<br><small>'+(e.me_going?(e.me_source==='nippo'?'✅ 申込済み':'✅ 行きます'):'')+(EVENTS.length>1?(e.me_going?'・':'')+'ほか'+(EVENTS.length-1)+'件の予定':'')+'</small>');
   el.innerHTML='<button class="homeEv'+(soon?' soon':'')+'" onclick="show(\'events\')"><span class="ic">📅</span><span class="tx">'+line+'</span><span class="go">›</span></button>';}
 async function loadEvents(){var b=document.getElementById('evBody');if(!EVENTS)b.innerHTML='<div class="loading">読み込み中…</div>';else renderEvents();var r=await evRefresh();if(!r.ok&&!EVENTS){b.innerHTML='<div class="stub">予定を読み込めなかった…</div>';return;}renderEvents();}
 function goingFaces(list,max){return list.slice(0,max).map(function(p){return '<span class="evFace">'+avaBox((p.avatar_type==='photo')?p.avatar_url:'',p.name,26)+'</span>';}).join('')+(list.length>max?'<span class="evMore">+'+(list.length-max)+'</span>':'');}
@@ -1734,10 +1734,10 @@ function renderEvents(){var b=document.getElementById('evBody');if(!b)return;
     '<ol><li><span>集まりの前</span><p>来る人は<b>まだ見えない</b>よ。</p></li>'+
     '<li><span>集まりの時間</span><p>来る人の<b>顔ぶれが開く</b>よ。会場で声をかけてね。</p></li>'+
     '<li><span>会ったあと</span><p>「仲間をさがす」から<b>「会いたい」</b>でLINEがつながるよ。</p></li></ol>'+
-    '<small>※もうつながっている仲間は、前から見えるよ。<br>※見えるのは、このアプリに登録している人だけだよ（参加者全員ではないよ）</small></div>';
+    '<small>※もうつながっている仲間は、前から見えるよ。<br>※見えるのは、集まりに申し込んだ人と「行きます」を押した人のうち、このアプリに登録している人だけだよ（参加者全員ではないよ）</small></div>';
   if(!EVENTS||!EVENTS.length){b.innerHTML=h+'<div class="stub">今わかっている予定はないよ。</div>';return;}
   EVENTS.forEach(function(e,i){var tm=(e.talk_to_me||[]).length+(e.talk_hidden||0);
-    h+='<div class="evCard'+(e.me_going?' going':'')+'" onclick="openEvent('+i+')"><div class="evD"><b>'+escapeHtml(evDate(e).split('(')[0])+'</b><small>'+escapeHtml('('+evDate(e).split('(')[1])+'</small><i>'+escapeHtml(evWhen(e))+'</i></div><div class="evT"><div class="nm">'+escapeHtml(evTitle(e))+'</div><div class="pl">📍 '+escapeHtml(e.venue_name||e.venue||'場所は未定')+'</div><div class="pp">'+(e.going.length?goingFaces(e.going,5)+'<span class="cnt">'+(e.revealed?'アプリに登録している参加者':'つながっている仲間')+'</span>':(e.revealed?'':'<span class="evLock">🔒 顔ぶれは集まりの時間に開くよ</span>'))+(e.me_going?'<span class="chip chipG">行きます</span>':'')+(tm?'<span class="chip chipW">話したい人 '+tm+'</span>':'')+'</div></div></div>';});
+    h+='<div class="evCard'+(e.me_going?' going':'')+'" onclick="openEvent('+i+')"><div class="evD"><b>'+escapeHtml(evDate(e).split('(')[0])+'</b><small>'+escapeHtml('('+evDate(e).split('(')[1])+'</small><i>'+escapeHtml(evWhen(e))+'</i></div><div class="evT"><div class="nm">'+escapeHtml(evTitle(e))+'</div><div class="pl">📍 '+escapeHtml(e.venue_name||e.venue||'場所は未定')+'</div><div class="pp">'+(e.going.length?goingFaces(e.going,5)+'<span class="cnt">'+(e.revealed?'アプリに登録している参加者':'つながっている仲間')+'</span>':(e.revealed?'':'<span class="evLock">🔒 顔ぶれは集まりの時間に開くよ</span>'))+(e.me_going?'<span class="chip chipG">'+(e.me_source==='nippo'?'申込済み':'行きます')+'</span>':'')+(tm?'<span class="chip chipW">話したい人 '+tm+'</span>':'')+'</div></div></div>';});
   h+='<div class="evNote">※「行きます」は、仲間に知らせるための印だよ。集まりへの申し込みは、今までどおりの方法でしてね。</div>';
   b.innerHTML=h;}
 function openEvent(i){CUR_EV=EVENTS[i];if(!CUR_EV)return;renderEventDetail();show('evdetail');}
@@ -1757,7 +1757,7 @@ function renderEventDetail(){var e=CUR_EV;if(!e)return;var b=document.getElement
     if(!e.me_going)h+='<div class="evNote">「行きます」を押すと、話したい人に印を付けられるよ。</div>';}
   h+='<div class="evNote">※「行きます」は仲間に知らせるための印だよ。申し込みは今までどおりの方法でしてね。<br>※「話したい」はLINEの交換ではなく、当日声をかけるきっかけだよ。相手には「話したいそうです」とだけ伝わるよ。</div>';
   b.innerHTML=h;
-  document.getElementById('evdAct').innerHTML=e.me_going?'<button class="done" onclick="evRsvp(false)">✅ 行きます（取り消す）</button>':'<button onclick="evRsvp(true)">🙋 行きます</button>';}
+  document.getElementById('evdAct').innerHTML=e.me_source==='nippo'?'<button class="done" onclick="toastMsg(\'申込みは日報で受け付けているよ。<br>取り消すときは、日報から取り消してね\')">✅ 申込済み</button>':e.me_going?'<button class="done" onclick="evRsvp(false)">✅ 行きます（取り消す）</button>':'<button onclick="evRsvp(true)">🙋 行きます</button>';}
 function openEvPerson(k){var p=CUR_EV&&CUR_EV.going[k];if(!p)return;if(ME&&p.id===ME.id){openMycard();return;}openDetail(p,null,{back:'evdetail',event:CUR_EV});}
 var EV_BUSY=false;
 async function evRsvp(go){if(EV_BUSY||!CUR_EV)return;if(!go&&window.confirm&&!confirm('「行きます」を取り消しますか？\n（付けた「話したい」も消えます）'))return;EV_BUSY=true;
