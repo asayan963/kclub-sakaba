@@ -265,6 +265,27 @@ html,body{height:100%;background:radial-gradient(130% 90% at 50% 0%, #1c1008 0%,
 .bcItem .bnames span{display:inline-block;background:rgba(255,255,255,.07);border-radius:999px;padding:1px 9px;margin:0 4px 4px 0;}
 .bcItem .bwd{margin-top:10px;background:none;border:1.5px solid #a55;color:#f1b0a8;border-radius:9px;padding:7px 12px;font-family:'Zen Maru Gothic',sans-serif;font-weight:700;font-size:.8rem;cursor:pointer;}
 .bcCount{font-size:.72rem;color:#a8977a;text-align:right;margin-top:-6px;margin-bottom:8px;}
+.chTabs{flex-wrap:wrap;}
+.chTab{min-width:28%;}
+.lnG{margin:16px 0 6px;font-family:'Zen Maru Gothic',sans-serif;font-weight:900;color:#f5d97a;font-size:.9rem;}
+.lnG small{display:block;font-weight:600;color:#a8977a;font-size:.7rem;margin-top:2px;}
+.lnS{background:linear-gradient(180deg,#2a1810,#1b0f07);border:1.5px solid #6e4a1e;border-radius:12px;margin-bottom:8px;overflow:hidden;}
+.lnS>summary{list-style:none;cursor:pointer;padding:11px 12px;display:flex;align-items:center;gap:8px;color:#f3e7cf;font-weight:700;font-size:.88rem;}
+.lnS>summary::-webkit-details-marker{display:none;}
+.lnS>summary::before{content:'▸';color:#caa45a;transition:transform .2s;}
+.lnS[open]>summary::before{transform:rotate(90deg);}
+.lnS>summary .n{margin-left:auto;font-size:.72rem;color:#a8977a;font-weight:600;}
+.lnB{padding:0 12px 12px;}
+.lnR{border-top:1px dashed rgba(202,164,90,.25);padding:10px 0;}
+.lnR .t{color:#f7ecd4;font-size:.88rem;line-height:1.65;white-space:pre-wrap;word-break:break-word;}
+.lnR.off .t{opacity:.45;text-decoration:line-through;}
+.lnR .a{display:flex;gap:6px;margin-top:7px;flex-wrap:wrap;}
+.lnR .a button,.lnAdd button{background:rgba(0,0,0,.25);border:1.5px solid #6e4a1e;color:#e9d9b6;border-radius:8px;padding:5px 11px;font-family:'Zen Maru Gothic',sans-serif;font-size:.74rem;font-weight:700;cursor:pointer;}
+.lnR .a button.pri,.lnAdd button.pri{background:linear-gradient(180deg,#f0c060,#c98f2a);color:#2a1600;border-color:#c98f2a;}
+.lnR .a button.del{border-color:#a55;color:#f1b0a8;margin-left:auto;}
+.lnR textarea,.lnAdd textarea{width:100%;min-height:64px;background:rgba(255,250,235,.96);border:2px solid #caa45a;border-radius:9px;padding:8px 10px;font-family:'Zen Maru Gothic',sans-serif;font-size:.9rem;color:#3a2410;}
+.lnAdd{border-top:1px dashed rgba(202,164,90,.25);padding-top:10px;}
+.lnAdd .a{display:flex;gap:6px;margin-top:6px;}
 .dhead{background:linear-gradient(180deg,#f7eeda,#e9d9b6);margin:-14px -14px 14px;padding:20px 16px 16px;text-align:center;border-bottom:2px solid #b8925a;}
 .dhead .face{width:76px;height:76px;border-radius:15px;margin:0 auto 10px;background:radial-gradient(circle at 50% 30%,#caa45a,#6e4a1e);display:flex;align-items:center;justify-content:center;font-family:'Zen Maru Gothic',serif;font-weight:800;color:#fff;font-size:2rem;border:3px solid #7a5520;overflow:hidden;}
 .dhead .face img{width:100%;height:100%;object-fit:cover;}
@@ -498,6 +519,7 @@ html,body{height:100%;background:radial-gradient(130% 90% at 50% 0%, #1c1008 0%,
         <button id="chT_today" class="chTab" onclick="choTab('today')">ひとこと</button>
         <button id="chT_mem" class="chTab" onclick="choTab('mem')">会員</button>
         <button id="chT_bc" class="chTab" style="display:none" onclick="choTab('bc')">お知らせ</button>
+        <button id="chT_ln" class="chTab" style="display:none" onclick="choTab('ln')">セリフ</button>
       </div>
       <div id="chBody"><div class="loading">読み込み中…</div></div>
     </div>
@@ -1055,8 +1077,8 @@ async function saveProfile(){
 function toastMsg(html){var t=document.getElementById('toast');t.innerHTML=html;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},3400);}
 
 /* ===== 帳場 (admin / owner) ===== */
-function openChocho(){show('chocho');var bt=document.getElementById('chT_bc');if(bt)bt.style.display=(ME&&ME.role==='owner')?'':'none';choTab('req');}
-function choTab(t){['req','today','mem','bc'].forEach(function(x){document.getElementById('chT_'+x).classList.toggle('on',x===t);});document.getElementById('chBody').innerHTML='<div class="loading">読み込み中…</div>';if(t==='req')loadChoRequests();else if(t==='today')loadChoToday();else if(t==='bc')loadChoBc();else loadChoMembers();}
+function openChocho(){show('chocho');['chT_bc','chT_ln'].forEach(function(i){var bt=document.getElementById(i);if(bt)bt.style.display=(ME&&ME.role==='owner')?'':'none';});choTab('req');}
+function choTab(t){['req','today','mem','bc','ln'].forEach(function(x){document.getElementById('chT_'+x).classList.toggle('on',x===t);});document.getElementById('chBody').innerHTML='<div class="loading">読み込み中…</div>';if(t==='req')loadChoRequests();else if(t==='today')loadChoToday();else if(t==='bc')loadChoBc();else if(t==='ln')loadChoLines();else loadChoMembers();}
 var CHO_STATUS={pending:['返事待ち','chipW'],matched:['つながった','chipG'],declined:['見送り','chipN']};
 function fmtJ(d){return d?new Date(d).toLocaleString('ja-JP',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}):'';}
 async function loadChoRequests(){var r=await api('admin_requests',{});var b=document.getElementById('chBody');if(!r.ok){b.innerHTML='<div class="stub">読み込めなかった…</div>';return;}var reqs=r.requests||[];var c={pending:0,matched:0,declined:0};reqs.forEach(function(x){if(c[x.status]!==undefined)c[x.status]++;});var h='<div class="say" style="font-size:.84rem">「会いたい」の申請は、自動で相手に届くよ。<br>ここでは、誰が誰に申請したかを見守れるよ。</div>';h+='<div class="choSum"><div><b>'+reqs.length+'</b>申請</div><div><b>'+c.pending+'</b>返事待ち</div><div><b>'+c.matched+'</b>つながった</div><div><b>'+c.declined+'</b>見送り</div></div>';if(!reqs.length)h+='<div class="stub">まだ申請はないよ。</div>';reqs.forEach(function(x){h+=reqCardHtml(x);});b.innerHTML=h;}
@@ -1199,6 +1221,54 @@ async function bcWithdraw(id){
   var r=await api('bc_withdraw',{id:id});
   if(r.ok){toastMsg('取り消したよ');loadChoBc();}else toastMsg('うまく取り消せなかった…');
 }
+
+/* 帳場：あさやんのセリフ編集 */
+var LN_GROUPS=[
+ ['入ったときのあいさつ','時間帯ごとに、どれか1つが選ばれて出るよ。曜日のものは、ときどき時間帯のかわりに出るよ。',[['greet_morning','朝（5〜10時）'],['greet_noon','昼（11〜16時）'],['greet_evening','夕方（17〜20時）'],['greet_night','夜（21〜24時）'],['greet_late','深夜（0〜4時）'],['greet_mon','月曜日'],['greet_fri','金曜日'],['greet_weekend','土日']]],
+ ['季節のひとこと','あいさつのあとに、ときどき（4回に1〜2回）付くよ。',[1,2,3,4,5,6,7,8,9,10,11,12].map(function(m){return ['season_'+m,m+'月'];})],
+ ['ホームのひとこと','申請や新しい仲間など、話すことがないときに出るよ。',[['home','ふだんのひとこと']]],
+ ['初めて来た人へ','初めての人の最初のあいさつ。上から順に全部つなげて出るよ。',[['intro','最初のあいさつ']]]
+];
+var LN_ALL=[],LN_OPEN={};
+async function loadChoLines(){
+  var b=document.getElementById('chBody');
+  var r=await api('lines_all',{});
+  if(!r.ok){b.innerHTML='<div class="stub">読み込めなかった…</div>';return;}
+  LN_ALL=r.lines||[];renderChoLines();
+}
+function renderChoLines(){
+  var b=document.getElementById('chBody');
+  var h='<div class="say" style="font-size:.84rem">あさやんの普段のセリフを、ここで足したり直したりできるよ。<br>改行すると、画面でもそこで改行されるよ。<br>「止める」にすると、消さずにお休みできるよ。</div>';
+  LN_GROUPS.forEach(function(g){
+    h+='<div class="lnG">'+g[0]+'<small>'+g[1]+'</small></div>';
+    g[2].forEach(function(sc){
+      var rows=LN_ALL.filter(function(x){return x.scene===sc[0];});
+      var on=rows.filter(function(x){return x.active;}).length;
+      h+='<details class="lnS" data-sc="'+sc[0]+'"'+(LN_OPEN[sc[0]]?' open':'')+' ontoggle="LN_OPEN[this.getAttribute(\'data-sc\')]=this.open"><summary>'+sc[1]+'<span class="n">'+on+'こ出ています'+(rows.length>on?'（お休み'+(rows.length-on)+'）':'')+'</span></summary><div class="lnB">';
+      rows.forEach(function(x){
+        h+='<div class="lnR'+(x.active?'':' off')+'" id="lnr_'+x.id+'"><div class="t">'+escapeHtml(x.text)+'</div><div class="a">'+
+          '<button onclick="lnEdit('+x.id+')">直す</button>'+
+          '<button onclick="lnToggle('+x.id+')">'+(x.active?'止める':'また出す')+'</button>'+
+          '<button class="del" onclick="lnDel('+x.id+')">消す</button></div></div>';
+      });
+      if(!rows.length)h+='<div class="lkE" style="padding:6px 0">まだないよ</div>';
+      h+='<div class="lnAdd"><textarea id="lna_'+sc[0]+'" maxlength="200" placeholder="新しいセリフを書く（200文字まで）"></textarea><div class="a"><button class="pri" onclick="lnAdd(\''+sc[0]+'\')">＋ このセリフを足す</button></div></div>';
+      h+='</div></details>';
+    });
+  });
+  b.innerHTML=h;
+}
+function lnFind(id){return LN_ALL.filter(function(x){return x.id===id;})[0];}
+function lnEdit(id){var x=lnFind(id);if(!x)return;var el=document.getElementById('lnr_'+id);
+  el.innerHTML='<textarea id="lne_'+id+'" maxlength="200">'+escapeHtml(x.text)+'</textarea><div class="a"><button class="pri" onclick="lnSaveEdit('+id+')">保存</button><button onclick="renderChoLines()">やめる</button></div>';
+  var ta=document.getElementById('lne_'+id);ta.focus();}
+async function lnSend(o,msg){var r=await api('line_save',o);
+  if(r.ok){var ok=await api('okami',{});if(ok.ok)OKAMI=ok;toastMsg(msg);await loadChoLines();return true;}
+  toastMsg(r.error==='too_long'?'200文字までにしてね':r.error==='empty'?'セリフを書いてね':'うまく保存できなかった…');return false;}
+async function lnSaveEdit(id){var x=lnFind(id);var t=(document.getElementById('lne_'+id).value||'').trim();if(!x)return;await lnSend({id:id,scene:x.scene,text:t,active:x.active},'あさやん：「言い方、変えておいたよ」');}
+async function lnToggle(id){var x=lnFind(id);if(!x)return;await lnSend({id:id,scene:x.scene,text:x.text,active:!x.active},x.active?'お休みにしたよ':'また出すようにしたよ');}
+async function lnAdd(sc){var ta=document.getElementById('lna_'+sc);var t=(ta.value||'').trim();if(!t){toastMsg('セリフを書いてね');return;}LN_OPEN[sc]=true;await lnSend({scene:sc,text:t,active:true},'あさやん：「新しいセリフ、覚えたよ」');}
+async function lnDel(id){var x=lnFind(id);if(!x)return;if(!window.confirm||!confirm('このセリフを消しますか？\n\n'+x.text))return;var r=await api('line_remove',{id:id});if(r.ok){var ok=await api('okami',{});if(ok.ok)OKAMI=ok;toastMsg('消したよ');loadChoLines();}else toastMsg('うまく消せなかった…');}
 
 /* boot */
 (async function boot(){
