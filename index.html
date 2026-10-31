@@ -221,6 +221,13 @@ html,body{height:100%;background:radial-gradient(130% 90% at 50% 0%, #1c1008 0%,
 .tile.wide{grid-column:1/-1;min-height:0;display:flex;align-items:center;gap:10px;padding:10px 12px;}
 .tile.wide .tn{margin-top:0;}
 .tile .badge{position:absolute;top:9px;right:9px;margin:0;}
+.fgh{display:flex;align-items:center;gap:8px;margin:18px 0 10px;font-family:'Zen Maru Gothic',sans-serif;font-weight:900;color:#f5d97a;font-size:.88rem;letter-spacing:.04em;}
+.fgh::after{content:'';flex:1;height:1px;background:rgba(202,164,90,.35);}
+.fgh small{font-weight:700;color:#a8977a;font-size:.68rem;letter-spacing:0;}
+.mcprev{display:flex;flex-direction:column;align-items:center;gap:8px;padding:12px 0 6px;margin:0 -14px;background:radial-gradient(60% 80% at 50% 40%,rgba(245,197,24,.10),transparent 70%);}
+.mcprev .mcpl{font-size:.72rem;color:#c9b48c;}
+.mcprev .pc{flex:none;width:150px;animation:none;cursor:default;}
+.actbar button.dirty{animation:pulse 2s ease-in-out infinite;}
 .dhead{background:linear-gradient(180deg,#f7eeda,#e9d9b6);margin:-14px -14px 14px;padding:20px 16px 16px;text-align:center;border-bottom:2px solid #b8925a;}
 .dhead .face{width:76px;height:76px;border-radius:15px;margin:0 auto 10px;background:radial-gradient(circle at 50% 30%,#caa45a,#6e4a1e);display:flex;align-items:center;justify-content:center;font-family:'Zen Maru Gothic',serif;font-weight:800;color:#fff;font-size:2rem;border:3px solid #7a5520;overflow:hidden;}
 .dhead .face img{width:100%;height:100%;object-fit:cover;}
@@ -310,7 +317,7 @@ html,body{height:100%;background:radial-gradient(130% 90% at 50% 0%, #1c1008 0%,
 .qcB{color:#f3e7cf;font-size:.9rem;line-height:1.65;margin-top:7px;white-space:pre-wrap;word-break:break-word;}
 .qcDel{margin-top:7px;background:none;border:1px solid #6e4a1e;color:#a08a66;border-radius:7px;padding:3px 10px;font-size:.72rem;font-family:'Zen Maru Gothic',sans-serif;cursor:pointer;}
 
-.toast{position:absolute;left:50%;bottom:30px;transform:translateX(-50%) translateY(20px);background:rgba(28,16,8,.98);border:2px solid #f5c518;color:#f5d97a;padding:14px 20px;border-radius:12px;font-size:.92rem;opacity:0;transition:all .4s;z-index:50;text-align:center;max-width:86%;line-height:1.6;}
+.toast{position:absolute;left:50%;bottom:84px;transform:translateX(-50%) translateY(20px);background:rgba(28,16,8,.98);border:2px solid #f5c518;color:#f5d97a;padding:14px 20px;border-radius:12px;font-size:.92rem;opacity:0;transition:all .4s;z-index:50;text-align:center;max-width:86%;line-height:1.6;}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 </style>
 </head>
@@ -407,22 +414,26 @@ html,body{height:100%;background:radial-gradient(130% 90% at 50% 0%, #1c1008 0%,
   <div id="qnew" class="win hidden">
     <div class="wtop"><button class="back" onclick="show('board')">‹ 戻る</button><h2>案内を出す</h2></div>
     <div class="wbody">
-      <div class="field"><label>タイトル（必須）</label><div class="ex">何の案内か、ひと目で分かるように</div><input id="q_title" placeholder="例：朝活もくもく会やります"></div>
-      <div class="field"><label>内容（必須）</label><div class="ex">どんな案内か・なぜやるのか・当日の流れなど、くわしく書くほど伝わるよ（3000文字まで）</div><textarea id="q_content" maxlength="3000" style="min-height:180px" placeholder="例：毎週土曜の朝、カフェで各自もくもく作業します。&#10;&#10;【当日の流れ】&#10;8:00 集合・ひとこと自己紹介&#10;8:15〜9:30 各自作業&#10;9:30〜 軽く雑談&#10;&#10;初めての人歓迎！"></textarea></div>
-      <div class="field"><label>いつ（任意）</label><input id="q_when" maxlength="80" placeholder="例：毎週土曜 8:00〜10:00／11月15日(土) 19時〜"></div>
-      <div class="field"><label>どこで（任意）</label><input id="q_place" maxlength="80" placeholder="例：渋谷駅近くのカフェ／オンライン(Zoom)"></div>
-      <div class="field"><label>こんな人に来てほしい（任意）</label><textarea id="q_target" maxlength="200" style="min-height:60px" placeholder="例：朝の時間を有効に使いたい人。初めての人も大歓迎"></textarea></div>
-      <div class="field"><label>費用（任意）</label><input id="q_fee" maxlength="80" placeholder="例：無料（飲み物代のみ各自）"></div>
-      <div class="field"><label>業種・タグ（任意）</label><input id="q_industry" placeholder="例：朝活／勉強会"></div>
-      <button class="okbtn" id="qCreateBtn" onclick="createQuest()">この案内を出す</button>
+      <div class="say" style="margin-bottom:4px"><b>あさやん：</b>どんな集まり？ 書いた内容は、酒場のみんなに見えるよ。</div>
+      <div class="fgh">まずはここだけ <small>必須</small></div>
+      <div class="field"><label>タイトル</label><div class="ex">何の案内か、ひと目で分かるように</div><input id="q_title" placeholder="例：朝活もくもく会やります"></div>
+      <div class="field"><label>内容</label><div class="ex">どんな案内か・なぜやるのか・当日の流れなど、くわしく書くほど伝わるよ（3000文字まで）</div><textarea id="q_content" maxlength="3000" style="min-height:180px" placeholder="例：毎週土曜の朝、カフェで各自もくもく作業します。&#10;&#10;【当日の流れ】&#10;8:00 集合・ひとこと自己紹介&#10;8:15〜9:30 各自作業&#10;9:30〜 軽く雑談&#10;&#10;初めての人歓迎！"></textarea></div>
+      <div class="fgh">くわしく <small>任意・書くと人が集まりやすい</small></div>
+      <div class="field"><label>いつ</label><input id="q_when" maxlength="80" placeholder="例：毎週土曜 8:00〜10:00／11月15日(土) 19時〜"></div>
+      <div class="field"><label>どこで</label><input id="q_place" maxlength="80" placeholder="例：渋谷駅近くのカフェ／オンライン(Zoom)"></div>
+      <div class="field"><label>こんな人に来てほしい</label><textarea id="q_target" maxlength="200" style="min-height:60px" placeholder="例：朝の時間を有効に使いたい人。初めての人も大歓迎"></textarea></div>
+      <div class="field"><label>費用</label><input id="q_fee" maxlength="80" placeholder="例：無料（飲み物代のみ各自）"></div>
+      <div class="field"><label>業種・タグ</label><input id="q_industry" placeholder="例：朝活／勉強会"></div>
       <div class="meetNote">出すと、あなたのカードも一緒に表示されます（みんなに見えます）</div>
     </div>
+    <div class="actbar"><button id="qCreateBtn" onclick="createQuest()">📜 この案内を出す</button></div>
   </div>
 
   <!-- MYCARD -->
   <div id="mycard" class="win hidden">
     <div class="wtop"><button class="back" onclick="show('home')">‹ 戻る</button><h2>自分のカード</h2></div>
     <div class="wbody"><div id="mycardBody"><div class="loading">読み込み中…</div></div></div>
+    <div class="actbar" id="mcAct"><button id="saveBtn" onclick="saveProfile()">保存する</button></div>
   </div>
 
   <!-- LINKS (つながり) -->
@@ -888,7 +899,7 @@ async function createQuest(){
   var btn=document.getElementById('qCreateBtn');btn.disabled=true;btn.textContent='出しています…';
   function qv(id){return (document.getElementById(id).value||'').trim();}
   var r=await api('quest_create',{title:title,content:content,industry:qv('q_industry'),when_text:qv('q_when'),place:qv('q_place'),target:qv('q_target'),fee:qv('q_fee')});
-  btn.disabled=false;btn.textContent='この案内を出す';
+  btn.disabled=false;btn.textContent='📜 この案内を出す';
   if(r.ok){
     ['q_title','q_content','q_industry','q_when','q_place','q_target','q_fee'].forEach(function(id){document.getElementById(id).value='';});
     toastMsg('あさやん：「いい知らせだね。<br>みんなに届けておくよ」');show('board');
@@ -910,30 +921,40 @@ function renderMycard(){
   var m=ME;CONTACT=m.contact_ok!==false;
   var okamiIntro=JUST_REGISTERED?'できたね！ これであなたも、この酒場の仲間だよ。<br>これがあなたのカード。みんなには、こう見えているよ。直したいところは、いつでもここで直せるからね。':'これがあなたのカード。みんなには、こう見えているよ。直したいところは、いつでもここで直せるからね。';
   JUST_REGISTERED=false;
+  var inp=' oninput="mcChanged()"';
   b.innerHTML=
-    '<div class="say" style="margin-bottom:14px"><b>あさやん：</b>'+okamiIntro+'</div>'+
+    '<div class="say" style="margin-bottom:6px"><b>あさやん：</b>'+okamiIntro+'</div>'+
+    '<div class="mcprev"><div id="mcPrev"></div><div class="mcpl">▲ 仲間をさがすで、みんなにはこう見えるよ</div></div>'+
+    '<div class="fgh">カードに出ること <small>みんなに見えます</small></div>'+
     '<div class="field"><label>顔写真</label><div style="display:flex;align-items:center;gap:12px"><div id="mcAva">'+avaBox((m.avatar_type==='photo')?m.avatar_url:'',m.name,64)+'</div><label class="newbtn" style="width:auto;padding:9px 16px;margin:0;cursor:pointer">📷 写真を変える<input type="file" accept="image/*" style="display:none" onchange="mcPhoto(this)"></label></div></div>'+
-    '<div class="field"><label>なまえ</label><input id="f_name" value="'+escapeHtml(m.name||'')+'"></div>'+
-    '<div class="field"><label>会社名・屋号（任意）</label><input id="f_company" value="'+escapeHtml(m.company||'')+'"></div>'+
-    '<div class="field"><label>ひとこと（カードの看板）</label><div class="ex">何をしている人か、ひと目で分かる一行</div><input id="f_tagline" value="'+escapeHtml(m.tagline||'')+'" placeholder="例：浅草で居酒屋をやっています"></div>'+
-    '<div class="field"><label>どんな人？（くわしく・任意）</label><textarea id="f_detail" placeholder="仕事やサービスの中身、こんな相談OKなど">'+escapeHtml(m.detail||'')+'</textarea></div>'+
-    '<div class="field"><label>業種（任意・自由に）</label><input id="f_industry" value="'+escapeHtml(m.industry||'')+'" placeholder="例：保険業／不動産投資"></div>'+
-    '<div class="field"><label>キーワード（任意・カンマ区切り）</label><input id="f_tags" value="'+escapeHtml((m.free_tags||[]).join(','))+'" placeholder="例：日本酒,浅草,ゴルフ好き"></div>'+
-    '<div class="field"><label>LINE ID（任意）</label><div class="ex">🔒 つながった相手にだけ見えます。ほかの人には見えません</div><input id="f_line" value="'+escapeHtml(m.line_id||'')+'" placeholder="例：asayan123" autocapitalize="off" autocorrect="off" spellcheck="false"></div>'+
-    '<div class="field"><label>連絡の受付</label><div class="toggle"><button id="ct_on" class="'+(CONTACT?'on':'')+'" onclick="setContact(true)">受け取る</button><button id="ct_off" class="'+(!CONTACT?'on':'')+'" onclick="setContact(false)">今はオフ</button></div></div>'+
-    '<button class="okbtn" id="saveBtn" onclick="saveProfile()">保存する</button>';
+    '<div class="field"><label>なまえ</label><input id="f_name"'+inp+' value="'+escapeHtml(m.name||'')+'"></div>'+
+    '<div class="field"><label>会社名・屋号（任意）</label><input id="f_company"'+inp+' value="'+escapeHtml(m.company||'')+'"></div>'+
+    '<div class="field"><label>業種（任意・自由に）</label><input id="f_industry"'+inp+' value="'+escapeHtml(m.industry||'')+'" placeholder="例：保険業／不動産投資"></div>'+
+    '<div class="field"><label>ひとこと（カードの看板）</label><div class="ex">何をしている人か、ひと目で分かる一行</div><input id="f_tagline"'+inp+' value="'+escapeHtml(m.tagline||'')+'" placeholder="例：浅草で居酒屋をやっています"></div>'+
+    '<div class="fgh">くわしく <small>カードをタップした人に見えます</small></div>'+
+    '<div class="field"><label>どんな人？（任意）</label><textarea id="f_detail"'+inp+' placeholder="仕事やサービスの中身、こんな相談OKなど">'+escapeHtml(m.detail||'')+'</textarea></div>'+
+    '<div class="field"><label>キーワード（任意・カンマ区切り）</label><div class="ex">さがすときの手がかりになります</div><input id="f_tags"'+inp+' value="'+escapeHtml((m.free_tags||[]).join(','))+'" placeholder="例：日本酒,浅草,ゴルフ好き"></div>'+
+    '<div class="fgh">つながった人だけ <small>🔒 ほかの人には見えません</small></div>'+
+    '<div class="field"><label>LINE ID（任意）</label><input id="f_line"'+inp+' value="'+escapeHtml(m.line_id||'')+'" placeholder="例：asayan123" autocapitalize="off" autocorrect="off" spellcheck="false"></div>'+
+    '<div class="field"><label>「会いたい」の受付</label><div class="toggle"><button id="ct_on" class="'+(CONTACT?'on':'')+'" onclick="setContact(true)">受け取る</button><button id="ct_off" class="'+(!CONTACT?'on':'')+'" onclick="setContact(false)">今はオフ</button></div></div>';
+  var sb=document.getElementById('saveBtn');sb.classList.remove('dirty');sb.textContent='保存する';
+  mcPreview();
 }
-function setContact(v){CONTACT=v;document.getElementById('ct_on').classList.toggle('on',v);document.getElementById('ct_off').classList.toggle('on',!v);}
+function mcPreview(){var el=document.getElementById('mcPrev');if(!el||!ME)return;var v=function(id){var e=document.getElementById(id);return e?e.value:'';};
+  var p={id:ME.id,name:v('f_name')||'なまえ',company:v('f_company'),industry:v('f_industry'),tagline:v('f_tagline')||'（ひとことを書くとここに出ます）',avatar_type:ME.avatar_type,avatar_url:ME.avatar_url,link:'none'};
+  FIND_ANIM=false;el.innerHTML=pcHtml(p,0);}
+function mcChanged(){mcPreview();var sb=document.getElementById('saveBtn');sb.classList.add('dirty');sb.textContent='変更を保存する';}
+function setContact(v){if(CONTACT!==v)setTimeout(mcChanged,0);CONTACT=v;document.getElementById('ct_on').classList.toggle('on',v);document.getElementById('ct_off').classList.toggle('on',!v);}
 function mcPhoto(input){var file=input.files&&input.files[0];if(!file)return;
   resizeImage(file,360,function(dataUrl){if(!dataUrl){toastMsg('この画像は読めなかった…');return;}
-    api('upload_avatar',{data_url:dataUrl}).then(function(r){if(r.ok){ME=r.member;var a=document.getElementById('mcAva');if(a)a.innerHTML=avaBox(ME.avatar_url,ME.name,64);toastMsg('写真を変えたよ');}else toastMsg('うまく上げられなかった…');});});}
+    api('upload_avatar',{data_url:dataUrl}).then(function(r){if(r.ok){ME=r.member;var a=document.getElementById('mcAva');if(a)a.innerHTML=avaBox(ME.avatar_url,ME.name,64);mcPreview();toastMsg('写真を変えたよ');}else toastMsg('うまく上げられなかった…');});});}
 async function saveProfile(){
   var btn=document.getElementById('saveBtn');btn.disabled=true;btn.textContent='保存中…';
   var tags=(document.getElementById('f_tags').value||'').split(',').map(function(s){return s.trim();}).filter(Boolean);
   var patch={name:document.getElementById('f_name').value,company:document.getElementById('f_company').value,tagline:document.getElementById('f_tagline').value,detail:document.getElementById('f_detail').value,industry:document.getElementById('f_industry').value,free_tags:tags,contact_ok:CONTACT,line_id:(document.getElementById('f_line').value||'').trim()};
   var r=await api('save_profile',{patch:patch});
   btn.disabled=false;btn.textContent='保存する';
-  if(r.ok){ME=r.member;toastMsg('あさやん：「カード、更新しておいたよ」');}
+  if(r.ok){ME=r.member;btn.classList.remove('dirty');toastMsg('あさやん：「カード、更新しておいたよ」');}
   else toastMsg('うまく保存できなかったよ');
 }
 
