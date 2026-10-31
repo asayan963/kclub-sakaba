@@ -577,7 +577,7 @@ function renderHome(){
   if(OKAMI&&OKAMI.today){say='<b>あさやん：</b>'+escapeHtml(OKAMI.today);}
   else{var l=linesFor('home');say='<b>あさやん：</b>'+(l.length?escapeHtml(l[Math.floor(Math.random()*l.length)].text):'おかえり！ 今日も来てくれて嬉しいよ。');}
   document.getElementById('homeSay').innerHTML=say;
-  var cm=document.getElementById('chochoMenu');if(cm){cm.style.display=(ME&&(ME.role==='owner'||ME.role==='admin'))?'block':'none';}
+  var cm=document.getElementById('chochoMenu');if(cm){cm.style.display=(ME&&(ME.role==='owner'||ME.role==='admin'))?'flex':'none';}
   refreshLinkBadge();
 }
 
