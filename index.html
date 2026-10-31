@@ -315,6 +315,28 @@ html,body{height:100%;background:radial-gradient(130% 90% at 50% 0%, #1c1008 0%,
 .nrpick .nr{width:auto;}
 .nrpick .nrl{font-size:.56rem;white-space:normal;}
 .nrauto{font-size:.72rem;color:#c9b48c;margin-top:6px;}
+.dhero{position:relative;margin:-14px -14px 0;height:118px;background:radial-gradient(120% 140% at 50% 0%,var(--c1),var(--c2) 75%);overflow:visible;}
+.dhero .dbg{position:absolute;inset:0;overflow:hidden;}
+.dhero .dbg img{width:100%;height:100%;object-fit:cover;filter:blur(14px) brightness(.7);transform:scale(1.2);}
+.dhero::after{content:'';position:absolute;left:0;right:0;bottom:0;height:40px;background:linear-gradient(180deg,transparent,rgba(12,7,3,.6));}
+.dhero .dst{position:absolute;top:10px;right:12px;z-index:2;}
+.dhero .dst .bdg{position:static;display:inline-block;font-size:.7rem;font-weight:800;border-radius:999px;padding:4px 10px;box-shadow:0 2px 6px rgba(0,0,0,.35);}
+.dface{position:absolute;left:50%;bottom:-44px;transform:translateX(-50%);z-index:3;width:96px;height:96px;border-radius:50%;border:4px solid #1c1108;box-shadow:0 0 0 2px #caa45a,0 8px 20px rgba(0,0,0,.5);background:radial-gradient(circle at 50% 35%,var(--c1),var(--c2));display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.dface img{width:100%;height:100%;object-fit:cover;}
+.dface span{font-family:'Dela Gothic One',sans-serif;color:#fff7e0;font-size:2.6rem;text-shadow:0 3px 0 rgba(0,0,0,.25);}
+.dname{text-align:center;padding:52px 0 4px;}
+.dname .nm{font-family:'Zen Maru Gothic',sans-serif;font-weight:900;color:#f7ecd4;font-size:1.4rem;letter-spacing:.04em;}
+.dname .co{font-size:.84rem;color:#c9b48c;margin-top:2px;}
+.dchips{display:flex;justify-content:center;gap:6px;flex-wrap:wrap;margin-top:9px;}
+.dnr{display:inline-flex;align-items:center;gap:5px;background:linear-gradient(135deg,var(--na),var(--nb));color:#fff;border-radius:999px;padding:3px 11px 3px 3px;font-size:.74rem;font-weight:800;}
+.dnr i{font-style:normal;width:20px;height:20px;border-radius:50%;background:#f7efd9;color:var(--nb);display:inline-flex;align-items:center;justify-content:center;font-family:'Dela Gothic One',sans-serif;font-size:.72rem;}
+.dind{display:inline-block;border:1.5px solid rgba(202,164,90,.6);color:#e9d9b6;border-radius:999px;padding:2px 11px;font-size:.74rem;font-weight:700;}
+#detail .met{margin-top:12px;text-align:center;}
+.dsign{position:relative;margin:4px 0 14px;padding:14px 16px 14px 34px;background:linear-gradient(180deg,#f8efdb,#ecdcb8);border:1.5px solid #c9a35c;border-radius:14px;color:#2e1b09;font-weight:800;font-size:1rem;line-height:1.6;box-shadow:0 4px 12px rgba(0,0,0,.35);}
+.dsign .q{position:absolute;left:10px;top:4px;font-family:'Dela Gothic One',serif;font-size:1.8rem;color:#b8925a;}
+.dcard{background:rgba(255,255,255,.04);border:1px solid rgba(202,164,90,.25);border-radius:12px;padding:11px 13px;}
+.dtags{display:flex;flex-wrap:wrap;gap:6px;}
+.dtags span{background:rgba(202,164,90,.16);color:#f5d97a;border-radius:999px;padding:3px 10px;font-size:.78rem;font-weight:700;}
 .dhead{background:linear-gradient(180deg,#f7eeda,#e9d9b6);margin:-14px -14px 14px;padding:20px 16px 16px;text-align:center;border-bottom:2px solid #b8925a;}
 .dhead .face{width:76px;height:76px;border-radius:15px;margin:0 auto 10px;background:radial-gradient(circle at 50% 30%,#caa45a,#6e4a1e);display:flex;align-items:center;justify-content:center;font-family:'Zen Maru Gothic',serif;font-weight:800;color:#fff;font-size:2rem;border:3px solid #7a5520;overflow:hidden;}
 .dhead .face img{width:100%;height:100%;object-fit:cover;}
@@ -475,6 +497,7 @@ html,body{height:100%;background:radial-gradient(130% 90% at 50% 0%, #1c1008 0%,
   <div id="detail" class="win hidden">
     <div class="wtop"><button class="back" onclick="show(DETAIL_BACK||'find')">‹ 戻る</button><h2>冒険者カード</h2></div>
     <div class="wbody"><div id="detailBody"></div></div>
+    <div class="actbar" id="dtAct"></div>
   </div>
 
   <!-- BOARD (quests) -->
@@ -910,17 +933,25 @@ function railGo(btn,dir){var t=btn.parentNode.querySelector('.track');t.scrollBy
 
 function openDetail(p,g,from){
   DETAIL_BACK=(from&&from.back)||'find';
+  var pal=avaPal(p),nd=NOREN_BY[norenOf(p)];
+  var ph=(p.avatar_type==='photo'&&p.avatar_url);
   var metLine=from&&from.questTitle?'<div class="met">📜『'+escapeHtml(from.questTitle)+'』を出した人</div>':(g?'<div class="met">'+(g.kind==='quest'?'📜 ':'🗓 ')+escapeHtml(cleanTitle(g.title))+' で一緒でした</div>':'');
-  var dpal=avaPal(p);
-  var html='<div class="dhead"><div class="face" style="background:radial-gradient(circle at 50% 30%,'+dpal[0]+','+dpal[1]+' 80%);border-color:rgba(0,0,0,.15)">'+faceInner(p)+'</div><div class="nm">'+escapeHtml(p.name)+'</div>'+
-    (p.company?'<div class="co">'+escapeHtml(p.company)+'</div>':'')+
-    (p.industry?'<div class="gy">'+escapeHtml(p.industry)+'</div>':'')+'</div>'+
+  var tags=(p.free_tags&&p.free_tags.length)?p.free_tags:[];
+  var html='<div class="dhero" style="--c1:'+pal[0]+';--c2:'+pal[1]+'">'+
+      '<div class="dbg">'+(ph?'<img src="'+escapeHtml(p.avatar_url)+'" alt="">':'')+'</div>'+
+      '<div class="dst" id="dtState"></div>'+
+      '<div class="dface">'+(ph?'<img src="'+escapeHtml(p.avatar_url)+'" alt="">':'<span>'+escapeHtml(initial(p.name))+'</span>')+'</div>'+
+    '</div>'+
+    '<div class="dname"><div class="nm">'+escapeHtml(p.name||'')+'</div>'+(p.company?'<div class="co">'+escapeHtml(p.company)+'</div>':'')+
+      '<div class="dchips"><span class="dnr" style="--na:'+nd.a+';--nb:'+nd.b+'"><i>'+nd.c+'</i>'+nd.n+'</span>'+(p.industry?'<span class="dind">'+escapeHtml(p.industry)+'</span>':'')+'</div></div>'+
     metLine+
-    (p.tagline?'<div class="dsec"><h3>ひとこと</h3><p>'+escapeHtml(p.tagline)+'</p></div>':'')+
-    (p.detail?'<div class="dsec"><h3>どんな人？</h3><p>'+escapeHtml(p.detail)+'</p></div>':'')+
-    ((p.free_tags&&p.free_tags.length)?'<div class="dsec tags"><h3>タグ</h3>'+p.free_tags.map(function(x){return '<span>#'+escapeHtml(x)+'</span>';}).join('')+'</div>':'');
+    (p.tagline?'<div class="dsign"><span class="q">“</span>'+escapeHtml(p.tagline)+'</div>':'')+
+    (p.detail?'<div class="dsec dcard"><h3>どんな人？</h3><p>'+escapeHtml(p.detail)+'</p></div>':'')+
+    (tags.length?'<div class="dsec dcard"><h3>キーワード</h3><div class="dtags">'+tags.map(function(x){return '<span>#'+escapeHtml(x)+'</span>';}).join('')+'</div></div>':'');
   html+='<div id="linkArea"><div class="meetNote">確認中…</div></div>';
-  document.getElementById('detailBody').innerHTML=html;show('detail');
+  document.getElementById('detailBody').innerHTML=html;
+  document.getElementById('dtAct').innerHTML='<button class="mine" disabled>確認中…</button>';
+  show('detail');
   DETAIL_P=p;renderLinkArea(p);
 }
 var DETAIL_P=null;
@@ -937,25 +968,36 @@ function lineIdBox(lid,nm){
 }
 async function renderLinkArea(p){
   var el=document.getElementById('linkArea');if(!el)return;
+  var act=document.getElementById('dtAct'),st=document.getElementById('dtState');
   var r=await api('connection_info',{target_id:p.id});
-  if(!r.ok){el.innerHTML='';return;}
-  var nm=escapeHtml(p.name),h='';
+  if(!r.ok){el.innerHTML='';act.innerHTML='';return;}
+  var nm=escapeHtml(p.name),h='',a='',badge='';
   if(r.state==='matched'){
+    badge='<span class="bdg matched">🤝 つながり</span>';
     h='<div class="linkBox"><div class="lbT">🤝 '+nm+'さんとつながっています</div>'+lineIdBox(r.line_id,nm)+'</div>';
+    a='<button class="done" disabled>🤝 つながっています</button>';
   }else if(r.state==='incoming_pending'){
-    h='<div class="linkBox"><div class="lbT">📬 '+nm+'さんから「会いたい」が届いています</div><div class="lbL">つながると、お互いのLINE IDが見られるようになるよ。</div><div style="display:flex;gap:8px;margin-top:10px"><button class="okbtn" style="flex:1;margin:0" onclick="respond('+r.request_id+',true)">つながる</button><button class="reqBtn" style="flex:1;margin:0" onclick="respond('+r.request_id+',false)">今回は見送る</button></div></div>';
+    badge='<span class="bdg incoming">📬 申請きてる</span>';
+    h='<div class="linkBox"><div class="lbT">📬 '+nm+'さんから「会いたい」が届いています</div><div class="lbL">つながると、お互いのLINE IDが見られるようになるよ。<br>右下の「つながる」を押すか、今回は見送ることもできるよ。</div><button class="reqBtn" onclick="respond('+r.request_id+',false)">今回は見送る</button></div>';
+    a='<button onclick="respond('+r.request_id+',true)">🤝 つながる</button>';
   }else if(r.state==='outgoing_pending'){
-    h='<div class="linkBox"><div class="lbT">⏳ 申請中（返事待ち）</div><div class="lbL">'+nm+'さんの返事を待っているよ。</div></div>';
+    badge='<span class="bdg outgoing">⏳ 返事待ち</span>';
+    h='<div class="meetNote">'+nm+'さんに「会いたい」を送ってあるよ。返事を待ってね。</div>';
+    a='<button class="mine" disabled>⏳ 返事を待っています</button>';
   }else if(r.is_me){
-    h='<div class="meetNote">これはあなたのカードだよ</div>';
+    h='<div class="meetNote">これはあなたのカード。みんなには、こう見えているよ。</div>';
+    a='<button onclick="openMycard()">✏️ カードを直す</button>';
   }else if(!r.can_request){
-    h='<div class="meetNote">'+nm+'さんとは、まだ同じ集まり・案内で一緒になっていないよ。<br>'+(DETAIL_BACK==='qdetail'?'この案内に参加すると、':'集まりや案内で一緒になると、')+nm+'さんに「会いたい」を送れるようになるよ。</div>';
+    h='<div class="meetNote">'+nm+'さんとは、まだ同じ集まり・案内で一緒になっていないよ。<br>'+(DETAIL_BACK==='qdetail'?'この案内に参加すると、':'集まりや案内で一緒になると、')+'「会いたい」を送れるようになるよ。</div>';
+    a='<button class="mine" disabled>まだ声をかけられないよ</button>';
   }else if(!r.contact_ok){
-    h='<div class="meetNote">この方は今、連絡の受付をお休みしています</div>';
+    h='<div class="meetNote">この方は今、「会いたい」の受付をお休みしています</div>';
+    a='<button class="mine" disabled>受付お休み中</button>';
   }else{
-    h='<button class="meetBtn" onclick="meet(\''+p.id+'\')">🍺 '+nm+'さんに会いたい</button><div class="meetNote">押すと、'+nm+'さんにお知らせが届くよ。<br>OKをもらえたら、お互いのLINE IDが見られるようになるよ。</div>';
+    h='<div class="meetNote">右下の「会いたい」を押すと、'+nm+'さんにお知らせが届くよ。<br>OKをもらえたら、お互いのLINE IDが見られるようになるよ。</div>';
+    a='<button onclick="meet(\''+p.id+'\')">🍺 会いたい</button>';
   }
-  el.innerHTML=h;
+  el.innerHTML=h;act.innerHTML=a;if(st)st.innerHTML=badge;
 }
 async function meet(id){
   toastMsg('あさやん：「ちょっと待っててね…」');
