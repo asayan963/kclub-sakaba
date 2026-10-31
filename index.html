@@ -353,6 +353,16 @@ html,body{height:100%;background:radial-gradient(130% 90% at 50% 0%, #1c1008 0%,
 .nrA button{background:rgba(0,0,0,.25);border:1.5px solid #6e4a1e;color:#e9d9b6;border-radius:8px;padding:6px 11px;font-family:'Zen Maru Gothic',sans-serif;font-size:.78rem;font-weight:700;cursor:pointer;}
 .nrA button.pri{background:linear-gradient(180deg,#f0c060,#c98f2a);color:#2a1600;border-color:#c98f2a;}
 .nrA button.del{border-color:#a55;color:#f1b0a8;}
+.nrprev{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.04);border:1px solid rgba(202,164,90,.3);border-radius:12px;padding:8px 12px;margin:4px 0 10px;}
+.nrpt b{color:#f5d97a;font-size:.95rem;}
+.nrpt{color:#e9d9b6;font-size:.84rem;}
+.nrpt small{display:block;color:#a8977a;font-size:.7rem;margin-top:3px;line-height:1.45;}
+.nrpick2{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;}
+.nrp2{background:none;border:0;border-radius:10px;padding:4px 0 3px;display:flex;flex-direction:column;align-items:center;cursor:pointer;-webkit-tap-highlight-color:transparent;}
+.nrp2 .nrl{font-size:.54rem;font-weight:800;color:#d9c9a8;line-height:1.2;text-align:center;margin-top:2px;}
+.nrp2.on{background:rgba(245,197,24,.16);box-shadow:0 0 0 1.5px #f5c518 inset;}
+.nrp2.on .nrl{color:#f5d97a;}
+.nrp2:active{transform:scale(.94);}
 .dhead{background:linear-gradient(180deg,#f7eeda,#e9d9b6);margin:-14px -14px 14px;padding:20px 16px 16px;text-align:center;border-bottom:2px solid #b8925a;}
 .dhead .face{width:76px;height:76px;border-radius:15px;margin:0 auto 10px;background:radial-gradient(circle at 50% 30%,#caa45a,#6e4a1e);display:flex;align-items:center;justify-content:center;font-family:'Zen Maru Gothic',serif;font-weight:800;color:#fff;font-size:2rem;border:3px solid #7a5520;overflow:hidden;}
 .dhead .face img{width:100%;height:100%;object-fit:cover;}
@@ -851,6 +861,8 @@ var NOREN_IMG={money:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAADACAMA
 function norenImg(word,cat,w){w=w||62;var isA=/^[\x00-\x7F]+$/.test(word);var n=word.length;
   var fs=isA?Math.min(15,46/(n*0.62)):(n<=2?15:n===3?13:n===4?10.5:9);
   return '<span class="nrimg" style="width:'+w+'px;height:'+Math.round(w*192/180)+'px"><img src="'+NOREN_IMG[cat]+'" alt=""><span class="nrw'+(isA?' h':'')+'" style="font-size:'+fs+'px">'+(isA?escapeHtml(word):word.split('').map(escapeHtml).join('<br>'))+'</span></span>';}
+function nrPickerHtml(cur,fn){return '<div class="nrpick2">'+NOREN.map(function(d){return '<button type="button" class="nrp2'+(cur===d.k?' on':'')+'" onclick="'+fn+'(\''+d.k+'\',this)"><span class="nrimg" style="width:46px;height:49px"><img src="'+NOREN_IMG[d.k]+'" alt=""></span><span class="nrl">'+d.n+'</span></button>';}).join('')+'</div>';}
+function nrPreviewHtml(word,cat,auto){var d=NOREN_BY[cat];return '<div class="nrprev">'+norenImg(word?indShort(normInd(word)||word):'ほか',cat,64)+'<div class="nrpt"><b>'+escapeHtml(d.n)+'</b>ののれんに並ぶよ<small>'+(auto?'業種の言葉から自動で選んでいます。違ったら下から選び直してね':'あなたが選んだグループです')+'</small></div></div>';}
 var NR_LIST=[];
 function renderNoren(){
   var el=document.getElementById('fnoren');if(!el)return;
@@ -1215,6 +1227,7 @@ function renderMycard(){
     '<div class="field"><label>なまえ</label><input id="f_name"'+inp+' value="'+escapeHtml(m.name||'')+'"></div>'+
     '<div class="field"><label>会社名・屋号（任意）</label><input id="f_company"'+inp+' value="'+escapeHtml(m.company||'')+'"></div>'+
     '<div class="field"><label>業種（任意・自由に）</label><div class="ex">この言葉が、そのまま「仲間をさがす」ののれんになるよ（短く書くと読みやすい）</div><input id="f_industry"'+inp+' value="'+escapeHtml(m.industry||'')+'" placeholder="例：保険業／不動産投資"></div>'+
+    '<div class="field"><label>のれんのグループ</label><div id="mcNoren"></div></div>'+
     '<div class="field"><label>ひとこと（カードの看板）</label><div class="ex">何をしている人か、ひと目で分かる一行</div><input id="f_tagline"'+inp+' value="'+escapeHtml(m.tagline||'')+'" placeholder="例：浅草で居酒屋をやっています"></div>'+
     '<div class="fgh">くわしく <small>カードをタップした人に見えます</small></div>'+
     '<div class="field"><label>どんな人？（任意）</label><textarea id="f_detail"'+inp+' placeholder="仕事やサービスの中身、こんな相談OKなど">'+escapeHtml(m.detail||'')+'</textarea></div>'+
@@ -1226,14 +1239,13 @@ function renderMycard(){
   mcNorenRender();mcPreview();
 }
 function mcGuess(){var v=function(id){var e=document.getElementById(id);return e?e.value:'';};return guessNoren({industry:v('f_industry'),company:v('f_company'),tagline:v('f_tagline')});}
-function mcNorenRender(){var el=document.getElementById('mcNoren');if(!el)return;var cur=MC_NOREN||mcGuess();
-  el.innerHTML=NOREN.map(function(d){return '<button type="button" class="nr'+(cur===d.k?' on':'')+'" onclick="mcPickNoren(\''+d.k+'\',this)">'+norenSvg(d,44)+'<span class="nrl">'+d.n+'</span></button>';}).join('');
-  document.getElementById('mcNrAuto').innerHTML=MC_NOREN?('「'+NOREN_BY[MC_NOREN].n+'」に決めています　<a href="javascript:void(0)" onclick="mcPickNoren(\'\')" style="color:#f5d97a">業種から自動で選ぶ</a>'):('業種から自動で「'+NOREN_BY[cur].n+'」を選んでいます。ちがえばタップで選び直してね');}
-function mcPickNoren(k,btn){if(btn){btn.classList.remove('swing');void btn.offsetWidth;btn.classList.add('swing');}MC_NOREN=k;setTimeout(function(){mcNorenRender();mcChanged();},btn?220:0);}
+function mcNorenRender(){var el=document.getElementById('mcNoren');if(!el)return;var cur=MC_NOREN||mcGuess();var ind=(document.getElementById('f_industry')||{}).value||'';
+  el.innerHTML=nrPreviewHtml(ind,cur,!MC_NOREN)+nrPickerHtml(cur,'mcPickNoren')+(MC_NOREN?'<div class="nrauto"><a href="javascript:void(0)" onclick="mcPickNoren(\'\')" style="color:#f5d97a">自動で選ぶにもどす</a></div>':'');}
+function mcPickNoren(k,btn){MC_NOREN=k;mcNorenRender();mcChanged();}
 function mcPreview(){var el=document.getElementById('mcPrev');if(!el||!ME)return;var v=function(id){var e=document.getElementById(id);return e?e.value:'';};
   var p={id:ME.id,noren:MC_NOREN||null,name:v('f_name')||'なまえ',company:v('f_company'),industry:v('f_industry'),tagline:v('f_tagline')||'（ひとことを書くとここに出ます）',avatar_type:ME.avatar_type,avatar_url:ME.avatar_url,link:'none'};
   FIND_ANIM=false;el.innerHTML=pcHtml(p,0);}
-function mcChanged(){if(!MC_NOREN)mcNorenRender();mcPreview();var sb=document.getElementById('saveBtn');sb.classList.add('dirty');sb.textContent='変更を保存する';}
+function mcChanged(){mcNorenRender();mcPreview();var sb=document.getElementById('saveBtn');sb.classList.add('dirty');sb.textContent='変更を保存する';}
 function setContact(v){if(CONTACT!==v)setTimeout(mcChanged,0);CONTACT=v;document.getElementById('ct_on').classList.toggle('on',v);document.getElementById('ct_off').classList.toggle('on',!v);}
 function mcPhoto(input){var file=input.files&&input.files[0];if(!file)return;
   resizeImage(file,360,function(dataUrl){if(!dataUrl){toastMsg('この画像は読めなかった…');return;}
@@ -1289,6 +1301,7 @@ function renderWiz(){
   document.getElementById('wizSay').innerHTML='<b>あさやん：</b>'+s.say+hint;
   var f=document.getElementById('wizField');var val=wizData[s.key];if(s.key==='name'&&val===undefined&&NIPPO_NAME)val=NIPPO_NAME;
   if(s.type==='text')f.innerHTML='<div class="field"><input id="wizInput" value="'+escapeHtml(val||'')+'" placeholder="'+escapeHtml(s.ph||'')+'"></div>';
+  if(s.key==='industry'){f.innerHTML+='<div id="wizNr"></div>';var wi=document.getElementById('wizInput');wi.setAttribute('oninput','wizNrRender()');setTimeout(wizNrRender,0);}
   else if(s.type==='textarea')f.innerHTML='<div class="field"><textarea id="wizInput" placeholder="'+escapeHtml(s.ph||'')+'">'+escapeHtml(val||'')+'</textarea></div>';
   else if(s.type==='tags')f.innerHTML='<div class="field"><input id="wizInput" value="'+escapeHtml((val||[]).join(', '))+'" placeholder="'+escapeHtml(s.ph||'')+'"></div>';
   else if(s.type==='contact')f.innerHTML='<div class="toggle"><button id="wc_on" class="'+(wizData.contact_ok!==false?'on':'')+'" onclick="wizContact(true)">受け取る</button><button id="wc_off" class="'+(wizData.contact_ok===false?'on':'')+'" onclick="wizContact(false)">今はオフ</button></div>';
@@ -1303,6 +1316,8 @@ function renderWiz(){
   document.getElementById('wizBtns').innerHTML=btns;
   setTimeout(function(){var inp=document.getElementById('wizInput');if(inp)inp.focus();},60);
 }
+function wizNrRender(){var el=document.getElementById('wizNr');if(!el)return;var w=(document.getElementById('wizInput')||{}).value||'';if(!w.trim()){el.innerHTML='<div class="nrauto">書くと、どののれんに並ぶか出てくるよ</div>';return;}var cur=wizData.noren||guessNoren({industry:w});el.innerHTML=nrPreviewHtml(w,cur,!wizData.noren)+nrPickerHtml(cur,'wizPickNoren');}
+function wizPickNoren(k){wizData.noren=k;wizNrRender();}
 function wizContact(v){wizData.contact_ok=v;document.getElementById('wc_on').classList.toggle('on',v);document.getElementById('wc_off').classList.toggle('on',!v);}
 function saveWizCurrent(){var s=WIZ[wizI];var inp=document.getElementById('wizInput');
   if(s.type==='text'||s.type==='textarea'){if(inp)wizData[s.key]=inp.value.trim();}
@@ -1324,7 +1339,7 @@ function wizPhoto(input){var file=input.files&&input.files[0];if(!file)return;
       if(r.ok){ME=r.member;document.getElementById('wizAva').innerHTML=avaBox(ME.avatar_url,wizData.name||NIPPO_NAME,90);document.getElementById('wizPhotoMsg').textContent='写真を設定したよ！';}
       else{document.getElementById('wizPhotoMsg').textContent='うまく上げられなかった…もう一度試してね';}});});}
 async function finishWiz(){
-  var patch={name:wizData.name,company:wizData.company||'',tagline:wizData.tagline,detail:wizData.detail||'',industry:wizData.industry,free_tags:wizData.free_tags||[],contact_ok:wizData.contact_ok!==false,line_id:(wizData.line_id||'').trim()};
+  var patch={name:wizData.name,company:wizData.company||'',tagline:wizData.tagline,detail:wizData.detail||'',industry:wizData.industry,noren:wizData.noren||null,free_tags:wizData.free_tags||[],contact_ok:wizData.contact_ok!==false,line_id:(wizData.line_id||'').trim()};
   var r=await api('save_profile',{patch:patch});if(r.ok)ME=r.member;
   JUST_REGISTERED=true;
   openMycard();
@@ -1446,7 +1461,7 @@ async function lnDel(id){var x=lnFind(id);if(!x)return;if(!window.confirm||!conf
 
 /* 帳場：のれんの振り分け */
 var NR_MEMBERS=[];
-function nrWords(){var m={};NR_MEMBERS.forEach(function(x){if(!x.active||!x.industry)return;var k=normInd(x.industry);if(!k)return;if(!m[k])m[k]={k:k,n:0,names:[],cat:guessNoren({industry:x.industry,company:x.company,tagline:x.tagline}),rule:norenRule(k)};m[k].n++;if(m[k].names.length<4)m[k].names.push(x.name);});return Object.keys(m).map(function(k){return m[k];});}
+function nrWords(){var m={};NR_MEMBERS.forEach(function(x){if(!x.active||!x.industry||x.noren)return;var k=normInd(x.industry);if(!k)return;if(!m[k])m[k]={k:k,n:0,names:[],cat:guessNoren({industry:x.industry,company:x.company,tagline:x.tagline}),rule:norenRule(k)};m[k].n++;if(m[k].names.length<4)m[k].names.push(x.name);});return Object.keys(m).map(function(k){return m[k];});}
 async function nrBadgeRefresh(){var r=await api('admin_members',{});if(!r.ok)return;NR_MEMBERS=r.members||[];var n=nrWords().filter(function(w){return w.cat==='other'&&!w.rule;}).length;var b=document.getElementById('nrBadge');if(b){if(n){b.textContent=n;b.classList.remove('hidden');}else b.classList.add('hidden');}}
 function nrSelect(id,cur){return '<select id="'+id+'" class="nrsel2">'+NOREN.map(function(d){return '<option value="'+d.k+'"'+(d.k===cur?' selected':'')+'>'+d.n+'</option>';}).join('')+'</select>';}
 async function loadChoNoren(){
