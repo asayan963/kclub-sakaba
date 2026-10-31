@@ -212,15 +212,17 @@ html,body{height:100%;background:radial-gradient(130% 90% at 50% 0%, #1c1008 0%,
 .actbar button.done{background:rgba(63,155,110,.18);color:#9fe0bd;border:1.5px solid #3f9b6e;box-shadow:none;}
 .actbar button.mine{background:rgba(143,193,169,.14);color:#bfe3d3;border:1.5px solid #8fc1a9;box-shadow:none;}
 /* ===== ホームのメニュー（タイル） ===== */
-.tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-.tile{position:relative;text-align:left;background:linear-gradient(180deg,#2c1a0e,#1a0e06);border:1.5px solid #caa45a;border-radius:14px;padding:10px 12px 9px;cursor:pointer;color:#f3e7cf;min-height:72px;transition:transform .1s;}
-.tile:active{transform:scale(.97);}
-.tile .ti{font-size:1.3rem;line-height:1;}
-.tile .tn{font-family:'Zen Maru Gothic',sans-serif;font-weight:900;color:#f5d97a;font-size:.95rem;margin-top:5px;letter-spacing:.02em;}
-.tile .td{font-size:.68rem;color:#bba987;margin-top:2px;line-height:1.35;}
-.tile.wide{grid-column:1/-1;min-height:0;display:flex;align-items:center;gap:10px;padding:10px 12px;}
-.tile.wide .tn{margin-top:0;}
-.tile .badge{position:absolute;top:9px;right:9px;margin:0;}
+.tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+.tile{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:linear-gradient(180deg,#2c1a0e,#1a0e06);border:1.5px solid #caa45a;border-radius:14px;padding:10px 2px 8px;cursor:pointer;color:#f3e7cf;min-height:74px;transition:transform .1s;}
+.tile:active{transform:scale(.95);}
+.tile .ti{font-size:1.5rem;line-height:1;}
+.tile .tn{font-family:'Zen Maru Gothic',sans-serif;font-weight:900;color:#f5d97a;font-size:.72rem;margin-top:6px;line-height:1.25;letter-spacing:0;}
+.tile .td{display:none;}
+.tile.wide{grid-column:1/-1;min-height:0;flex-direction:row;gap:10px;padding:8px 12px;justify-content:flex-start;text-align:left;}
+.tile.wide .ti{font-size:1.15rem;}
+.tile.wide .tn{margin-top:0;font-size:.85rem;}
+.tile.wide .td{display:block;font-size:.66rem;color:#bba987;}
+.tile .badge{position:absolute;top:5px;right:5px;margin:0;}
 .fgh{display:flex;align-items:center;gap:8px;margin:18px 0 10px;font-family:'Zen Maru Gothic',sans-serif;font-weight:900;color:#f5d97a;font-size:.88rem;letter-spacing:.04em;}
 .fgh::after{content:'';flex:1;height:1px;background:rgba(202,164,90,.35);}
 .fgh small{font-weight:700;color:#a8977a;font-size:.68rem;letter-spacing:0;}
@@ -228,6 +230,19 @@ html,body{height:100%;background:radial-gradient(130% 90% at 50% 0%, #1c1008 0%,
 .mcprev .mcpl{font-size:.72rem;color:#c9b48c;}
 .mcprev .pc{flex:none;width:150px;animation:none;cursor:default;}
 .actbar button.dirty{animation:pulse 2s ease-in-out infinite;}
+.rec{margin:-4px 0 12px;}
+.rec .rl{display:flex;align-items:center;gap:6px;font-size:.74rem;font-weight:800;color:#f5d97a;margin-bottom:6px;}
+.rec .rl span{font-weight:600;color:#a8977a;font-size:.66rem;}
+.rec .rx{margin-left:auto;background:none;border:0;color:#a8977a;font-size:.8rem;cursor:pointer;padding:2px 4px;}
+.rec .rc{display:flex;align-items:center;gap:10px;background:linear-gradient(180deg,#f8efdb,#ecdcb8);border:1.5px solid #c9a35c;border-radius:13px;padding:8px 10px;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.35);animation:cardIn .45s both;}
+.rec .rc:active{transform:scale(.98);}
+.rec .rav{width:40px;height:40px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:1.05rem;background:radial-gradient(circle at 50% 35%,var(--c1,#caa45a),var(--c2,#6e4a1e));overflow:hidden;}
+.rec .rav.q{background:#3a2410;font-size:1.2rem;}
+.rec .rav img{width:100%;height:100%;object-fit:cover;}
+.rec .rt{flex:1;min-width:0;display:flex;flex-direction:column;}
+.rec .rt b{color:#2e1b09;font-size:.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.rec .rt small{color:#6a4c26;font-size:.7rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.rec .rgo{flex:none;font-size:.72rem;font-weight:800;color:#fff;background:#6e4a1e;border-radius:999px;padding:4px 10px;}
 .dhead{background:linear-gradient(180deg,#f7eeda,#e9d9b6);margin:-14px -14px 14px;padding:20px 16px 16px;text-align:center;border-bottom:2px solid #b8925a;}
 .dhead .face{width:76px;height:76px;border-radius:15px;margin:0 auto 10px;background:radial-gradient(circle at 50% 30%,#caa45a,#6e4a1e);display:flex;align-items:center;justify-content:center;font-family:'Zen Maru Gothic',serif;font-weight:800;color:#fff;font-size:2rem;border:3px solid #7a5520;overflow:hidden;}
 .dhead .face img{width:100%;height:100%;object-fit:cover;}
@@ -354,11 +369,12 @@ html,body{height:100%;background:radial-gradient(130% 90% at 50% 0%, #1c1008 0%,
   <div id="home" class="win hidden">
     <div class="wbody">
       <div class="say" id="homeSay"><b>あさやん：</b>おかえり！</div>
+      <div id="homeRec"></div>
       <div class="tiles">
-        <button class="tile" onclick="show('find')"><div class="ti">🍺</div><div class="tn">仲間をさがす</div><div class="td">集まりで一緒だった仲間</div></button>
-        <button class="tile" onclick="show('board')"><div class="ti">📜</div><div class="tn">クエスト掲示板</div><div class="td">案内を見る・出す</div></button>
-        <button class="tile" onclick="show('links')"><span id="linkBadge" class="badge hidden"></span><div class="ti">📬</div><div class="tn">つながり</div><div class="td">「会いたい」とLINE ID</div></button>
-        <button class="tile" onclick="openMycard()"><div class="ti">🪪</div><div class="tn">自分のカード</div><div class="td">プロフィールを直す</div></button>
+        <button class="tile" onclick="show('find')"><div class="ti">🍺</div><div class="tn">仲間を<br>さがす</div><div class="td">集まりで一緒だった仲間</div></button>
+        <button class="tile" onclick="show('board')"><div class="ti">📜</div><div class="tn">クエスト<br>掲示板</div><div class="td">案内を見る・出す</div></button>
+        <button class="tile" onclick="show('links')"><span id="linkBadge" class="badge hidden"></span><div class="ti">📬</div><div class="tn">つながり<br>&nbsp;</div><div class="td">「会いたい」とLINE ID</div></button>
+        <button class="tile" onclick="openMycard()"><div class="ti">🪪</div><div class="tn">自分の<br>カード</div><div class="td">プロフィールを直す</div></button>
         <button class="tile wide" id="chochoMenu" style="display:none" onclick="openChocho()"><div class="ti">🏮</div><div><div class="tn">帳場（管理）</div><div class="td">申請の様子・ひとこと・会員</div></div></button>
       </div>
     </div>
@@ -405,7 +421,7 @@ html,body{height:100%;background:radial-gradient(130% 90% at 50% 0%, #1c1008 0%,
 
   <!-- QUEST DETAIL -->
   <div id="qdetail" class="win hidden">
-    <div class="wtop"><button class="back" onclick="show('board')">‹ 戻る</button><h2>案内の詳細</h2></div>
+    <div class="wtop"><button class="back" onclick="show(QD_BACK||'board')">‹ 戻る</button><h2>案内の詳細</h2></div>
     <div class="wbody"><div id="qdBody"></div></div>
     <div class="actbar" id="qdAct"></div>
   </div>
@@ -528,13 +544,20 @@ document.getElementById('enter').addEventListener('click',function(){
   setTimeout(function(){dialogue.classList.add('show');type();},1900);
 });
 function linesFor(scene){if(!OKAMI||!OKAMI.lines)return [];return OKAMI.lines.filter(function(l){return l.scene===scene;});}
+function pickLine(scene){var l=linesFor(scene);return l.length?l[Math.floor(Math.random()*l.length)].text:'';}
 function greetingMsg(){
-  var h=new Date().getHours();
-  var scene=(ENTERED&&ENTERED.status==='returning')?(h<11?'revisit_morning':h<17?'revisit_noon':'revisit_night'):'intro';
-  var lines=linesFor(scene);
-  if(!lines.length&&ENTERED&&ENTERED.status==='returning')lines=linesFor('revisit_random');
-  if(!lines.length)return 'ようこそ、Ｋクラブ酒場へ。\nわたしはあさやん。\nさあ、今日はどんな仲間に\n会えるかしらね。';
-  return lines.map(function(l){return l.text;}).join('\n');
+  if(!(ENTERED&&ENTERED.status==='returning')){
+    var lines=linesFor('intro');
+    if(!lines.length)return 'ようこそ、Ｋクラブ酒場へ。\nわたしはあさやん。\nさあ、今日はどんな仲間に\n会えるかしらね。';
+    return lines.map(function(l){return l.text;}).join('\n');
+  }
+  var d=new Date(),h=d.getHours(),w=d.getDay();
+  var scene=h>=5&&h<11?'greet_morning':h<17&&h>=11?'greet_noon':h>=17&&h<21?'greet_evening':h>=21?'greet_night':'greet_late';
+  var msg='';
+  if(scene!=='greet_late'&&Math.random()<0.35){msg=(w===5?pickLine('greet_fri'):w===1?pickLine('greet_mon'):(w===0||w===6)?pickLine('greet_weekend'):'');}
+  if(!msg)msg=pickLine(scene)||pickLine('revisit_random')||'おかえり、待ってたよ。';
+  if(Math.random()<0.4){var se=pickLine('season_'+(d.getMonth()+1));if(se)msg+='\n'+se;}
+  return msg;
 }
 var typeMsg='';
 function type(){
@@ -583,13 +606,60 @@ function show(id){
 }
 
 /* home */
+var HOME_AT=0;
+function todayKey(){var d=new Date();return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();}
+function seedPick(arr,salt){if(!arr.length)return null;var s=todayKey()+(ME&&ME.id||'')+salt,h=0;for(var i=0;i<s.length;i++)h=(h*31+s.charCodeAt(i))>>>0;return arr[h%arr.length];}
+function homeSituation(){
+  var all=uniqFellows();
+  var inc=all.filter(function(x){return x.p.link==='incoming';});
+  if(inc.length)return inc[0].p.name+'さんから「会いたい」が届いてるよ。<br>下の「つながり」を見てごらん。';
+  var opts=[];
+  var nw=all.filter(function(x){return x.p.is_new;});
+  if(nw.length)opts.push('新しい仲間が'+nw.length+'人、酒場に来たよ。<br>「仲間をさがす」でのぞいてみて。');
+  var now=Date.now();
+  var nq=(QUESTS||[]).filter(function(q){return !q.mine&&q.created_at&&now-Date.parse(q.created_at)<3*86400000;});
+  if(nq.length)opts.push('掲示板に新しい案内が出てるよ。<br>『'+escapeHtml(nq[0].title)+'』');
+  return opts.length?opts[Math.floor(Math.random()*opts.length)]:'';
+}
 function renderHome(){
   var say='';
-  if(OKAMI&&OKAMI.today){say='<b>あさやん：</b>'+escapeHtml(OKAMI.today);}
-  else{var l=linesFor('home');say='<b>あさやん：</b>'+(l.length?escapeHtml(l[Math.floor(Math.random()*l.length)].text):'おかえり！ 今日も来てくれて嬉しいよ。');}
-  document.getElementById('homeSay').innerHTML=say;
+  if(OKAMI&&OKAMI.today)say=escapeHtml(OKAMI.today);
+  else say=homeSituation()||escapeHtml(pickLine('home')||'おかえり！ 今日も来てくれて嬉しいよ。');
+  document.getElementById('homeSay').innerHTML='<b>あさやん：</b>'+say;
+  renderRec();
   var cm=document.getElementById('chochoMenu');if(cm){cm.style.display=(ME&&(ME.role==='owner'||ME.role==='admin'))?'flex':'none';}
   refreshLinkBadge();
+  if(Date.now()-HOME_AT>60000){HOME_AT=Date.now();
+    Promise.all([api('fellows',{}),api('quest_list',{})]).then(function(rs){
+      if(rs[0].ok)GROUPS=rs[0].groups||[];if(rs[1].ok)QUESTS=rs[1].quests||[];
+      if(CUR_PANEL==='home'&&!(OKAMI&&OKAMI.today)){var sit=homeSituation();if(sit)document.getElementById('homeSay').innerHTML='<b>あさやん：</b>'+sit;}
+      if(CUR_PANEL==='home')renderRec();
+    });
+  }
+}
+var REC=null;
+function renderRec(){
+  var el=document.getElementById('homeRec');if(!el)return;
+  var hidden=false;try{hidden=localStorage.getItem('sakaba_rec_hide')===todayKey();}catch(e){}
+  if(hidden){el.innerHTML='';return;}
+  var cands=uniqFellows().filter(function(x){return x.p.link==='none';});
+  REC=null;
+  if(cands.length){var x=seedPick(cands,'p');REC={type:'p',x:x};
+    var p=x.p,pal=avaPal(p),ph=(p.avatar_type==='photo'&&p.avatar_url);
+    el.innerHTML='<div class="rec"><div class="rl">🍀 今日の出会い<span>あさやんのおすすめ</span><button class="rx" onclick="hideRec(event)" aria-label="今日は閉じる">✕</button></div>'+
+      '<div class="rc" onclick="openRec()"><span class="rav" style="--c1:'+pal[0]+';--c2:'+pal[1]+'">'+(ph?'<img src="'+escapeHtml(p.avatar_url)+'" alt="">':escapeHtml(initial(p.name)))+'</span><span class="rt"><b>'+escapeHtml(p.name)+'</b><small>'+escapeHtml(p.tagline||p.industry||'')+'</small></span><span class="rgo">会ってみる ›</span></div></div>';
+    return;}
+  var qs=(QUESTS||[]).filter(function(q){return !q.mine&&!q.joined;});
+  if(qs.length){var q=seedPick(qs,'q');REC={type:'q',q:q};
+    el.innerHTML='<div class="rec"><div class="rl">🍀 今日のおすすめ案内<button class="rx" onclick="hideRec(event)" aria-label="今日は閉じる">✕</button></div>'+
+      '<div class="rc" onclick="openRec()"><span class="rav q">📜</span><span class="rt"><b>'+escapeHtml(q.title)+'</b><small>'+escapeHtml([q.when_text,q.place].filter(Boolean).join('・')||(q.author?q.author.name+'さんの案内':''))+'</small></span><span class="rgo">見てみる ›</span></div></div>';
+    return;}
+  el.innerHTML='';
+}
+function hideRec(e){if(e)e.stopPropagation();try{localStorage.setItem('sakaba_rec_hide',todayKey());}catch(x){}var el=document.getElementById('homeRec');if(el)el.innerHTML='';toastMsg('あさやん：「また明日、紹介するね」');}
+function openRec(){if(!REC)return;
+  if(REC.type==='p')openDetail(REC.x.p,REC.x.g,{back:'home'});
+  else{var i=(QUESTS||[]).indexOf(REC.q);if(i>=0){openQuest(i);QD_BACK='home';}}
 }
 
 /* ===== 仲間をさがす ===== */
@@ -834,7 +904,7 @@ function renderQuests(){
   }).join('')+'</div>'+(list.length?'':'<div class="fempty">この条件の案内はないよ</div>');
 }
 function openQuest(i){
-  var qq=QUESTS[i];CUR_QI=i;
+  var qq=QUESTS[i];CUR_QI=i;QD_BACK='board';
   var a=qq.author;
   var who=a?('<div class="dsec"><h3>出した人</h3><div class="auCard" onclick="openQuestAuthor()"><div class="auAv">'+avaBox((a.avatar_type==='photo')?a.avatar_url:'',a.name,54)+'</div><div class="auTx"><div class="auNm">'+escapeHtml(a.name)+'</div>'+(a.company||a.industry?'<div class="auSub">'+escapeHtml([a.company,a.industry].filter(Boolean).join('・'))+'</div>':'')+(a.tagline?'<div class="auTg">'+escapeHtml(a.tagline)+'</div>':'')+'</div><div class="auGo">›</div></div><div class="meetNote" style="margin-top:6px">タップすると、プロフィールを全部見られるよ</div></div>'):'';
   var btn = qq.mine
@@ -855,7 +925,7 @@ function openQuest(i){
     '<button class="okbtn" id="qcBtn" onclick="addQComment()">コメントする</button></div>';
   CUR_Q=qq;show('qdetail');loadQComments();
 }
-var CUR_Q=null,CUR_QI=0;
+var CUR_Q=null,CUR_QI=0,QD_BACK='board';
 function openQuestAuthor(){if(!CUR_Q||!CUR_Q.author)return;openDetail(CUR_Q.author,null,{back:'qdetail',questTitle:CUR_Q.title});}
 function fmtShort(d){return d?new Date(d).toLocaleString('ja-JP',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}):'';}
 async function loadQComments(){
