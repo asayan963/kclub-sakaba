@@ -321,6 +321,14 @@ html,body{height:100%;background:radial-gradient(130% 90% at 50% 0%, #1c1008 0%,
 .qaChk{display:flex;align-items:center;gap:6px;font-size:.78rem;color:#e9d9b6;margin-top:7px;}
 .qaL{font-size:.72rem;color:#c9b48c;margin:7px 0 4px;}
 .qaIn{width:100%;background:rgba(255,250,235,.96);border:2px solid #caa45a;border-radius:9px;padding:8px 10px;font-family:'Zen Maru Gothic',sans-serif;font-size:.86rem;color:#3a2410;margin-bottom:6px;}
+.lockBox{text-align:center;padding:18px 8px;color:#f3e6c8;}
+.lockBox .lk{font-size:2.4rem;margin-bottom:6px;}
+.lockBox b{display:block;color:#f5d97a;font-family:'Zen Maru Gothic',sans-serif;font-size:1rem;margin-bottom:8px;}
+.lockBox p{font-size:.84rem;line-height:1.75;margin:0 0 14px;}
+.lockBox .sm{font-size:.72rem;color:#a8977a;line-height:1.6;margin-top:10px;}
+.lockBtn{display:block;width:100%;background:linear-gradient(180deg,#f0c060,#c98f2a);color:#2a1600;border:none;border-radius:12px;padding:14px;font-family:'Zen Maru Gothic',sans-serif;font-weight:800;font-size:1rem;cursor:pointer;text-decoration:none;}
+.lockBtn:disabled{opacity:.6;}
+.lockTop{margin-left:auto;background:rgba(0,0,0,.25);border:1px solid rgba(202,164,90,.6);color:#c9b48c;border-radius:8px;padding:4px 9px;font-size:.7rem;font-family:'Zen Maru Gothic',sans-serif;cursor:pointer;}
 .lnAdd{border-top:1px dashed rgba(202,164,90,.25);padding-top:10px;}
 .lnAdd .a{display:flex;gap:6px;margin-top:6px;}
 .fnoren{padding:6px 0 2px;}
@@ -685,7 +693,7 @@ html,body{height:100%;background:radial-gradient(130% 90% at 50% 0%, #1c1008 0%,
 
   <!-- CHOCHO (帳場 / owner・admin) -->
   <div id="chocho" class="win hidden">
-    <div class="wtop"><button class="back" onclick="show('home')">‹ 戻る</button><h2>帳場</h2></div>
+    <div class="wtop"><button class="back" onclick="show('home')">‹ 戻る</button><h2>帳場</h2><button class="lockTop" onclick="choLock()" aria-label="帳場に鍵をかける">🔒 鍵をかける</button></div>
     <div class="wbody">
       <div class="say"><b>あさやん：</b>おかみ業、おつかれさま。ここで酒場を切り盛りしようね。</div>
       <div class="chTabs">
@@ -722,8 +730,12 @@ html,body{height:100%;background:radial-gradient(130% 90% at 50% 0%, #1c1008 0%,
   <div id="toast" class="toast"></div>
 </div>
 
+<script>/* [@simplewebauthn/browser@10.0.0] */
+!function(e,t){"object"==typeof exports&&"undefined"!=typeof module?t(exports):"function"==typeof define&&define.amd?define(["exports"],t):t((e="undefined"!=typeof globalThis?globalThis:e||self).SimpleWebAuthnBrowser={})}(this,(function(e){"use strict";function t(e){const t=new Uint8Array(e);let r="";for(const e of t)r+=String.fromCharCode(e);return btoa(r).replace(/\+/g,"-").replace(/\//g,"_").replace(/=/g,"")}function r(e){const t=e.replace(/-/g,"+").replace(/_/g,"/"),r=(4-t.length%4)%4,n=t.padEnd(t.length+r,"="),o=atob(n),i=new ArrayBuffer(o.length),a=new Uint8Array(i);for(let e=0;e<o.length;e++)a[e]=o.charCodeAt(e);return i}function n(){return void 0!==window?.PublicKeyCredential&&"function"==typeof window.PublicKeyCredential}function o(e){const{id:t}=e;return{...e,id:r(t),transports:e.transports}}function i(e){return"localhost"===e||/^([a-z0-9]+(-[a-z0-9]+)*\.)+[a-z]{2,}$/i.test(e)}class a extends Error{constructor({message:e,code:t,cause:r,name:n}){super(e,{cause:r}),this.name=n??r.name,this.code=t}}const s=new class{createNewAbortSignal(){if(this.controller){const e=new Error("Cancelling existing WebAuthn API call for new one");e.name="AbortError",this.controller.abort(e)}const e=new AbortController;return this.controller=e,e.signal}cancelCeremony(){if(this.controller){const e=new Error("Manually cancelling existing WebAuthn API call");e.name="AbortError",this.controller.abort(e),this.controller=void 0}}},c=["cross-platform","platform"];function l(e){if(e&&!(c.indexOf(e)<0))return e}function u(e,t){console.warn(`The browser extension that intercepted this WebAuthn API call incorrectly implemented ${e}. You should report this error to them.\n`,t)}function d(){if(!n())return new Promise((e=>e(!1)));const e=window.PublicKeyCredential;return void 0===e.isConditionalMediationAvailable?new Promise((e=>e(!1))):e.isConditionalMediationAvailable()}e.WebAuthnAbortService=s,e.WebAuthnError=a,e.base64URLStringToBuffer=r,e.browserSupportsWebAuthn=n,e.browserSupportsWebAuthnAutofill=d,e.bufferToBase64URLString=t,e.platformAuthenticatorIsAvailable=function(){return n()?PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable():new Promise((e=>e(!1)))},e.startAuthentication=async function(e,c=!1){if(!n())throw new Error("WebAuthn is not supported in this browser");let u;0!==e.allowCredentials?.length&&(u=e.allowCredentials?.map(o));const h={...e,challenge:r(e.challenge),allowCredentials:u},f={};if(c){if(!await d())throw Error("Browser does not support WebAuthn autofill");if(document.querySelectorAll("input[autocomplete$='webauthn']").length<1)throw Error('No <input> with "webauthn" as the only or last value in its `autocomplete` attribute was detected');f.mediation="conditional",h.allowCredentials=[]}let p;f.publicKey=h,f.signal=s.createNewAbortSignal();try{p=await navigator.credentials.get(f)}catch(e){throw function({error:e,options:t}){const{publicKey:r}=t;if(!r)throw Error("options was missing required publicKey property");if("AbortError"===e.name){if(t.signal instanceof AbortSignal)return new a({message:"Authentication ceremony was sent an abort signal",code:"ERROR_CEREMONY_ABORTED",cause:e})}else{if("NotAllowedError"===e.name)return new a({message:e.message,code:"ERROR_PASSTHROUGH_SEE_CAUSE_PROPERTY",cause:e});if("SecurityError"===e.name){const t=window.location.hostname;if(!i(t))return new a({message:`${window.location.hostname} is an invalid domain`,code:"ERROR_INVALID_DOMAIN",cause:e});if(r.rpId!==t)return new a({message:`The RP ID "${r.rpId}" is invalid for this domain`,code:"ERROR_INVALID_RP_ID",cause:e})}else if("UnknownError"===e.name)return new a({message:"The authenticator was unable to process the specified options, or could not create a new assertion signature",code:"ERROR_AUTHENTICATOR_GENERAL_ERROR",cause:e})}return e}({error:e,options:f})}if(!p)throw new Error("Authentication was not completed");const{id:R,rawId:w,response:E,type:g}=p;let A;return E.userHandle&&(A=t(E.userHandle)),{id:R,rawId:t(w),response:{authenticatorData:t(E.authenticatorData),clientDataJSON:t(E.clientDataJSON),signature:t(E.signature),userHandle:A},type:g,clientExtensionResults:p.getClientExtensionResults(),authenticatorAttachment:l(p.authenticatorAttachment)}},e.startRegistration=async function(e){if(!n())throw new Error("WebAuthn is not supported in this browser");const c={publicKey:{...e,challenge:r(e.challenge),user:{...e.user,id:r(e.user.id)},excludeCredentials:e.excludeCredentials?.map(o)}};let d;c.signal=s.createNewAbortSignal();try{d=await navigator.credentials.create(c)}catch(e){throw function({error:e,options:t}){const{publicKey:r}=t;if(!r)throw Error("options was missing required publicKey property");if("AbortError"===e.name){if(t.signal instanceof AbortSignal)return new a({message:"Registration ceremony was sent an abort signal",code:"ERROR_CEREMONY_ABORTED",cause:e})}else if("ConstraintError"===e.name){if(!0===r.authenticatorSelection?.requireResidentKey)return new a({message:"Discoverable credentials were required but no available authenticator supported it",code:"ERROR_AUTHENTICATOR_MISSING_DISCOVERABLE_CREDENTIAL_SUPPORT",cause:e});if("required"===r.authenticatorSelection?.userVerification)return new a({message:"User verification was required but no available authenticator supported it",code:"ERROR_AUTHENTICATOR_MISSING_USER_VERIFICATION_SUPPORT",cause:e})}else{if("InvalidStateError"===e.name)return new a({message:"The authenticator was previously registered",code:"ERROR_AUTHENTICATOR_PREVIOUSLY_REGISTERED",cause:e});if("NotAllowedError"===e.name)return new a({message:e.message,code:"ERROR_PASSTHROUGH_SEE_CAUSE_PROPERTY",cause:e});if("NotSupportedError"===e.name)return 0===r.pubKeyCredParams.filter((e=>"public-key"===e.type)).length?new a({message:'No entry in pubKeyCredParams was of type "public-key"',code:"ERROR_MALFORMED_PUBKEYCREDPARAMS",cause:e}):new a({message:"No available authenticator supported any of the specified pubKeyCredParams algorithms",code:"ERROR_AUTHENTICATOR_NO_SUPPORTED_PUBKEYCREDPARAMS_ALG",cause:e});if("SecurityError"===e.name){const t=window.location.hostname;if(!i(t))return new a({message:`${window.location.hostname} is an invalid domain`,code:"ERROR_INVALID_DOMAIN",cause:e});if(r.rp.id!==t)return new a({message:`The RP ID "${r.rp.id}" is invalid for this domain`,code:"ERROR_INVALID_RP_ID",cause:e})}else if("TypeError"===e.name){if(r.user.id.byteLength<1||r.user.id.byteLength>64)return new a({message:"User ID was not between 1 and 64 characters",code:"ERROR_INVALID_USER_ID_LENGTH",cause:e})}else if("UnknownError"===e.name)return new a({message:"The authenticator was unable to process the specified options, or could not create a new credential",code:"ERROR_AUTHENTICATOR_GENERAL_ERROR",cause:e})}return e}({error:e,options:c})}if(!d)throw new Error("Registration was not completed");const{id:h,rawId:f,response:p,type:R}=d;let w,E,g,A;if("function"==typeof p.getTransports&&(w=p.getTransports()),"function"==typeof p.getPublicKeyAlgorithm)try{E=p.getPublicKeyAlgorithm()}catch(e){u("getPublicKeyAlgorithm()",e)}if("function"==typeof p.getPublicKey)try{const e=p.getPublicKey();null!==e&&(g=t(e))}catch(e){u("getPublicKey()",e)}if("function"==typeof p.getAuthenticatorData)try{A=t(p.getAuthenticatorData())}catch(e){u("getAuthenticatorData()",e)}return{id:h,rawId:t(f),response:{attestationObject:t(p.attestationObject),clientDataJSON:t(p.clientDataJSON),transports:w,publicKeyAlgorithm:E,publicKey:g,authenticatorData:A},type:R,clientExtensionResults:d.getClientExtensionResults(),authenticatorAttachment:l(d.authenticatorAttachment)}},Object.defineProperty(e,"__esModule",{value:!0})}));
+</script>
 <script>
 var EDGE='https://yvfllgldbjroongkhkgg.supabase.co/functions/v1/sakaba';
+var STAFF_SS=null;
 var TOKEN=null, ME=null, OKAMI=null, GROUPS=[], QUESTS=[], ENTERED=null;
 
 function getToken(){
@@ -738,11 +750,25 @@ function getToken(){
   return null;
 }
 function setToken(t){TOKEN=t;try{localStorage.setItem('sakaba_token',t);}catch(e){}}
+var OPEN_CHO=/(^|[#&])cho=1/.test(location.hash||'');
+function stripToken(){
+  try{
+    if(!TOKEN||localStorage.getItem('sakaba_token')!==TOKEN)return; /* スマホに覚えられないときはURLに残す */
+    var u=new URL(location.href);var had=u.searchParams.has('t')||/t=/.test(u.hash);
+    if(!had)return;
+    u.searchParams.delete('t');u.searchParams.delete('openExternalBrowser');u.hash='';
+    history.replaceState(null,'',u.pathname+(u.search||''));
+  }catch(e){}
+}
 async function api(action,extra){
   var body=Object.assign({action:action,token:TOKEN},extra||{});
+  if(STAFF_SS&&!body.staff_session)body.staff_session=STAFF_SS;
   try{
     var r=await fetch(EDGE,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
-    return await r.json();
+    var j=await r.json();
+    if(j&&j.error==='need_staff_auth'){STAFF_SS=null;if(CUR_PANEL==='chocho')renderChoLock();else toastMsg('管理の操作は、帳場で Face ID を通してからできるよ');}
+    if(j&&j.error==='too_many')toastMsg('少し間をあけてから、もう一度ためしてね');
+    return j;
   }catch(e){return {ok:false,error:'network'};}
 }
 function escapeHtml(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
@@ -794,7 +820,7 @@ function type(){
 goHome.addEventListener('click',function(){
   dialogue.classList.add('hidden');
   if(ENTERED&&ENTERED.status==='left'){showLeft();return;}
-  if(ENTERED&&ENTERED.status==='new'){show('consent');}else{show('home');}
+  if(ENTERED&&ENTERED.status==='new'){show('consent');}else{show('home');if(OPEN_CHO&&ME&&(ME.role==='owner'||ME.role==='admin')){OPEN_CHO=false;openChocho();}}
 });
 var CONSENT_MSG='ようこそ。\nここは、集まりで出会った仲間と、\nまたつながれる場所。\n\nそして、\n告知したい人や、\n仲間を募りたい人も\n集まる場所だよ。\n\nこれから、あなたのことを\n少しだけ聞かせてね。\n\nここで答えることは、\n仲間みんなに見える情報になるよ。\nだから、見てもらうつもりで\nしっかり答えてね。\n\n顔写真も、問題なければ\nぜひ載せてね。\n\nそれと、LINEに届いたリンクは\nあなた専用の入口だよ。\nほかの人には送らないでね。\n\nはじめても大丈夫かな？';
 function typeInto(elId,curId,msg,onDone){var el=document.getElementById(elId),cur=document.getElementById(curId),i=0;if(el._tt)clearInterval(el._tt);el.innerHTML='';if(cur)cur.style.display='inline-block';var t=setInterval(function(){if(i>=msg.length){clearInterval(t);el._tt=null;if(cur)cur.style.display='none';if(onDone)onDone();return;}var ch=msg[i++];el.innerHTML+=(ch==='\n')?'<br>':escapeHtml(ch);},30);el._tt=t;}
@@ -1466,7 +1492,7 @@ async function saveProfile(){
 function toastMsg(html){var t=document.getElementById('toast');t.innerHTML=html;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},3400);}
 
 /* ===== 帳場 (admin / owner) ===== */
-function openChocho(){show('chocho');if(ME&&ME.role==='owner')nrBadgeRefresh();['chT_bc','chT_ln','chT_nr','chT_qa'].forEach(function(i){var bt=document.getElementById(i);if(bt)bt.style.display=(ME&&ME.role==='owner')?'':'none';});choTab('req');}
+function openChocho(){show('chocho');if(!STAFF_SS){renderChoLock();return;}var tb=document.querySelector('#chocho .chTabs');if(tb)tb.style.display='';var lt=document.querySelector('#chocho .lockTop');if(lt)lt.style.display='';if(ME&&ME.role==='owner')nrBadgeRefresh();['chT_bc','chT_ln','chT_nr','chT_qa'].forEach(function(i){var bt=document.getElementById(i);if(bt)bt.style.display=(ME&&ME.role==='owner')?'':'none';});choTab('req');}
 function choTab(t){['req','today','mem','bc','ln','nr','qa'].forEach(function(x){document.getElementById('chT_'+x).classList.toggle('on',x===t);});document.getElementById('chBody').innerHTML='<div class="loading">読み込み中…</div>';if(t==='req')loadChoRequests();else if(t==='today')loadChoToday();else if(t==='bc')loadChoBc();else if(t==='ln')loadChoLines();else if(t==='nr')loadChoNoren();else if(t==='qa')loadChoQa();else loadChoMembers();}
 var CHO_STATUS={pending:['返事待ち','chipW'],matched:['つながった','chipG'],declined:['見送り','chipN']};
 function fmtJ(d){return d?new Date(d).toLocaleString('ja-JP',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}):'';}
@@ -1662,6 +1688,49 @@ async function qaDel(id){var f=qaFind(id);if(!f)return;if(!window.confirm||!conf
 async function qaAdd(){var q=(document.getElementById('qaNq').value||'').trim(),a=(document.getElementById('qaNa').value||'').trim();if(!q||!a){toastMsg('質問と答えを書いてね');return;}
   var r=await api('faq_save',{question:q,answer:a,cat:document.getElementById('qaNc').value,go:document.getElementById('qaNg').value||null,active:true});if(r.ok)qaReloadFaq('あさやん：「新しい質問、覚えたよ」');else toastMsg('うまく足せなかった…');}
 
+
+/* ===== 帳場の鍵（Face ID / パスキー） ===== */
+function waLib(){return window.SimpleWebAuthnBrowser?Promise.resolve(window.SimpleWebAuthnBrowser):Promise.reject(new Error('lib'));}
+function inLineApp(){return /\bLine\//i.test(navigator.userAgent||'');}
+function waSupported(){return !!(window.PublicKeyCredential&&navigator.credentials)&&!inLineApp();}
+function safariUrl(){return location.origin+location.pathname+'?openExternalBrowser=1#t='+encodeURIComponent(TOKEN||'')+'&cho=1';}
+async function renderChoLock(){
+  var tb=document.querySelector('#chocho .chTabs');if(tb)tb.style.display='none';var lt=document.querySelector('#chocho .lockTop');if(lt)lt.style.display='none';
+  var b=document.getElementById('chBody');b.innerHTML='<div class="loading">確かめています…</div>';
+  if(!waSupported()){
+    b.innerHTML='<div class="lockBox"><div class="lk">🔒</div><b>帳場は Face ID で開くよ</b><p>LINEの中の画面では Face ID が使えないの。<br>下のボタンで Safari に切り替えてね。</p><a class="lockBtn" href="'+escAttr(safariUrl())+'">🧭 Safari で帳場を開く</a><p class="sm">※ボタンで開けないときは、右上の「…」→「ブラウザで開く」でもOK</p></div>';return;}
+  var r=await api('pk_status',{});
+  if(!r.ok){b.innerHTML='<div class="stub">確かめられなかった…もう一度開いてね</div>';return;}
+  if(r.session_ok){openChocho();return;}
+  if(r.has_passkey){b.innerHTML='<div class="lockBox"><div class="lk">🔒</div><b>帳場は Face ID で開くよ</b><p>ここは酒場の大事な場所。<br>あなた本人か、確かめさせてね。</p><button class="lockBtn" id="lockGo" onclick="choUnlock()">Face ID で開く</button><div id="lockMsg" class="sm"></div></div>';}
+  else{b.innerHTML='<div class="lockBox"><div class="lk">🔑</div><b>はじめに、このスマホを帳場の鍵にしよう</b><p>このスマホの Face ID（または指紋）を、帳場の鍵として登録するよ。<br>次からは、Face ID を通さないと帳場は開かないよ。</p><button class="lockBtn" id="lockGo" onclick="choRegister()">このスマホを鍵にする</button><div id="lockMsg" class="sm">※スマホを替えたり、なくしたりしたときは、開発の担当にお願いすれば登録をやり直せるよ</div></div>';}
+}
+function lockBusy(on,t){var g=document.getElementById('lockGo');if(g){g.disabled=on;if(t)g.textContent=t;}}
+function lockMsg(t){var m=document.getElementById('lockMsg');if(m)m.innerHTML=t;}
+async function choUnlock(){
+  lockBusy(true,'確かめています…');
+  try{
+    var lib=await waLib();var o=await api('pk_auth_options',{});
+    if(!o.ok){lockBusy(false,'Face ID で開く');lockMsg('うまく始められなかった…もう一度押してね');return;}
+    var resp=await lib.startAuthentication(o.options);
+    var v=await api('pk_auth_verify',{response:resp});
+    if(v.ok&&v.staff_session){STAFF_SS=v.staff_session;toastMsg('あさやん：「おかえり、帳場を開けたよ」');openChocho();return;}
+    lockBusy(false,'Face ID で開く');lockMsg('本人だと確かめられなかったよ。もう一度ためしてね');
+  }catch(e){lockBusy(false,'Face ID で開く');lockMsg(e&&e.name==='NotAllowedError'?'やめたか、時間切れになったみたい。もう一度押してね':'うまくいかなかった…もう一度ためしてね');}
+}
+async function choRegister(){
+  lockBusy(true,'登録しています…');
+  try{
+    var lib=await waLib();var o=await api('pk_reg_options',{});
+    if(!o.ok){lockBusy(false,'このスマホを鍵にする');lockMsg('うまく始められなかった…もう一度押してね');return;}
+    var resp=await lib.startRegistration(o.options);
+    var v=await api('pk_reg_verify',{response:resp});
+    if(v.ok&&v.staff_session){STAFF_SS=v.staff_session;toastMsg('あさやん：「このスマホを帳場の鍵にしたよ」');openChocho();return;}
+    lockBusy(false,'このスマホを鍵にする');lockMsg('登録できなかったよ。もう一度ためしてね');
+  }catch(e){lockBusy(false,'このスマホを鍵にする');lockMsg(e&&e.name==='InvalidStateError'?'このスマホは、もう鍵として登録されているよ。「Face ID で開く」を使ってね':'うまくいかなかった…もう一度ためしてね');}
+}
+function choLock(){var st=STAFF_SS;STAFF_SS=null;if(st)api('pk_logout',{staff_session:st});show('home');toastMsg('帳場に鍵をかけたよ');}
+
 /* ===== あさやんからのお知らせ（ポップアップ） ===== */
 var BC_Q=[],BC_SHOW=null,BC_BUSY=false;
 function fmtWhen(d){return d?new Date(d).toLocaleString('ja-JP',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}):'';}
@@ -1815,7 +1884,7 @@ async function nrDelRule(i){var x=NR_RULES[i];if(!x)return;if(!window.confirm||!
 
 /* boot */
 (async function boot(){
-  TOKEN=getToken();
+  TOKEN=getToken();stripToken();
   var ok=await api('okami',{});if(ok.ok)OKAMI=ok;
   if(!TOKEN){document.getElementById('tokenAsk').classList.remove('hidden');return;}
   ENTERED=await api('enter',{});
