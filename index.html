@@ -286,6 +286,35 @@ html,body{height:100%;background:radial-gradient(130% 90% at 50% 0%, #1c1008 0%,
 .lnR textarea,.lnAdd textarea{width:100%;min-height:64px;background:rgba(255,250,235,.96);border:2px solid #caa45a;border-radius:9px;padding:8px 10px;font-family:'Zen Maru Gothic',sans-serif;font-size:.9rem;color:#3a2410;}
 .lnAdd{border-top:1px dashed rgba(202,164,90,.25);padding-top:10px;}
 .lnAdd .a{display:flex;gap:6px;margin-top:6px;}
+.fnoren{padding:6px 0 2px;}
+.nrh{padding:0 16px 6px;font-size:.8rem;font-weight:800;color:#f5d97a;}
+.nrh span{font-weight:600;color:#a8977a;font-size:.68rem;margin-left:4px;}
+.nrrow{display:flex;gap:4px;overflow-x:auto;padding:2px 12px 8px;scrollbar-width:none;-webkit-overflow-scrolling:touch;}
+.nrrow::-webkit-scrollbar{display:none;}
+.nr{flex:none;position:relative;width:70px;background:none;border:0;padding:4px 2px 2px;cursor:pointer;display:flex;flex-direction:column;align-items:center;border-radius:12px;transition:transform .15s,background .2s;-webkit-tap-highlight-color:transparent;}
+.nr .nrsvg{display:block;filter:drop-shadow(0 3px 4px rgba(0,0,0,.5));}
+.nr .nrp{transform-origin:32px 8px;}
+.nr .nrl{margin-top:3px;font-size:.62rem;font-weight:800;color:#e9d9b6;line-height:1.2;text-align:center;white-space:nowrap;}
+.nr .nrc{position:absolute;top:0;right:4px;min-width:18px;height:18px;border-radius:9px;background:#1c1108;border:1.5px solid #caa45a;color:#f5d97a;font-size:.62rem;font-weight:800;display:flex;align-items:center;justify-content:center;padding:0 4px;}
+.nr.on{background:rgba(245,197,24,.14);}
+.nr.on .nrl{color:#f5d97a;}
+.nr.on .nrsvg{filter:drop-shadow(0 0 8px rgba(245,197,24,.6));}
+.nr:active{transform:scale(.95);}
+.nr.swing .p1{animation:nrL .5s ease;transform-origin:12px 8px;}
+.nr.swing .p3{animation:nrR .5s ease;transform-origin:51px 8px;}
+.nr.swing .p2{animation:nrM .5s ease;transform-origin:32px 8px;}
+@keyframes nrL{40%{transform:rotate(14deg) translateX(-2px)}100%{transform:none}}
+@keyframes nrR{40%{transform:rotate(-14deg) translateX(2px)}100%{transform:none}}
+@keyframes nrM{40%{transform:scaleY(.9)}100%{transform:none}}
+.nrsel{display:flex;align-items:center;gap:10px;margin:6px 16px 4px;padding:10px 12px;border-radius:14px;background:linear-gradient(135deg,var(--na),var(--nb));color:#fff;box-shadow:0 4px 14px rgba(0,0,0,.4);}
+.nrsel .nrsi{width:38px;height:38px;border-radius:50%;background:#f7efd9;color:var(--nb);display:flex;align-items:center;justify-content:center;font-family:'Dela Gothic One',sans-serif;font-size:1.2rem;flex:none;}
+.nrsel b{font-size:1rem;}
+.nrsel small{display:block;font-size:.7rem;opacity:.85;}
+.nrsel button{margin-left:auto;background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.4);color:#fff;border-radius:999px;padding:5px 10px;font-family:'Zen Maru Gothic',sans-serif;font-size:.72rem;font-weight:700;cursor:pointer;}
+.nrpick{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;}
+.nrpick .nr{width:auto;}
+.nrpick .nrl{font-size:.56rem;white-space:normal;}
+.nrauto{font-size:.72rem;color:#c9b48c;margin-top:6px;}
 .dhead{background:linear-gradient(180deg,#f7eeda,#e9d9b6);margin:-14px -14px 14px;padding:20px 16px 16px;text-align:center;border-bottom:2px solid #b8925a;}
 .dhead .face{width:76px;height:76px;border-radius:15px;margin:0 auto 10px;background:radial-gradient(circle at 50% 30%,#caa45a,#6e4a1e);display:flex;align-items:center;justify-content:center;font-family:'Zen Maru Gothic',serif;font-weight:800;color:#fff;font-size:2rem;border:3px solid #7a5520;overflow:hidden;}
 .dhead .face img{width:100%;height:100%;object-fit:cover;}
@@ -435,6 +464,7 @@ html,body{height:100%;background:radial-gradient(130% 90% at 50% 0%, #1c1008 0%,
           <div class="sbox" id="sbox"><span class="ic">🔍</span><input id="search" placeholder="名前・業種・キーワードでさがす" oninput="onFindSearch()" enterkeyhint="search" autocomplete="off"><button class="clr" onclick="clearFindSearch()" aria-label="消す">✕</button></div>
           <div class="chips" id="fchips"></div>
         </div>
+        <div id="fnoren" class="fnoren"></div>
         <div id="findList"></div>
       </div>
     </div>
@@ -723,7 +753,7 @@ async function loadFind(keep){
     return;
   }
   document.getElementById('findScroll').scrollTop=0;FIND_VIEW=null;
-  FIND_FILTER='all';FIND_OPEN={};var se=document.getElementById('search');if(se){se.value='';document.getElementById('sbox').classList.remove('has');}
+  FIND_FILTER='all';FIND_OPEN={};FIND_NOREN='';var se=document.getElementById('search');if(se){se.value='';document.getElementById('sbox').classList.remove('has');}
   if(!GROUPS.length){list.innerHTML=[1,2].map(function(){return '<div class="frow"><div class="skh"></div><div class="track">'+'<div class="sk"></div>'.repeat(3)+'</div></div>';}).join('');}
   else renderFind();
   var r=await api('fellows',{});
@@ -731,6 +761,52 @@ async function loadFind(keep){
   renderFind(true);
 }
 function fellowText(p){return ((p.name||'')+' '+(p.company||'')+' '+(p.tagline||'')+' '+(p.industry||'')+' '+((p.free_tags||[]).join(' '))+' '+(p.detail||'')).toLowerCase();}
+/* ===== のれん（業種） ===== */
+var NOREN=[
+ {k:'food',c:'食',n:'飲食',a:'#a8322f',b:'#6a1916',kw:['飲食','居酒屋','料理','カフェ','バー','酒','レストラン','台所','食堂','ラーメン','寿司','弁当','パン','菓子','スイーツ','ケータリング','キッチン','焼肉','そば','うどん']},
+ {k:'shigyo',c:'士',n:'士業・お金',a:'#2d4677',b:'#16264a',kw:['税理士','社労士','行政書士','司法書士','弁護士','会計','保険','金融','FP','ファイナンシャル','銀行','投資','経理','労務','助成金','融資','相続','証券']},
+ {k:'house',c:'家',n:'住まい・建築',a:'#7a5a2a',b:'#45310f',kw:['不動産','建築','リフォーム','工務店','設計','住宅','建設','内装','塗装','電気工事','解体','土木','設備','外構']},
+ {k:'it',c:'技',n:'IT・Web',a:'#1f6a6a',b:'#0d3c3c',kw:['IT','Web','WEB','ウェブ','ホームページ','システム','DX','アプリ','エンジニア','プログラ','AI','SNS','マーケ','広告','EC','ネット']},
+ {k:'create',c:'創',n:'デザイン・制作',a:'#734085',b:'#432450',kw:['デザイン','写真','撮影','フォト','映像','動画','印刷','制作','クリエイ','イラスト','編集','ライター','音楽','Photo','Design']},
+ {k:'beauty',c:'癒',n:'美容・健康',a:'#b0587a',b:'#6a2c45',kw:['整体','美容','エステ','サロン','健康','医療','鍼','マッサージ','ヨガ','ジム','ネイル','ヘア','理容','歯科','クリニック','介護','福祉','看護','薬','整骨','接骨']},
+ {k:'learn',c:'学',n:'学び・相談',a:'#3c7040',b:'#1f4222',kw:['コンサル','教育','講師','研修','コーチ','塾','セミナー','スクール','カウンセ','先生','教室']},
+ {k:'shop',c:'商',n:'お店・ものづくり',a:'#9a6220',b:'#5a3a0a',kw:['小売','販売','卸','製造','物販','メーカー','工場','農','漁','雑貨','アパレル','花','ショップ','商店','職人']},
+ {k:'community',c:'縁',n:'地域・団体',a:'#8a7a2a',b:'#4f4410',kw:['コミュニティ','団体','NPO','地域','社団','財団','自治','観光','イベント','まちづくり']},
+ {k:'other',c:'他',n:'そのほか',a:'#5a5048',b:'#2e2824',kw:[]}
+];
+var NOREN_BY={};NOREN.forEach(function(x){NOREN_BY[x.k]=x;});
+function guessNoren(p){
+  var txts=[p.industry||'',(p.company||'')+' '+(p.tagline||'')];
+  for(var t=0;t<txts.length;t++){var s=txts[t];if(!s.trim())continue;for(var i=0;i<NOREN.length;i++){var d=NOREN[i];for(var j=0;j<d.kw.length;j++){if(s.indexOf(d.kw[j])>=0)return d.k;}}}
+  return 'other';
+}
+function norenOf(p){return (p&&p.noren&&NOREN_BY[p.noren])?p.noren:guessNoren(p||{});}
+var NR_SEQ=0;
+function norenSvg(d,sz){sz=sz||58;var h=Math.round(sz*74/64);var gid='ng_'+d.k+'_'+(++NR_SEQ);
+  return '<svg class="nrsvg" width="'+sz+'" height="'+h+'" viewBox="0 0 64 74" aria-hidden="true"><defs><linearGradient id="'+gid+'" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="'+d.a+'"/><stop offset="1" stop-color="'+d.b+'"/></linearGradient></defs>'+
+  '<rect x="1" y="2" width="62" height="6" rx="3" fill="#6b4520"/><rect x="1" y="2" width="62" height="2" rx="1" fill="#a8743a"/>'+
+  '<g class="nrp"><rect class="p1" x="4" y="8" width="17.5" height="58" rx="1.5" fill="url(#'+gid+')"/><rect class="p2" x="23.25" y="8" width="17.5" height="58" rx="1.5" fill="url(#'+gid+')"/><rect class="p3" x="42.5" y="8" width="17.5" height="58" rx="1.5" fill="url(#'+gid+')"/>'+
+  '<rect x="4" y="60" width="56" height="3" fill="rgba(0,0,0,.25)"/></g>'+
+  '<circle cx="32" cy="32" r="13" fill="#f7efd9"/><circle cx="32" cy="32" r="13" fill="none" stroke="rgba(0,0,0,.2)" stroke-width="1"/>'+
+  '<text x="32" y="38.5" text-anchor="middle" font-family="Dela Gothic One, Zen Maru Gothic, sans-serif" font-size="17" fill="'+d.b+'">'+d.c+'</text></svg>';}
+var FIND_NOREN='';
+function renderNoren(){
+  var el=document.getElementById('fnoren');if(!el)return;
+  var all=uniqFellows().filter(function(x){return passFilter(x.p);});
+  var cnt={};all.forEach(function(x){var k=norenOf(x.p);cnt[k]=(cnt[k]||0)+1;});
+  var ks=NOREN.filter(function(d){return cnt[d.k];});
+  if(FIND_NOREN&&!cnt[FIND_NOREN])FIND_NOREN='';
+  if(ks.length<2&&!FIND_NOREN){el.innerHTML='';el.style.display='none';return;}
+  el.style.display='';
+  el.innerHTML='<div class="nrh">🏮 業種ののれん <span>くぐると、その業種の仲間だけ並ぶよ</span></div><div class="nrrow">'+ks.map(function(d){
+    return '<button class="nr'+(FIND_NOREN===d.k?' on':'')+'" onclick="setNoren(\''+d.k+'\',this)" aria-label="'+d.n+'">'+norenSvg(d,54)+'<span class="nrl">'+d.n+'</span><span class="nrc">'+cnt[d.k]+'</span></button>';
+  }).join('')+'</div>';
+}
+function setNoren(k,btn){
+  if(btn){btn.classList.remove('swing');void btn.offsetWidth;btn.classList.add('swing');}
+  setTimeout(function(){FIND_NOREN=(FIND_NOREN===k)?'':k;var se=document.getElementById('search');if(se&&se.value){se.value='';document.getElementById('sbox').classList.remove('has');}renderFind(true);
+    var sc=document.getElementById('findScroll'),nr=document.getElementById('fnoren');if(sc&&nr&&FIND_NOREN){var y=nr.offsetTop+nr.offsetParent.offsetTop-60;if(sc.scrollTop<y)sc.scrollTo({top:y,behavior:'smooth'});}},btn?260:0);
+}
 function passFilter(p){
   if(FIND_FILTER==='all')return true;
   if(FIND_FILTER==='new')return !!p.is_new;
@@ -747,7 +823,6 @@ function renderChips(){
   if(c.incoming)chips.push(['incoming','📬 申請きてる',c.incoming]);
   if(c.new)chips.push(['new','✨ 新しい仲間',c.new]);
   if(c.matched)chips.push(['matched','🤝 つながり',c.matched]);
-  Object.keys(inds).sort(function(a,b){return inds[b]-inds[a];}).slice(0,8).forEach(function(k){chips.push(['ind:'+k,k,inds[k]]);});
   if(!chips.some(function(x){return x[0]===FIND_FILTER;}))FIND_FILTER='all';
   FIND_CHIPS=chips;
   if(FIND_FILTER==='all'){var fc=document.getElementById('fchips');if(fc)fc.scrollLeft=0;}
@@ -770,7 +845,7 @@ function pcHtml(p,i){
   else if(p.is_new)bdg='<span class="bdg new">NEW</span>';
   var st=FIND_ANIM?'animation-delay:'+Math.min(i,8)*45+'ms':'animation:none';
   return '<div class="pc'+(p.link==='matched'?' matched':'')+'" style="'+st+'" data-id="'+escapeHtml(p.id)+'">'+
-    '<div class="ph" style="--c1:'+pal[0]+';--c2:'+pal[1]+'">'+img+bdg+(p.industry?'<span class="ind">'+escapeHtml(p.industry)+'</span>':'')+'</div>'+
+    '<div class="ph" style="--c1:'+pal[0]+';--c2:'+pal[1]+'">'+img+bdg+(p.industry?'<span class="ind" style="background:'+NOREN_BY[norenOf(p)].a+'e6">'+escapeHtml(p.industry)+'</span>':'')+'</div>'+
     '<div class="bd"><div class="nm">'+escapeHtml(p.name||'')+'</div><div class="co">'+escapeHtml(p.company||'')+'</div><div class="tg">'+escapeHtml(p.tagline||'')+'</div></div></div>';
 }
 function bindCards(root,lookup){[].forEach.call(root.querySelectorAll('.pc'),function(el){var x=lookup[el.getAttribute('data-id')];var gi=el.closest('[data-gi]');var g=gi&&gi.getAttribute('data-gi')!==''?GROUPS[+gi.getAttribute('data-gi')]:null;if(x)el.onclick=function(){saveFindView();openDetail(x.p,g||x.g);};});}
@@ -795,6 +870,14 @@ function renderFind(quiet){
   if(!GROUPS.length){
     list.innerHTML='<div class="fempty"><div class="big">🍺</div>まだ、一緒になった仲間が<br>酒場に来ていないみたい。<br><br>集まりに出たり、クエストに参加すると<br>ここに仲間のカードが並ぶからね。</div>';
     return;
+  }
+  renderNoren();
+  if(FIND_NOREN&&!q){
+    var nd=NOREN_BY[FIND_NOREN];
+    var nh=uniqFellows().filter(function(x){return passFilter(x.p)&&norenOf(x.p)===FIND_NOREN;});
+    nh.forEach(function(x){lookup[x.p.id]=x;});
+    list.innerHTML='<div class="nrsel" style="--na:'+nd.a+';--nb:'+nd.b+'"><span class="nrsi">'+nd.c+'</span><div><b>'+nd.n+'</b>の仲間<small>'+nh.length+'人</small></div><button onclick="setNoren(\''+nd.k+'\')">✕ のれんを出る</button></div><div class="fgrid">'+nh.map(function(x,i){return pcHtml(x.p,i);}).join('')+'</div>';
+    bindCards(list,lookup);return;
   }
   if(q){
     var hits=uniqFellows().filter(function(x){return passFilter(x.p)&&fellowText(x.p).indexOf(q)>=0;});
@@ -1030,11 +1113,11 @@ async function openMycard(){
   if(r.ok)ME=r.member;
   renderMycard();
 }
-var CONTACT=true;
+var CONTACT=true,MC_NOREN='';
 function renderMycard(){
   var b=document.getElementById('mycardBody');
   if(!ME){b.innerHTML='<div class="stub">カードがまだないよ</div>';return;}
-  var m=ME;CONTACT=m.contact_ok!==false;
+  var m=ME;CONTACT=m.contact_ok!==false;MC_NOREN=m.noren||'';
   var okamiIntro=JUST_REGISTERED?'できたね！ これであなたも、この酒場の仲間だよ。<br>これがあなたのカード。みんなには、こう見えているよ。直したいところは、いつでもここで直せるからね。':'これがあなたのカード。みんなには、こう見えているよ。直したいところは、いつでもここで直せるからね。';
   JUST_REGISTERED=false;
   var inp=' oninput="mcChanged()"';
@@ -1046,6 +1129,7 @@ function renderMycard(){
     '<div class="field"><label>なまえ</label><input id="f_name"'+inp+' value="'+escapeHtml(m.name||'')+'"></div>'+
     '<div class="field"><label>会社名・屋号（任意）</label><input id="f_company"'+inp+' value="'+escapeHtml(m.company||'')+'"></div>'+
     '<div class="field"><label>業種（任意・自由に）</label><input id="f_industry"'+inp+' value="'+escapeHtml(m.industry||'')+'" placeholder="例：保険業／不動産投資"></div>'+
+    '<div class="field"><label>のれん（どの業種の仲間に並ぶか）</label><div class="ex">「仲間をさがす」ののれんをくぐった人に見つけてもらえるよ</div><div class="nrpick" id="mcNoren"></div><div class="nrauto" id="mcNrAuto"></div></div>'+
     '<div class="field"><label>ひとこと（カードの看板）</label><div class="ex">何をしている人か、ひと目で分かる一行</div><input id="f_tagline"'+inp+' value="'+escapeHtml(m.tagline||'')+'" placeholder="例：浅草で居酒屋をやっています"></div>'+
     '<div class="fgh">くわしく <small>カードをタップした人に見えます</small></div>'+
     '<div class="field"><label>どんな人？（任意）</label><textarea id="f_detail"'+inp+' placeholder="仕事やサービスの中身、こんな相談OKなど">'+escapeHtml(m.detail||'')+'</textarea></div>'+
@@ -1054,12 +1138,17 @@ function renderMycard(){
     '<div class="field"><label>LINE ID（任意）</label><input id="f_line"'+inp+' value="'+escapeHtml(m.line_id||'')+'" placeholder="例：asayan123" autocapitalize="off" autocorrect="off" spellcheck="false"></div>'+
     '<div class="field"><label>「会いたい」の受付</label><div class="toggle"><button id="ct_on" class="'+(CONTACT?'on':'')+'" onclick="setContact(true)">受け取る</button><button id="ct_off" class="'+(!CONTACT?'on':'')+'" onclick="setContact(false)">今はオフ</button></div></div>';
   var sb=document.getElementById('saveBtn');sb.classList.remove('dirty');sb.textContent='保存する';
-  mcPreview();
+  mcNorenRender();mcPreview();
 }
+function mcGuess(){var v=function(id){var e=document.getElementById(id);return e?e.value:'';};return guessNoren({industry:v('f_industry'),company:v('f_company'),tagline:v('f_tagline')});}
+function mcNorenRender(){var el=document.getElementById('mcNoren');if(!el)return;var cur=MC_NOREN||mcGuess();
+  el.innerHTML=NOREN.map(function(d){return '<button type="button" class="nr'+(cur===d.k?' on':'')+'" onclick="mcPickNoren(\''+d.k+'\',this)">'+norenSvg(d,44)+'<span class="nrl">'+d.n+'</span></button>';}).join('');
+  document.getElementById('mcNrAuto').innerHTML=MC_NOREN?('「'+NOREN_BY[MC_NOREN].n+'」に決めています　<a href="javascript:void(0)" onclick="mcPickNoren(\'\')" style="color:#f5d97a">業種から自動で選ぶ</a>'):('業種から自動で「'+NOREN_BY[cur].n+'」を選んでいます。ちがえばタップで選び直してね');}
+function mcPickNoren(k,btn){if(btn){btn.classList.remove('swing');void btn.offsetWidth;btn.classList.add('swing');}MC_NOREN=k;setTimeout(function(){mcNorenRender();mcChanged();},btn?220:0);}
 function mcPreview(){var el=document.getElementById('mcPrev');if(!el||!ME)return;var v=function(id){var e=document.getElementById(id);return e?e.value:'';};
-  var p={id:ME.id,name:v('f_name')||'なまえ',company:v('f_company'),industry:v('f_industry'),tagline:v('f_tagline')||'（ひとことを書くとここに出ます）',avatar_type:ME.avatar_type,avatar_url:ME.avatar_url,link:'none'};
+  var p={id:ME.id,noren:MC_NOREN||null,name:v('f_name')||'なまえ',company:v('f_company'),industry:v('f_industry'),tagline:v('f_tagline')||'（ひとことを書くとここに出ます）',avatar_type:ME.avatar_type,avatar_url:ME.avatar_url,link:'none'};
   FIND_ANIM=false;el.innerHTML=pcHtml(p,0);}
-function mcChanged(){mcPreview();var sb=document.getElementById('saveBtn');sb.classList.add('dirty');sb.textContent='変更を保存する';}
+function mcChanged(){if(!MC_NOREN)mcNorenRender();mcPreview();var sb=document.getElementById('saveBtn');sb.classList.add('dirty');sb.textContent='変更を保存する';}
 function setContact(v){if(CONTACT!==v)setTimeout(mcChanged,0);CONTACT=v;document.getElementById('ct_on').classList.toggle('on',v);document.getElementById('ct_off').classList.toggle('on',!v);}
 function mcPhoto(input){var file=input.files&&input.files[0];if(!file)return;
   resizeImage(file,360,function(dataUrl){if(!dataUrl){toastMsg('この画像は読めなかった…');return;}
@@ -1067,7 +1156,7 @@ function mcPhoto(input){var file=input.files&&input.files[0];if(!file)return;
 async function saveProfile(){
   var btn=document.getElementById('saveBtn');btn.disabled=true;btn.textContent='保存中…';
   var tags=(document.getElementById('f_tags').value||'').split(',').map(function(s){return s.trim();}).filter(Boolean);
-  var patch={name:document.getElementById('f_name').value,company:document.getElementById('f_company').value,tagline:document.getElementById('f_tagline').value,detail:document.getElementById('f_detail').value,industry:document.getElementById('f_industry').value,free_tags:tags,contact_ok:CONTACT,line_id:(document.getElementById('f_line').value||'').trim()};
+  var patch={name:document.getElementById('f_name').value,company:document.getElementById('f_company').value,tagline:document.getElementById('f_tagline').value,detail:document.getElementById('f_detail').value,industry:document.getElementById('f_industry').value,free_tags:tags,contact_ok:CONTACT,noren:MC_NOREN||null,line_id:(document.getElementById('f_line').value||'').trim()};
   var r=await api('save_profile',{patch:patch});
   btn.disabled=false;btn.textContent='保存する';
   if(r.ok){ME=r.member;btn.classList.remove('dirty');toastMsg('あさやん：「カード、更新しておいたよ」');}
