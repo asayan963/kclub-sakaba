@@ -356,6 +356,15 @@ html,body{height:100%;background:radial-gradient(130% 90% at 50% 0%, #1c1008 0%,
 .evT .cnt{font-size:.72rem;color:#e9d9b6;margin:0 4px 0 2px;}
 .evFace{display:inline-block;margin-right:-6px;}
 .evFace img,.evFace div{border-width:1.5px !important;}
+.evRule{background:rgba(245,197,24,.06);border:1.5px solid rgba(245,197,24,.45);border-radius:12px;padding:10px 12px;margin:0 0 12px;color:#f3e6c8;font-size:.8rem;line-height:1.6;}
+.evRule>b{display:block;color:#f5d97a;font-family:'Zen Maru Gothic',sans-serif;font-size:.88rem;margin-bottom:6px;}
+.evRule ol{list-style:none;margin:0;padding:0;}
+.evRule li{display:flex;gap:8px;align-items:baseline;padding:4px 0;border-top:1px dashed rgba(202,164,90,.25);}
+.evRule li:first-child{border-top:none;}
+.evRule li span{flex:none;width:78px;font-size:.7rem;font-weight:800;color:#2a1600;background:#caa45a;border-radius:999px;text-align:center;padding:1px 0;}
+.evRule li p{margin:0;flex:1;min-width:0;}
+.evRule li b{color:#f5d97a;}
+.evRule small{display:block;color:#a8977a;font-size:.7rem;margin-top:6px;}
 .evLock{font-size:.68rem;color:#c9b48c;margin-left:10px;}
 .evHidden{background:rgba(0,0,0,.25);border:1.5px dashed rgba(202,164,90,.5);border-radius:12px;padding:10px 12px;margin-bottom:9px;color:#e9d9b6;font-size:.8rem;line-height:1.7;}
 .evHidden b{color:#f5d97a;}
@@ -1695,7 +1704,12 @@ function renderHomeEv(){var el=document.getElementById('homeEv');if(!el)return;i
 async function loadEvents(){var b=document.getElementById('evBody');if(!EVENTS)b.innerHTML='<div class="loading">読み込み中…</div>';else renderEvents();var r=await evRefresh();if(!r.ok&&!EVENTS){b.innerHTML='<div class="stub">予定を読み込めなかった…</div>';return;}renderEvents();}
 function goingFaces(list,max){return list.slice(0,max).map(function(p){return '<span class="evFace">'+avaBox((p.avatar_type==='photo')?p.avatar_url:'',p.name,26)+'</span>';}).join('')+(list.length>max?'<span class="evMore">+'+(list.length-max)+'</span>':'');}
 function renderEvents(){var b=document.getElementById('evBody');if(!b)return;
-  var h='<div class="say"><b>あさやん：</b>これからのKクラブの集まりだよ。<br>行くなら「行きます」を押しておくと、来る仲間が分かるよ。</div>';
+  var h='<div class="say"><b>あさやん：</b>これからのKクラブの集まりだよ。<br>行くなら「行きます」を押しておいてね。</div>'+
+    '<div class="evRule"><b>🍺 この酒場は「会った人とつながる」場所</b>'+
+    '<ol><li><span>集まりの前</span><p>行く人は<b>人数だけ</b>見えるよ。</p></li>'+
+    '<li><span>集まりの時間</span><p>来る人の<b>顔ぶれが開く</b>よ。会場で声をかけてね。</p></li>'+
+    '<li><span>会ったあと</span><p>「仲間をさがす」から<b>「会いたい」</b>でLINEがつながるよ。</p></li></ol>'+
+    '<small>※もうつながっている仲間と、自分のカードは、前から見えるよ</small></div>';
   if(!EVENTS||!EVENTS.length){b.innerHTML=h+'<div class="stub">今わかっている予定はないよ。</div>';return;}
   EVENTS.forEach(function(e,i){var tm=(e.talk_to_me||[]).length+(e.talk_hidden||0);
     h+='<div class="evCard'+(e.me_going?' going':'')+'" onclick="openEvent('+i+')"><div class="evD"><b>'+escapeHtml(evDate(e).split('(')[0])+'</b><small>'+escapeHtml('('+evDate(e).split('(')[1])+'</small><i>'+escapeHtml(evWhen(e))+'</i></div><div class="evT"><div class="nm">'+escapeHtml(evTitle(e))+'</div><div class="pl">📍 '+escapeHtml(e.venue_name||e.venue||'場所は未定')+'</div><div class="pp">'+goingFaces(e.going,5)+(e.hidden_count?'<span class="evLock">🔒'+e.hidden_count+'</span>':'')+'<span class="cnt">行く人 '+evCount(e)+'人</span>'+(e.me_going?'<span class="chip chipG">行きます</span>':'')+(tm?'<span class="chip chipW">話したい人 '+tm+'</span>':'')+'</div></div></div>';});
@@ -1711,7 +1725,7 @@ function renderEventDetail(){var e=CUR_EV;if(!e)return;var b=document.getElement
   if(e.me_going&&tm.length){var who=e.going.filter(function(p){return tm.indexOf(p.id)>=0;});h+='<div class="evTalkMe"><b>🗣 あなたと当日話したい人</b>'+who.map(function(p){return '<span>'+escapeHtml(p.name)+'さん</span>';}).join('')+'<small>会場で声をかけてみてね</small></div>';}
   h+='<div class="lkH">🙋 行く人（'+evCount(e)+'人）</div>';
   if(!evCount(e))h+='<div class="lkE">まだ誰も「行きます」を押していないよ'+(e.me_going?'':'。いちばん乗りしよう')+'</div>';
-  if(e.hidden_count)h+='<div class="evHidden">🔒 '+(e.going.length?'ほかに ':'')+e.hidden_count+'人が行くよ。<br>顔ぶれは、<b>集まりの時間（'+escapeHtml(evRevealAt(e))+'）</b>になったら見られるよ。<small>あなたと、もうつながっている仲間は先に見えているよ</small></div>';
+  if(e.hidden_count)h+='<div class="evHidden">🔒 '+(e.going.length?'ほかに ':'')+e.hidden_count+'人が行くよ。<br>この酒場は<b>「会った人とつながる」</b>場所だから、顔ぶれは<b>集まりの時間（'+escapeHtml(evRevealAt(e))+'）</b>に開くよ。<br>当日、会場で会えるのを楽しみにしててね。<small>※もうつながっている仲間は、先に見えているよ</small></div>';
   if(e.going.length){h+='<div class="evPeople">';e.going.forEach(function(p,k){var me=ME&&p.id===ME.id;var on=(e.my_talks||[]).indexOf(p.id)>=0;var fromThem=tm.indexOf(p.id)>=0;
     h+='<div class="evP"><div class="evPc" onclick="openEvPerson('+k+')">'+avaBox((p.avatar_type==='photo')?p.avatar_url:'',p.name,46)+'<div class="t"><b>'+escapeHtml(p.name)+(me?'（あなた）':'')+'</b><small>'+escapeHtml(p.tagline||p.industry||'')+'</small>'+(fromThem?'<em>🗣 あなたと話したいそうです</em>':'')+'</div></div>'+
       (me||!e.me_going?'':'<button class="evTalk'+(on?' on':'')+'" onclick="evTalk(\''+escAttr(p.id)+'\','+(on?'false':'true')+')">'+(on?'✓ 話したい':'🗣 話したい')+'</button>')+'</div>';});h+='</div>';
