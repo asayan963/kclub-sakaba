@@ -58,6 +58,13 @@ html,body{height:100%;background:radial-gradient(130% 90% at 50% 0%, #1c1008 0%,
 .fxSp{position:absolute;color:#fff6c8;font-size:1.2rem;opacity:0;animation:fxSp 2.4s infinite;}
 .fxSp.s1{left:44%;top:22%;}.fxSp.s2{left:56%;top:30%;animation-delay:.1s;}.fxSp.s3{left:50%;top:60%;animation-delay:.2s;}
 @keyframes fxSp{0%,40%{opacity:0;}48%,58%{opacity:1;}70%,100%{opacity:0;}}
+#demoTag{position:absolute;top:0;left:50%;transform:translateX(-50%);z-index:200;background:rgba(200,50,40,.9);color:#fff;font-size:.6rem;padding:1px 10px 2px;border-radius:0 0 8px 8px;pointer-events:none;font-family:'Zen Maru Gothic',sans-serif;letter-spacing:.05em;}
+#demoGate{position:absolute;inset:0;z-index:150;background:linear-gradient(rgba(0,0,0,.55),rgba(0,0,0,.75)),var(--tavimg) center/cover;font-family:'DotGothic16','Zen Maru Gothic',sans-serif;}
+.dgWin{top:28%;bottom:auto;cursor:default;min-height:0;}
+.dgT{margin-bottom:12px;}
+#demoPass{width:100%;font-size:1.05rem;padding:10px 12px;border-radius:8px;border:2px solid #fff;background:#0b0b24;color:#fff;font-family:inherit;}
+#demoGo{margin-top:12px;width:100%;padding:11px;border-radius:8px;border:2px solid #ffe08a;background:#1a1440;color:#ffe08a;font-size:1rem;font-family:inherit;cursor:pointer;}
+.dgMsg{margin-top:8px;color:#ff9a8a;font-size:.88rem;min-height:1.2em;}
 #tourTitle{position:absolute;top:12px;left:12px;z-index:3;background:rgba(4,4,18,.85);border:2px solid #fff;border-radius:8px;padding:5px 10px;color:#fff;font-size:.78rem;line-height:1.45;max-width:62%;}
 #tourTitle span{margin-left:8px;color:#9aa0d8;}
 #tourTitle b{display:block;color:#ffe08a;font-size:1rem;font-weight:400;margin-top:1px;}
@@ -994,6 +1001,8 @@ html,body{height:100%;background:radial-gradient(130% 90% at 50% 0%, #1c1008 0%,
   </div>
   <div id="glow"></div><div id="flash"></div>
 
+  <div id="demoTag" class="hidden">お試し版　本物のデータは使いません</div>
+  <div id="demoGate" class="hidden"><div class="dqwin dgWin"><div class="dqname">お試し版</div><div class="dgT">Kクラブ酒場の お試し版だよ。<br>あいことばを いれてね。</div><input id="demoPass" type="password" autocomplete="off" autocapitalize="off" placeholder="あいことば"><button id="demoGo">▶ はいる</button><div id="demoMsg" class="dgMsg"></div></div></div>
   <div id="tokenAsk" class="hidden" style="position:absolute;inset:0;z-index:40;background:rgba(0,0,0,.85);display:flex;align-items:center;justify-content:center;padding:24px;">
     <div style="max-width:380px;width:100%;background:linear-gradient(180deg,rgba(28,16,8,.98),rgba(18,10,5,.99));border:3px solid #caa45a;border-radius:16px;padding:24px;">
       <div style="color:#f5d97a;font-family:'Zen Maru Gothic',serif;font-weight:800;font-size:1.1rem;margin-bottom:10px;text-align:center;">合言葉を入れてね</div>
@@ -1038,6 +1047,7 @@ function stripToken(){
   }catch(e){}
 }
 async function api(action,extra){
+  if(DEMO)return demoApi(action,extra);
   var body=Object.assign({action:action,token:TOKEN},extra||{});
   if(STAFF_SS&&!body.staff_session)body.staff_session=STAFF_SS;
   try{
@@ -1946,7 +1956,7 @@ var WIZ=[
 var TG_EX={shigyo:['会社づくりと相続の相談にのります','創業融資と節税ならおまかせください'],money:['ご家族に合う保険を一緒に考えます','お金の困りごと、気軽に相談してください'],consult:['中小企業の売上づくりを手伝っています','経営の悩みを一緒に整理します'],food:['日本酒に合う小料理屋をやっています','地元の食材でお弁当をつくっています'],care:['肩こり・腰痛、デスクワークの方に','からだの不調、気軽に相談してください'],beauty:['髪とお肌のことならおまかせ','大人の女性のための美容室です'],house:['住まいの困りごと、なんでも相談ください','店舗物件さがしならおまかせ'],it:['小さな会社のホームページをつくります','パソコン・スマホの困りごと解決します'],create:['ロゴとチラシで、お店の顔をつくります','プロフィール写真、撮ります'],learn:['大人の学び直しを応援しています','子どもの「できた！」を増やす教室です'],shop:['こだわりの雑貨を扱うお店です','地元の名産品を届けています'],community:['地域の人がつながる場をつくっています','イベントの企画・運営をしています'],other:['はじめての方も気軽に声かけてください','こんなことで役に立てます']};
 var wizI=0, wizData={free_tags:[],contact_ok:true};
 function avaBox(url,nm,sz){
-  if(url&&!/^https:\/\//i.test(url))url='';
+  if(url&&!/^https:\/\//i.test(url)&&!(DEMO&&/^data:image\//.test(url)))url='';
   if(url)return '<img src="'+escapeHtml(url)+'" style="width:'+sz+'px;height:'+sz+'px;object-fit:cover;border-radius:14px;border:3px solid #caa45a">';
   var pal=avaPal({name:nm});
   return '<div style="width:'+sz+'px;height:'+sz+'px;border-radius:14px;border:2px solid rgba(255,255,255,.18);background:radial-gradient(circle at 50% 30%,'+pal[0]+','+pal[1]+' 80%);display:flex;align-items:center;justify-content:center;color:#fff;font-family:\'Zen Maru Gothic\',sans-serif;font-weight:900;font-size:'+Math.max(12,Math.round(sz*0.42))+'px">'+escapeHtml(initial(nm))+'</div>';
@@ -2260,6 +2270,7 @@ var BC_Q=[],BC_SHOW=null,BC_BUSY=false;
 function fmtWhen(d){return d?new Date(d).toLocaleString('ja-JP',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}):'';}
 async function bcCheck(){
   if(BC_BUSY||!TOKEN||!ME||!CUR_PANEL||document.hidden)return;
+  if(CUR_PANEL==='wizard'||CUR_PANEL==='consent'||!document.getElementById('tour').classList.contains('hidden')||!document.getElementById('battle').classList.contains('hidden')){setTimeout(bcCheck,3000);return;}
   BC_BUSY=true;
   try{
     var r=await api('bc_current',{});
@@ -2406,8 +2417,135 @@ function nrSaveRule(i){var w=NR_UNK[i];if(!w)return;var cat=document.getElementB
 function nrChangeRule(i){var x=NR_RULES[i];if(!x)return;var cat=document.getElementById('nrr_'+i).value;nrSend(x.word,cat,'変えたよ');}
 async function nrDelRule(i){var x=NR_RULES[i];if(!x)return;if(!window.confirm||!confirm('「'+x.word+'」の振り分けを外しますか？\n（自動の振り分けに戻ります）'))return;var r=await api('noren_rule_delete',{word:x.word});if(r.ok){var ok=await api('okami',{});if(ok.ok)OKAMI=ok;toastMsg('外したよ');renderChoNoren();nrBadgeRefresh();}else toastMsg('うまく外せなかった…');}
 
+/* ===== お試し版（?demo=1）：本物のデータには一切さわらない ===== */
+var DEMO=/[?&]demo=1(\b|$)/.test(location.search)||/(^|[#&])demo=1/.test(location.hash||'');
+var DEMO_PASS_HASH='45841a958db10c6daeaddbc79cf708f8feeccac9ea294665102a826be1392663';
+var DS=null;
+function demoYmd(off){var d=new Date(Date.now()+off*86400000);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function demoHm(offMin){var d=new Date(Date.now()+offMin*60000);return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');}
+function demoInit(){
+  var P=[
+   ['d1','山本 健太','やまもと税理士事務所','税理士','shigyo','創業融資と節税の相談ならおまかせください','会社をつくるときの手続きから、毎年の確定申告まで。数字が苦手な方こそ、気軽に声をかけてください。',['創業','節税','相続']],
+   ['d2','小林 さくら','さくら整体院','整体','care','肩こり・腰痛、デスクワークの方に','浅草で整体院をやっています。姿勢のクセを見て、自分でできるストレッチもお伝えします。',['肩こり','浅草']],
+   ['d3','佐々木 美咲','Misaki Design','デザイン','create','ロゴとチラシで、お店の顔をつくります','お店の想いを聞いて、ロゴ・チラシ・名刺をつくっています。開業前のご相談も歓迎です。',['ロゴ','チラシ']],
+   ['d4','中村 大輔','中村工務店','建築・リフォーム','house','浅草で三代つづく工務店です','お店の改装から、おうちの小さな修理まで。まずは見に行くだけでも大丈夫です。',['リフォーム','店舗']],
+   ['d5','井上 千尋','千尋の台所','飲食','food','日本酒に合う小料理屋をやっています','季節の食材と日本酒を楽しめる小さなお店です。集まりの二次会にもどうぞ。',['日本酒','小料理']],
+   ['d6','松本 翔','翔ITサポート','IT','it','中小企業のホームページとDX','「パソコン苦手」でも大丈夫。ホームページづくりや、お店のLINE活用をお手伝いします。',['ホームページ','LINE']],
+   ['d7','吉田 彩','Aya Photo','写真','create','プロフィール写真、撮ります','自然な笑顔のプロフィール写真が得意です。この酒場のカード用の写真もどうぞ。',['写真']],
+   ['d8','加藤 誠','加藤不動産','不動産','house','店舗物件さがしならご相談ください','飲食店・事務所の物件さがしをお手伝いしています。',['店舗物件']]
+  ];
+  var people={};P.forEach(function(x){people[x[0]]={id:x[0],name:x[1],company:x[2],industry:x[3],noren:x[4],noren_custom:null,tagline:x[5],detail:x[6],free_tags:x[7],contact_ok:true,avatar_type:'crest',avatar_url:null,line_id:'https://line.me/ti/p/~demo'};});
+  DS={people:people,me:null,registered:false,links:{},reqSeq:1,reqs:{},notes:{},talks:[],asks:[],reads:{},seq:100,
+    rsvp:{ev1:['d1','d2','d3','d5'],ev2:['d4','d6'],ev3:['d7']},
+    events:[
+      {event_id:'ev1',name:'【見本】今夜の 浅草・日本酒の会',date:demoYmd(0),time:demoHm(-60),type:'集まり',venue:'浅草',venue_name:'千尋の台所（見本）',address:'東京都台東区（見本）',map_url:null},
+      {event_id:'ev2',name:'【見本】赤坂の 焼肉を楽しむ会',date:demoYmd(10),time:'19:00',type:'集まり',venue:'赤坂',venue_name:'焼肉店（見本）',address:'東京都港区赤坂（見本）',map_url:null},
+      {event_id:'ev3',name:'【見本】朝活 もくもく会',date:demoYmd(24),time:'08:00',type:'イベント',venue:'渋谷',venue_name:'カフェ（見本）',address:'東京都渋谷区（見本）',map_url:null}],
+    past:{key:'past1',title:'【見本】先月の 赤坂の会',date:demoYmd(-20),ids:['d1','d2','d3','d4','d5','d6']},
+    quests:[
+      {id:'q1',title:'【見本】朝活もくもく会、メンバー募集',content:'毎週土曜の朝、カフェで各自の作業をします。\n終わったあとに30分だけ、近況を話します。\n初めての人も歓迎です！',industry:'朝活',when_text:'毎週土曜 8:00〜10:00',place:'渋谷のカフェ',target:'朝の時間を有効に使いたい人',fee:'飲み物代のみ',author:'d6',parts:['d6','d3','d7'],status:'open',created_at:new Date(Date.now()-2*86400000).toISOString()},
+      {id:'q2',title:'【見本】日本酒の蔵元さんを囲む会',content:'蔵元さんをお招きして、新酒を味わう会をひらきます。\n日本酒が初めての方も大歓迎です。',industry:'日本酒',when_text:'来月の第2金曜 19:00',place:'千尋の台所',target:'日本酒が好きな人・気になる人',fee:'5,000円',author:'d5',parts:['d5','d1','d2','d8'],status:'open',created_at:new Date(Date.now()-5*86400000).toISOString()}],
+    comments:{q1:[{id:1,m:'d3',body:'土曜の朝、行ってみたいです！',at:new Date(Date.now()-86400000).toISOString()},{id:2,m:'d6',body:'ぜひ！ 8時にお待ちしてます☕',at:new Date(Date.now()-80000000).toISOString()}],q2:[{id:3,m:'d1',body:'楽しみにしています🍶',at:new Date(Date.now()-3*86400000).toISOString()}]}};
+}
+function demoCard(id){if(id==='me')return DS.me?demoPub(DS.me):null;var p=DS.people[id];return p?demoPub(p):null;}
+function demoPub(m){return {id:m.id,name:m.name,company:m.company,tagline:m.tagline,detail:m.detail,industry:m.industry,free_tags:m.free_tags||[],contact_ok:m.contact_ok!==false,avatar_type:m.avatar_type||'crest',avatar_url:m.avatar_url||null,noren:m.noren||null,noren_custom:m.noren_custom||null};}
+function demoSelf(){return Object.assign(demoPub(DS.me),{role:'member',member_type:'会員',group_name:null,consent_at:new Date().toISOString(),line_id:DS.me.line_id||null,line_broken_at:null,line_broken_by:null});}
+function demoFellowIds(){var s={};DS.past.ids.forEach(function(i){s[i]=1;});DS.quests.forEach(function(q){if(q.parts.indexOf('me')>=0&&q.status!=='deleted')q.parts.forEach(function(i){if(i!=='me')s[i]=1;});});return s;}
+function demoLink(id){return DS.links[id]||'none';}
+function demoMatch(id,quiet){DS.links[id]='matched';Object.keys(DS.reqs).forEach(function(k){if(DS.reqs[k]===id)delete DS.reqs[k];});
+  if(!quiet){var p=DS.people[id];toastMsg('📬 '+escapeHtml(p.name)+'さんが「OK」したよ！<br>つながったよ（お試し版なので、すぐ返事が来るよ）');try{refreshLinkBadge();}catch(e){}
+    if(typeof DETAIL_P!=='undefined'&&DETAIL_P&&DETAIL_P.id===id&&CUR_PANEL==='detail'){try{renderLinkArea(DETAIL_P);}catch(e){}}}}
+function demoApi(action,x){x=x||{};
+  return new Promise(function(res){setTimeout(function(){var r;try{r=demoDo(action,x);}catch(e){console.error('demo',action,e);r={ok:false,error:'demo'};}res(r);},120);});}
+function demoDo(a,x){var me=DS.me,now=new Date().toISOString();
+  switch(a){
+  case 'enter':return DS.registered?{ok:true,status:'returning',member:demoSelf(),need_profile:false}:{ok:true,status:'new'};
+  case 'consent_and_setup':if(!DS.me)DS.me={id:'me',name:'',company:'',tagline:'',detail:'',industry:'',free_tags:[],contact_ok:true,avatar_type:'crest',avatar_url:null,noren:null,noren_custom:null,line_id:null};return {ok:true,found:true,member:demoSelf(),nippo_name:''};
+  case 'get_me':return me?{ok:true,member:demoSelf()}:{ok:false,error:'not_found'};
+  case 'save_profile':{var p=x.patch||{};['name','company','tagline','detail','industry','free_tags','contact_ok','noren','noren_custom'].forEach(function(k){if(k in p)me[k]=p[k];});
+    if('line_id' in p){var lv=String(p.line_id||'').trim();me.line_id=lv||null;}
+    if(!DS.registered&&me.tagline){DS.registered=true;DS.links.d2='incoming';DS.reqs[DS.reqSeq++]='d2';}
+    return {ok:true,member:demoSelf()};}
+  case 'upload_avatar':me.avatar_type='photo';me.avatar_url=x.data_url;return {ok:true,member:demoSelf()};
+  case 'fellows':{var g=[],now2=Date.now();
+    var mk=function(id){var c=demoCard(id);c.link=({matched:'matched',incoming:'incoming',outgoing:'outgoing'})[demoLink(id)]||'none';c.is_new=(id==='d3'||id==='d6');return c;};
+    g.push({kind:'event',key:DS.past.key,title:DS.past.title,date:DS.past.date,count:null,fellows:DS.past.ids.map(mk)});
+    DS.quests.forEach(function(q){if(q.status==='deleted'||q.parts.indexOf('me')<0)return;var f=q.parts.filter(function(i){return i!=='me';}).map(mk);if(f.length)g.push({kind:'quest',key:q.id,title:q.title,date:null,count:null,fellows:f});});
+    return {ok:true,groups:g};}
+  case 'connection_info':{var t=x.target_id,st=demoLink(t),rid=null;if(t==='me')return {ok:true,state:'none',is_me:true,can_request:false,contact_ok:true,line_id:null};
+    var map={matched:'matched',outgoing:'outgoing_pending',incoming:'incoming_pending'};var s2=map[st]||'none';
+    if(s2==='incoming_pending')Object.keys(DS.reqs).forEach(function(k){if(DS.reqs[k]===t)rid=+k;});
+    return {ok:true,state:s2,request_id:rid,can_request:s2==='none'&&!!demoFellowIds()[t],is_me:false,contact_ok:true,line_id:s2==='matched'?DS.people[t].line_id:null};}
+  case 'want_to_meet':{var t=x.target_id;if(!demoFellowIds()[t])return {ok:false,error:'not_same_event'};
+    var st=demoLink(t);if(st==='matched')return {ok:true,state:'matched',message:'もうつながっているよ'};
+    if(st==='incoming'){demoMatch(t,true);return {ok:true,state:'matched',line_id:DS.people[t].line_id,message:'つながったよ'};}
+    if(st==='outgoing')return {ok:true,state:'outgoing_pending',message:'もう送ってあるよ。返事を待ってね'};
+    DS.links[t]='outgoing';setTimeout(function(){if(DS&&DS.links[t]==='outgoing')demoMatch(t);},5000);
+    return {ok:true,state:'outgoing_pending',message:'送ったよ。相手の返事を待ってね'};}
+  case 'my_links':{var inc=[],out=[],mat=[];Object.keys(DS.links).forEach(function(id){var st=DS.links[id],c=demoCard(id);
+      if(st==='incoming'){var rid=null;Object.keys(DS.reqs).forEach(function(k){if(DS.reqs[k]===id)rid=+k;});inc.push({request_id:rid,card:c,at:now});}
+      else if(st==='outgoing')out.push({card:c,at:now});
+      else if(st==='matched'){c.line_id=DS.people[id].line_id;mat.push({card:c,at:now});}});
+    return {ok:true,incoming:inc,outgoing:out,matched:mat};}
+  case 'respond_request':{var id=DS.reqs[x.request_id];if(!id)return {ok:true,state:'declined'};
+    if(x.accept){demoMatch(id,true);return {ok:true,state:'matched',name:DS.people[id].name,line_id:DS.people[id].line_id};}
+    delete DS.reqs[x.request_id];DS.links[id]='declined';return {ok:true,state:'declined'};}
+  case 'quest_list':return {ok:true,quests:DS.quests.filter(function(q){return q.status!=='deleted';}).map(function(q){return {id:q.id,title:q.title,content:q.content,industry:q.industry,when_text:q.when_text,place:q.place,target:q.target,fee:q.fee,created_at:q.created_at,author:demoCard(q.author),participant_count:q.parts.length,comment_count:(DS.comments[q.id]||[]).length,joined:q.parts.indexOf('me')>=0,mine:q.author==='me',status:q.status};})};
+  case 'quest_create':{if(!me||!me.tagline)return {ok:false,error:'need_profile'};var id='q'+(DS.seq++);DS.quests.unshift({id:id,title:x.title,content:x.content,industry:x.industry||null,when_text:x.when_text||null,place:x.place||null,target:x.target||null,fee:x.fee||null,author:'me',parts:['me'],status:'open',created_at:now});return {ok:true,post:{id:id}};}
+  case 'quest_update':{var q=DS.quests.filter(function(q){return q.id===x.post_id;})[0];if(q){['title','content','industry','when_text','place','target','fee'].forEach(function(k){q[k]=x[k]||null;});}return {ok:true};}
+  case 'quest_status':{var q=DS.quests.filter(function(q){return q.id===x.post_id;})[0];if(q)q.status=x.status;return {ok:true,status:x.status};}
+  case 'quest_join':{var q=DS.quests.filter(function(q){return q.id===x.post_id;})[0];if(q&&q.parts.indexOf('me')<0)q.parts.push('me');return {ok:true};}
+  case 'quest_leave':{var q=DS.quests.filter(function(q){return q.id===x.post_id;})[0];if(q)q.parts=q.parts.filter(function(i){return i!=='me';});return {ok:true};}
+  case 'quest_people':{var q=DS.quests.filter(function(q){return q.id===x.post_id;})[0];return {ok:true,people:q?q.parts.map(demoCard).filter(Boolean):[]};}
+  case 'quest_comments':return {ok:true,comments:(DS.comments[x.post_id]||[]).map(function(c){return {id:c.id,body:c.body,created_at:c.at,author:demoCard(c.m),mine:c.m==='me',can_delete:c.m==='me'};})};
+  case 'quest_comment_add':{if(!me||!me.tagline)return {ok:false,error:'need_profile'};(DS.comments[x.post_id]=DS.comments[x.post_id]||[]).push({id:DS.seq++,m:'me',body:x.body,at:now});return {ok:true};}
+  case 'quest_comment_delete':Object.keys(DS.comments).forEach(function(k){DS.comments[k]=DS.comments[k].filter(function(c){return c.id!==x.comment_id;});});return {ok:true};
+  case 'bc_current':return {ok:true,items:DS.reads[1]?[]:[{id:1,text:'お試し版へようこそ！\nここで押したり書いたりしたことは、あなたのスマホの中だけ。本物の酒場には届かないから、自由にさわってみてね。',created_at:now}]};
+  case 'bc_read':DS.reads[x.id]=1;return {ok:true};
+  case 'events_upcoming':{var fr={};Object.keys(DS.links).forEach(function(k){if(DS.links[k]==='matched')fr[k]=1;});var nowMs=Date.now();
+    return {ok:true,today:demoYmd(0),events:DS.events.map(function(e){var g=DS.rsvp[e.event_id]||[];var start=new Date(e.date+'T'+(e.time||'00:00')+':00').getTime();var rev=nowMs>=start;
+      var vis=g.filter(function(id){return id!=='me'&&(rev||fr[id]);});var tin=DS.talks.filter(function(t){return t.e===e.event_id&&t.t==='me';}).map(function(t){return t.f;});
+      return Object.assign({},e,{revealed:rev,reveal_at:new Date(start).toISOString(),going:vis.map(demoCard).concat(rev&&g.indexOf('me')>=0?[demoCard('me')]:[]),me_going:g.indexOf('me')>=0,me_source:g.indexOf('me')>=0?'sakaba':null,talk_to_me:tin.filter(function(i){return vis.indexOf(i)>=0;}),talk_hidden:tin.filter(function(i){return vis.indexOf(i)<0;}).length,my_talks:DS.talks.filter(function(t){return t.e===e.event_id&&t.f==='me';}).map(function(t){return t.t;})});})};}
+  case 'event_rsvp':{var L=DS.rsvp[x.event_id]=DS.rsvp[x.event_id]||[];if(x.going===false){DS.rsvp[x.event_id]=L.filter(function(i){return i!=='me';});DS.talks=DS.talks.filter(function(t){return !(t.e===x.event_id&&t.f==='me');});return {ok:true,going:false};}
+    if(L.indexOf('me')<0)L.push('me');if(x.event_id==='ev1'&&!DS.talks.some(function(t){return t.f==='d2';}))DS.talks.push({e:'ev1',f:'d2',t:'me'});return {ok:true,going:true};}
+  case 'event_talk':{if(x.on===false){DS.talks=DS.talks.filter(function(t){return !(t.e===x.event_id&&t.f==='me'&&t.t===x.target_id);});return {ok:true,on:false};}
+    DS.talks.push({e:x.event_id,f:'me',t:x.target_id});return {ok:true,on:true};}
+  case 'note_get':return {ok:true,body:DS.notes[x.target_id]||'',updated_at:DS.notes[x.target_id]?now:null};
+  case 'note_save':{var b=String(x.body||'').trim();if(b)DS.notes[x.target_id]=b;else delete DS.notes[x.target_id];return {ok:true,body:b};}
+  case 'notes_list':return {ok:true,notes:Object.keys(DS.notes).map(function(k){return {target_id:k,body:DS.notes[k],updated_at:now};})};
+  case 'ask_mine':return {ok:true,items:DS.asks.slice().reverse(),unseen:DS.asks.filter(function(q){return q.answer&&!q.seen_at;}).length};
+  case 'ask_post':{var q={id:DS.seq++,question:x.question,answer:null,answered_at:null,seen_at:null,created_at:now};DS.asks.push(q);
+    setTimeout(function(){q.answer='お試し版なので、自動でお返事しているよ。本番では、あさやんが一つずつ返事をするよ。';q.answered_at=new Date().toISOString();try{askRefresh();}catch(e){}},3000);return {ok:true,id:q.id};}
+  case 'ask_seen':DS.asks.forEach(function(q){if(q.answer)q.seen_at=now;});return {ok:true};
+  case 'line_broken':return {ok:true};
+  case 'line_broken_clear':return {ok:true,member:demoSelf()};
+  case 'leave_sakaba':demoInit();return {ok:true};
+  case 'pk_status':return {ok:false,error:'forbidden'};
+  default:return {ok:true};
+  }
+}
+async function demoGate(){
+  var g=document.getElementById('demoGate');g.classList.remove('hidden');
+  var inp=document.getElementById('demoPass'),btn=document.getElementById('demoGo'),msg=document.getElementById('demoMsg');
+  setTimeout(function(){try{inp.focus();}catch(e){}},300);
+  async function go(){var v=String(inp.value||'').normalize('NFKC').trim().toLowerCase();if(!v)return;
+    var h='';try{var buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(v));h=Array.from(new Uint8Array(buf)).map(function(b){return b.toString(16).padStart(2,'0');}).join('');}catch(e){}
+    if(h!==DEMO_PASS_HASH){msg.textContent='あいことばが ちがうようだ…';inp.value='';return;}
+    g.classList.add('hidden');demoStart();}
+  btn.onclick=go;inp.onkeydown=function(e){if(e.key==='Enter')go();};
+}
+async function demoStart(){
+  demoInit();TOKEN='demo';
+  document.getElementById('demoTag').classList.remove('hidden');
+  try{var r=await fetch(EDGE,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'okami'})});var j=await r.json();if(j&&j.ok)OKAMI=j;}catch(e){}
+  if(!OKAMI)OKAMI={ok:true,lines:[],faq:[],noren_rules:[]};
+  ENTERED=await api('enter',{});
+}
+document.addEventListener('click',function(e){if(!DEMO)return;var a=e.target&&e.target.closest&&e.target.closest('a[href*="line.me"]');if(a){e.preventDefault();e.stopPropagation();toastMsg('お試し版なので、LINEは開かないよ。<br>本番では、ここから相手をLINEに追加できるよ');}},true);
+
 /* boot */
 (async function boot(){
+  if(DEMO){demoGate();return;}
   TOKEN=getToken();stripToken();
   var ok=await api('okami',{});if(ok.ok)OKAMI=ok;
   if(!TOKEN){document.getElementById('tokenAsk').classList.remove('hidden');return;}
