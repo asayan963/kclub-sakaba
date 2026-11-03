@@ -28,7 +28,7 @@ html,body{height:100%;background:radial-gradient(130% 90% at 50% 0%, #1c1008 0%,
   background:linear-gradient(180deg,transparent,rgba(40,24,12,.9) 40%,rgba(24,14,7,.98));
   border-top:3px solid rgba(202,164,90,.35);box-shadow:0 -14px 40px rgba(0,0,0,.5);}
 /* ===== ドラクエ風：酒場の案内・てれちょうちん ===== */
-#tour,#battle{position:absolute;inset:0;z-index:60;overflow:hidden;background:#000;font-family:'DotGothic16','Zen Maru Gothic',sans-serif;}
+#tour,#battle{cursor:pointer;-webkit-tap-highlight-color:transparent;position:absolute;inset:0;z-index:60;overflow:hidden;background:#000;font-family:'DotGothic16','Zen Maru Gothic',sans-serif;}
 #tourBg{position:absolute;left:0;top:0;background:var(--tavimg) 0 0/100% 100% no-repeat;transform-origin:0 0;transition:transform 1.4s cubic-bezier(.45,.05,.25,1);will-change:transform;}
 #tourShade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.15),rgba(0,0,0,0) 30%,rgba(0,0,0,.55) 70%,rgba(0,0,0,.8));transition:background .8s;pointer-events:none;}
 #tour.withOkami #tourShade{background:linear-gradient(180deg,rgba(0,0,0,.35),rgba(0,0,0,.35) 40%,rgba(0,0,0,.7) 70%,rgba(0,0,0,.85));}
@@ -731,19 +731,19 @@ html,body{height:100%;background:radial-gradient(130% 90% at 50% 0%, #1c1008 0%,
   </div>
 
   <!-- ドラクエ風：酒場の案内 -->
-  <div id="tour" class="hidden">
+  <div id="tour" class="hidden" onclick="tourTap()">
     <div id="tourBg"></div><div id="tourShade"></div>
     <img id="tourOkami" alt="">
     <div id="tourTitle"></div><div id="tourDemo"></div>
-    <button class="dqSkip" onclick="tourSkip()">とばす ▶▶</button>
-    <div class="dqwin" id="tourWin" onclick="tourTap()"><div class="dqname">あさやん</div><div class="dqtxt" id="tourTxt"></div><div class="dqbtns hidden" id="tourBtns"></div><div class="dqnext off" id="tourNext">▼</div></div>
+    <button class="dqSkip" onclick="event.stopPropagation();tourSkip()">とばす ▶▶</button>
+    <div class="dqwin" id="tourWin"><div class="dqname">あさやん</div><div class="dqtxt" id="tourTxt"></div><div class="dqbtns hidden" id="tourBtns"></div><div class="dqnext off" id="tourNext">▼</div></div>
   </div>
 
   <!-- ドラクエ風：てれちょうちん -->
-  <div id="battle" class="hidden">
+  <div id="battle" class="hidden" onclick="btTap()">
     <div id="btBg"></div><div id="btField"></div>
     <div class="dqwin" id="btStatus"><span class="btTag">つながる練習</span><span id="btName"></span>　ご縁 <b id="btEn">0</b></div>
-    <button class="dqSkip" onclick="btSkip()">とばす ▶▶</button>
+    <button class="dqSkip" onclick="event.stopPropagation();btSkip()">とばす ▶▶</button>
     <div id="btMon" class="shy"><svg viewBox="0 0 200 250" aria-label="てれちょうちん">
       <defs>
         <radialGradient id="tcBody" cx="50%" cy="45%" r="60%"><stop offset="0" stop-color="#ffe7a8"/><stop offset=".45" stop-color="#ff9d4a"/><stop offset="1" stop-color="#c2361c"/></radialGradient>
@@ -784,8 +784,8 @@ html,body{height:100%;background:radial-gradient(130% 90% at 50% 0%, #1c1008 0%,
     </svg></div>
     <img id="btOkami" alt=""><div id="btCard"></div>
     <div class="dqwin dqcmd hidden" id="btCmd"><div class="dqname">どうする？</div><div class="cmdSay" id="btHint"></div>
-      <button onclick="btDo('card')">カードを みせる<small>自分のことを 知ってもらう</small></button><button onclick="btDo('talk')">はなしかける<small>「会いたい」を おくる</small></button><button onclick="btDo('run')">にげる</button></div>
-    <div class="dqwin" id="btWin" onclick="btTap()"><div class="dqname" id="btWho" style="display:none">あさやん</div><div class="dqtxt" id="btTxt"></div><div class="dqbtns hidden" id="btBtns"></div><div class="dqnext off" id="btNext">▼</div></div>
+      <button onclick="event.stopPropagation();btDo('card')">カードを みせる<small>自分のことを 知ってもらう</small></button><button onclick="event.stopPropagation();btDo('talk')">はなしかける<small>「連絡を取る」を おくる</small></button><button onclick="event.stopPropagation();btDo('run')">にげる</button></div>
+    <div class="dqwin" id="btWin"><div class="dqname" id="btWho" style="display:none">あさやん</div><div class="dqtxt" id="btTxt"></div><div class="dqbtns hidden" id="btBtns"></div><div class="dqnext off" id="btNext">▼</div></div>
     <div id="btFlash"></div>
   </div>
 
@@ -923,7 +923,7 @@ html,body{height:100%;background:radial-gradient(130% 90% at 50% 0%, #1c1008 0%,
       <div class="fsheet">
         <button class="grab" onclick="toggleSheet(this)" aria-label="広げる・たたむ"></button>
         <div class="fhead"><h2>つながり</h2></div>
-        <div class="fhint"><b>あさやん：</b>届いた「会いたい」と、つながった仲間がここに並ぶよ。</div>
+        <div class="fhint"><b>あさやん：</b>届いた「連絡のお願い」と、つながった仲間がここに並ぶよ。</div>
         <div class="fsec" id="linksBody"><div class="loading">読み込み中…</div></div>
       </div>
     </div>
@@ -1089,8 +1089,8 @@ function dqFinish(el){if(!el._t)return false;clearInterval(el._t);el._t=null;el.
 var DM={
  ev:'<div class="dmBox"><div class="dmH">📅 次の集まり</div><div class="dmEv"><b>11/26(木) 19:00</b>　赤坂の会</div><span class="dmBtn gold pulse">🙋 行きます</span></div>',
  find:'<div class="dmBox"><div class="dmH">ホームのボタン</div><div class="tiles dmTiles"><div class="tile pulse"><div class="ti">🍺</div><div class="tn">仲間を<br>さがす</div></div><div class="tile dim"><div class="ti">📜</div><div class="tn">クエスト<br>掲示板</div></div><div class="tile dim"><div class="ti">📬</div><div class="tn">つながり<br>&nbsp;</div></div><div class="tile dim"><div class="ti">🪪</div><div class="tn">自分の<br>カード</div></div></div></div>',
- meet:'<div class="dmBox"><div class="dmH">仲間のカードを開くと、右下に</div><span class="dmBtn gold pulse">🍺 会いたい</span><div class="dmNote">→ 相手に、公式LINEでお知らせが届く</div></div>',
- line:'<div class="dmBox"><div class="dmH">📬 つながり（おたがいに「会いたい」）</div><span class="dmBtn green pulse">💬 LINEで友だち追加する</span><div class="dmNote">→ ボタンを押すだけで、相手をLINEに追加できる</div></div>',
+ meet:'<div class="dmBox"><div class="dmH">仲間のカードを開くと、右下に</div><span class="dmBtn gold pulse">📨 連絡を取る</span><div class="dmNote">→ 相手に、公式LINEでお知らせが届く</div></div>',
+ line:'<div class="dmBox"><div class="dmH">📬 つながり（相手が「OK」したら）</div><span class="dmBtn green pulse">💬 LINEで友だち追加する</span><div class="dmNote">→ ボタンを押すだけで、相手をLINEに追加できる</div></div>',
  quest:'<div class="dmBox"><div class="dmH">ホームのボタン</div><div class="tiles dmTiles"><div class="tile dim"><div class="ti">🍺</div><div class="tn">仲間を<br>さがす</div></div><div class="tile pulse"><div class="ti">📜</div><div class="tn">クエスト<br>掲示板</div></div><div class="tile dim"><div class="ti">📬</div><div class="tn">つながり<br>&nbsp;</div></div><div class="tile dim"><div class="ti">🪪</div><div class="tn">自分の<br>カード</div></div></div></div>',
  card:'<div class="dmBox"><div class="dmH">ホームのボタン</div><div class="tiles dmTiles"><div class="tile dim"><div class="ti">🍺</div><div class="tn">仲間を<br>さがす</div></div><div class="tile dim"><div class="ti">📜</div><div class="tn">クエスト<br>掲示板</div></div><div class="tile dim"><div class="ti">📬</div><div class="tn">つながり<br>&nbsp;</div></div><div class="tile pulse"><div class="ti">🪪</div><div class="tn">自分の<br>カード</div></div></div><div class="dmNote">→ 写真・くわしい紹介・LINEのリンクを足せる</div></div>',
  faq:'<div class="dmBox"><div class="dmH">ホームのいちばん下</div><div class="tile wide pulse dmWide"><div class="ti">❓</div><div><div class="tn">あさやんに聞く</div></div></div><div class="dmNote">→ 使い方を調べる・あさやんに質問を送る</div></div>'
@@ -1106,11 +1106,11 @@ var TOURS={
  ],
  guide:[
   {f:[0.52,0.38],s:2.4,ok:'w',t:'カードができたね！\nここからは、この酒場の\n「歩き方」を案内するよ。'},
-  {f:[0.22,0.84],s:2.3,ti:'① 次の集まり',dm:'ev',t:'ホームの「次の集まり」で、\nこれからの集まりが見られるよ。\n行くなら「行きます」を押しておいてね。'},
+  {f:[0.22,0.84],s:2.3,ti:'① 次の集まり',dm:'ev',t:'ホームの「次の集まり」で、\nこれからの集まりが見られるよ。\n行くなら「行きます」を押してもいいよ。\n日報で申し込んでいれば、\n自動で「申込済み」になるよ。'},
   {f:[0.22,0.84],s:2.3,ti:'① 次の集まり',dm:'ev',t:'来る人の顔ぶれは、\n集まりの時間になったら開くよ。\n会場で、気になる人に声をかけてね。'},
   {f:[0.45,0.56],s:1.9,ti:'② 仲間をさがす',dm:'find',t:'集まりのあとは「仲間をさがす」。\nいっしょだった仲間のカードが\nここに並ぶよ。'},
-  {f:[0.45,0.56],s:1.9,ti:'③ 会いたい',dm:'meet',t:'また話したい人がいたら、\nカードを開いて「会いたい」を押そう。\n相手に、公式LINEでお知らせが届くよ。'},
-  {f:[0.88,0.75],s:2.2,ti:'④ LINEでつながる',dm:'line',t:'おたがいに「会いたい」を送ったら、\nつながり成立！ 「つながり」から、\n相手をLINEの友だちに追加できるよ。'},
+  {f:[0.45,0.56],s:1.9,ti:'③ 連絡を取る',dm:'meet',t:'また話したい人がいたら、\nカードを開いて「連絡を取る」を押そう。\n相手に、公式LINEでお知らせが届くよ。'},
+  {f:[0.88,0.75],s:2.2,ti:'④ LINEでつながる',dm:'line',t:'相手が「OK」したら、つながり成立！\n「つながり」から、相手を\nLINEの友だちに追加できるよ。'},
   {f:[0.26,0.1],s:2.8,ti:'⑤ クエスト掲示板',dm:'quest',t:'壁の貼り紙は「クエスト」。\n告知したいこと、仲間を募りたいことを\nだれでも貼り出せるよ。'},
   {f:[0.45,0.56],s:1.9,ti:'⑥ 自分のカード',dm:'card',t:'カードは、いつでも直せるよ。\nLINEのリンクを入れておくと、\nつながった相手があなたを追加できるよ。'},
   {f:[0.52,0.42],s:1.5,ti:'⑦ こまったときは',dm:'faq',t:'わからないときは\n「あさやんに聞く」を開いてね。\nわたしに質問も送れるよ。'},
@@ -1177,9 +1177,9 @@ function btDo(k){document.getElementById('btCmd').classList.add('hidden');docume
     return;}
   if(k==='talk'){
     if(!BT.shown){btMon('hide');btSay(['あなたは はなしかけた！','しかし てれちょうちんは かくれてしまった！','あさやん：知らない人に いきなり話しかけられたら、\nびっくりするよね。\nまずは カードを見せてあげよう。'],btCmd);return;}
-    btMon('hit');btSay(['あなたは 「会いたい」を おくった！','てれちょうちんも 「会いたい」を おくりかえした！'],function(){
+    btMon('hit');btSay(['あなたは 「連絡を取る」を おくった！','てれちょうちんは 「OK」した！'],function(){
       var fl=document.getElementById('btFlash');fl.classList.remove('go');void fl.offsetWidth;fl.classList.add('go');btMon('happy');document.getElementById('btEn').textContent='1';
-      btSay(['おたがいの「会いたい」が そろった！','てれちょうちんが 仲間に なった！','あさやん：本物の酒場でも、\nおたがいに「会いたい」を送ったら、\nLINEで つながれるよ。'],btLesson);});
+      btSay(['つながり 成立！','てれちょうちんが 仲間に なった！','あさやん：本物の酒場でも、\n「連絡を取る」を送って、相手が「OK」したら、\nLINEで つながれるよ。'],btLesson);});
     return;}
   if(k==='run'){BT.ran++;
     if(BT.ran<2){btSay(['あなたは にげだした！','しかし あさやんに まわりこまれた！','あさやん：だいじょうぶ、これは練習だよ。\nまずは カードを見せてみよう。'],btCmd);return;}
@@ -1187,7 +1187,7 @@ function btDo(k){document.getElementById('btCmd').classList.add('hidden');docume
 }
 function btLesson(){btSay(['あさやん：練習は おしまい！\nいまのが、この酒場の つながり方だよ。'],function(){
   var el=document.getElementById('btTxt');document.getElementById('btWho').style.display='';
-  el.innerHTML='<div class="btSum"><div><span>①</span>🪪 カードで、自分のことを知ってもらう</div><div><span>②</span>🍺 集まりで会った人に「会いたい」を送る</div><div><span>③</span>💬 おたがいなら、LINEで つながる</div></div>';
+  el.innerHTML='<div class="btSum"><div><span>①</span>🪪 カードで、自分のことを知ってもらう</div><div><span>②</span>📨 集まりで会った人に「連絡を取る」を送る</div><div><span>③</span>💬 相手が「OK」したら、LINEで つながる</div></div>';
   var bt=document.getElementById('btBtns');bt.innerHTML=BT.replay?'<button class="main" onclick="event.stopPropagation();btEnd()">とじる</button>':'<button class="main" onclick="event.stopPropagation();btEnd()">じぶんの カードを見る</button>';bt.classList.remove('hidden');document.getElementById('btNext').classList.add('off');});}
 function btSkip(){var el=document.getElementById('btTxt');if(el._t){clearInterval(el._t);el._t=null;}document.getElementById('btCmd').classList.add('hidden');document.getElementById('btWin').style.visibility='';document.getElementById('btBtns').classList.add('hidden');document.getElementById('btMon').style.visibility='';document.getElementById('battle').classList.remove('okOn');BT.q=[];btLesson();}
 function btEnd(){if(BT.done)return;BT.done=true;document.getElementById('btBtns').classList.add('hidden');document.getElementById('btBtns').innerHTML='';document.getElementById('battle').classList.add('hidden');if(!BT.replay)openMycard();}
@@ -1219,7 +1219,7 @@ function homeSituation(){
   var all=uniqFellows();
   if(ASK_UNSEEN)return 'あなたの質問に、返事を書いておいたよ。<br>「❓ あさやんに聞く」を見てね。';
   var inc=all.filter(function(x){return x.p.link==='incoming';});
-  if(inc.length)return inc[0].p.name+'さんから「会いたい」が届いてるよ。<br>下の「つながり」を見てごらん。';
+  if(inc.length)return inc[0].p.name+'さんから「連絡のお願い」が届いてるよ。<br>下の「つながり」を見てごらん。';
   var opts=[];
   var nw=all.filter(function(x){return x.p.is_new;});
   if(nw.length)opts.push('新しい仲間が'+nw.length+'人、酒場に来たよ。<br>「仲間をさがす」でのぞいてみて。');
@@ -1459,7 +1459,7 @@ function renderFind(quiet){
     var hot=uniqFellows().filter(function(x){return x.p.link==='incoming';});
     if(hot.length){
       hot.forEach(function(x){lookup[x.p.id]=x;});
-      html+='<div class="hotbar" data-gi=""><div class="hl">📬 あなたに会いたい人が <b>'+hot.length+'人</b></div><div class="hots">'+hot.map(function(x){var pal=avaPal(x.p);var ph=(x.p.avatar_type==='photo'&&x.p.avatar_url);return '<div class="pc hotp" data-id="'+escapeHtml(x.p.id)+'"><span class="hav" style="--c1:'+pal[0]+';--c2:'+pal[1]+'">'+(ph?'<img src="'+escapeHtml(x.p.avatar_url)+'" alt="">':escapeHtml(initial(x.p.name)))+'</span><span class="hn">'+escapeHtml(x.p.name)+'</span><span class="hgo">返事する ›</span></div>';}).join('')+'</div></div>';ri++;
+      html+='<div class="hotbar" data-gi=""><div class="hl">📬 あなたと連絡を取りたい人が <b>'+hot.length+'人</b></div><div class="hots">'+hot.map(function(x){var pal=avaPal(x.p);var ph=(x.p.avatar_type==='photo'&&x.p.avatar_url);return '<div class="pc hotp" data-id="'+escapeHtml(x.p.id)+'"><span class="hav" style="--c1:'+pal[0]+';--c2:'+pal[1]+'">'+(ph?'<img src="'+escapeHtml(x.p.avatar_url)+'" alt="">':escapeHtml(initial(x.p.name)))+'</span><span class="hn">'+escapeHtml(x.p.name)+'</span><span class="hgo">返事する ›</span></div>';}).join('')+'</div></div>';ri++;
     }
   }
   GROUPS.forEach(function(g,gi){
@@ -1539,24 +1539,24 @@ async function renderLinkArea(p){
     a='<button class="done" disabled>🤝 つながっています</button>';
   }else if(r.state==='incoming_pending'){
     badge='<span class="bdg incoming">📬 申請きてる</span>';
-    h='<div class="linkBox"><div class="lbT">📬 '+nm+'さんから「会いたい」が届いています</div><div class="lbL">つながると、お互いのLINE IDが見られるようになるよ。<br>右下の「つながる」を押すか、今回は見送ることもできるよ。</div><button class="reqBtn" onclick="respond('+r.request_id+',false)">今回は見送る</button></div>';
-    a='<button onclick="respond('+r.request_id+',true)">🤝 つながる</button>';
+    h='<div class="linkBox"><div class="lbT">📬 '+nm+'さんから「連絡のお願い」が届いています</div><div class="lbL">右下の「OKして つながる」を押すと、おたがいのLINEが見られるようになるよ。<br>今回は見送ることもできるよ（相手には伝わらないよ）。</div><button class="reqBtn" onclick="respond('+r.request_id+',false)">今回は見送る</button></div>';
+    a='<button onclick="respond('+r.request_id+',true)">🤝 OKして つながる</button>';
   }else if(r.state==='outgoing_pending'){
     badge='<span class="bdg outgoing">⏳ 返事待ち</span>';
-    h='<div class="meetNote">'+nm+'さんに「会いたい」を送ってあるよ。返事を待ってね。</div>';
+    h='<div class="meetNote">'+nm+'さんに「連絡を取る」を送ってあるよ。相手が「OK」したら、つながるよ。</div>';
     a='<button class="mine" disabled>⏳ 返事を待っています</button>';
   }else if(r.is_me){
     h='<div class="meetNote">これはあなたのカード。みんなには、こう見えているよ。</div>';
     a='<button onclick="openMycard()">✏️ カードを直す</button>';
   }else if(!r.can_request){
-    h='<div class="meetNote">'+nm+'さんとは、まだ同じ集まり・案内で一緒になっていないよ。<br>'+(DETAIL_BACK==='qdetail'?'この案内に参加すると、':'集まりや案内で一緒になると、')+'「会いたい」を送れるようになるよ。</div>';
+    h='<div class="meetNote">'+nm+'さんとは、まだ同じ集まり・案内で一緒になっていないよ。<br>'+(DETAIL_BACK==='qdetail'?'この案内に参加すると、':'集まりや案内で一緒になると、')+'「連絡を取る」を送れるようになるよ。</div>';
     a='<button class="mine" disabled>まだ声をかけられないよ</button>';
   }else if(!r.contact_ok){
-    h='<div class="meetNote">この方は今、「会いたい」の受付をお休みしています</div>';
+    h='<div class="meetNote">この方は今、「連絡のお願い」の受付をお休みしています</div>';
     a='<button class="mine" disabled>受付お休み中</button>';
   }else{
-    h='<div class="meetNote">右下の「会いたい」を押すと、'+nm+'さんにお知らせが届くよ。<br>OKをもらえたら、お互いのLINE IDが見られるようになるよ。</div>';
-    a='<button onclick="meet(\''+p.id+'\')">🍺 会いたい</button>';
+    h='<div class="meetNote">右下の「連絡を取る」を押すと、'+nm+'さんにお知らせが届くよ。<br>相手が「OK」したら、おたがいのLINEが見られるようになるよ。</div>';
+    a='<button onclick="meet(\''+p.id+'\')">📨 連絡を取る</button>';
   }
   el.innerHTML=h;act.innerHTML=a;if(st)st.innerHTML=badge;
 }
@@ -1589,9 +1589,9 @@ async function loadLinks(){
   var rs=await Promise.all([api('my_links',{}),api('notes_list',{})]);var r=rs[0];
   if(rs[1].ok){NOTES={};(rs[1].notes||[]).forEach(function(n){NOTES[n.target_id]=n.body;});}
   if(!r.ok){b.innerHTML='<div class="stub">読み込めなかった…</div>';return;}
-  var h='<div class="lkH">📬 届いている「会いたい」（'+r.incoming.length+'）</div>';
+  var h='<div class="lkH">📬 届いている「連絡のお願い」（'+r.incoming.length+'）</div>';
   if(!r.incoming.length)h+='<div class="lkE">今は届いていないよ</div>';
-  r.incoming.forEach(function(x){h+=linkRow(x.card,'<div class="lbL">つながると、お互いのLINE IDが見られるようになるよ。</div><div style="display:flex;gap:8px;margin-top:10px"><button class="okbtn" style="flex:1;margin:0;padding:10px;font-size:.95rem" onclick="respond('+x.request_id+',true)">つながる</button><button class="reqBtn" style="flex:1;margin:0" onclick="respond('+x.request_id+',false)">今回は見送る</button></div>');});
+  r.incoming.forEach(function(x){h+=linkRow(x.card,'<div class="lbL">つながると、お互いのLINE IDが見られるようになるよ。</div><div style="display:flex;gap:8px;margin-top:10px"><button class="okbtn" style="flex:1;margin:0;padding:10px;font-size:.95rem" onclick="respond('+x.request_id+',true)">OKして つながる</button><button class="reqBtn" style="flex:1;margin:0" onclick="respond('+x.request_id+',false)">今回は見送る</button></div>');});
   h+='<div class="lkH">🤝 つながった仲間（'+r.matched.length+'）</div>';
   if(!r.matched.length)h+='<div class="lkE">まだいないよ。「仲間をさがす」から声をかけてみよう</div>';
   r.matched.forEach(function(x){var nt=NOTES[x.card.id];h+=linkRow(x.card,(nt?'<div class="lkMemo">📝 '+escapeHtml(nt.length>40?nt.slice(0,40)+'…':nt)+'</div>':'')+lineIdBox(x.card.line_id,escapeHtml(x.card.name),x.card.id));});
@@ -1799,12 +1799,12 @@ function renderMycard(){
     '<div class="field"><label>キーワード（任意・カンマ区切り）</label><div class="ex">さがすときの手がかりになります</div><input id="f_tags"'+inp+' value="'+escapeHtml((m.free_tags||[]).join(','))+'" placeholder="例：日本酒,浅草,ゴルフ好き"></div>'+
     '<div class="fgh">つながった人だけ <small>🔒 ほかの人には見えません</small></div>'+
     '<div class="field"><label>LINEの友だち追加リンク（任意）</label>'+lnWarnHtml(m,'mc')+
-      '<div class="lnSafe">🔒 ここに入れたLINEは、<b>「会いたい」がおたがいに成立して、つながった相手にだけ</b>見えます。<br>ほかの仲間には見えません。<br>つながったときは、公式LINEからお知らせが届きます。<br>相手はボタンを押すだけで、あなたを友だち追加できます。</div>'+
+      '<div class="lnSafe">🔒 ここに入れたLINEは、<b>「連絡を取る」に相手がOKして、つながった相手にだけ</b>見えます。<br>ほかの仲間には見えません。<br>つながったときは、公式LINEからお知らせが届きます。<br>相手はボタンを押すだけで、あなたを友だち追加できます。</div>'+
       '<details class="lnHow"'+(m.line_id?'':' open')+'><summary>🔗 リンクの出し方（10秒でできます）</summary><ol><li>LINEを開いて、下の「<b>ホーム</b>」</li><li>上のほうにある <b>QRコードのマーク</b> をタップ</li><li>「<b>マイQRコード</b>」</li><li>「<b>リンクをコピー</b>」</li><li>この画面にもどって、下の「<b>📋 貼り付ける</b>」</li></ol><small>※マイQRコードの画面で「更新」を押すと、前のリンクは使えなくなります。押したときは、もう一度貼り直してね。</small></details>'+
       '<div class="lnRow"><input id="f_line"'+inp+' value="'+escapeHtml(m.line_id||'')+'" placeholder="https://line.me/ti/p/…" autocapitalize="off" autocorrect="off" spellcheck="false"><button type="button" class="lnPaste" onclick="lnPaste()">📋 貼り付ける</button></div>'+
       '<div id="lnMsg" class="nrauto"></div>'+
     '</div>'+
-    '<div class="field"><label>「会いたい」の受付</label><div class="toggle"><button id="ct_on" class="'+(CONTACT?'on':'')+'" onclick="setContact(true)">受け取る</button><button id="ct_off" class="'+(!CONTACT?'on':'')+'" onclick="setContact(false)">今はオフ</button></div></div>'+(m.role==='owner'?'':lvHtml());
+    '<div class="field"><label>「連絡のお願い」の受付</label><div class="toggle"><button id="ct_on" class="'+(CONTACT?'on':'')+'" onclick="setContact(true)">受け取る</button><button id="ct_off" class="'+(!CONTACT?'on':'')+'" onclick="setContact(false)">今はオフ</button></div></div>'+(m.role==='owner'?'':lvHtml());
   var sb=document.getElementById('saveBtn');sb.classList.remove('dirty');sb.textContent='保存する';
   mcNorenRender();mcPreview();
 }
@@ -1812,7 +1812,7 @@ function lvHtml(){return '<div class="lvBox" id="lvBox"><button class="lvLink" o
 function lvOpen(){var b=document.getElementById('lvBox');if(!b)return;
   b.innerHTML='<div class="lvPanel"><div class="lvT">🚪 酒場をやめますか？</div>'+
   '<div class="lvTx">やめると、次のものが<b>すべて消えます</b>。元にはもどせません。</div>'+
-  '<ul class="lvUl"><li>あなたのカード（顔写真・LINEのリンクもふくむ）</li><li>つながった仲間と、「会いたい」のやりとり</li><li>集まりの「行きます」と「当日話したい」</li><li>あなたが書いたメモ</li><li>あなたが出したクエストと、コメント</li></ul>'+
+  '<ul class="lvUl"><li>あなたのカード（顔写真・LINEのリンクもふくむ）</li><li>つながった仲間と、「連絡を取る」のやりとり</li><li>集まりの「行きます」と「当日話したい」</li><li>あなたが書いたメモ</li><li>あなたが出したクエストと、コメント</li></ul>'+
   '<div class="lvTx">※仲間のほうからも、あなたのカードは見えなくなります。<br>※Kクラブの会員をやめることではないよ（酒場のカードが消えるだけ）。<br>※安全のための控え（バックアップ）からも、2週間で消えます。<br>※また来たくなったら、日報のリンクから入れば、新しくカードを作り直せるよ。</div>'+
   '<button class="lvGo" id="lvGo" onclick="lvDo()">消して、やめる</button><button class="lvNo" onclick="lvCancel()">やめない（もどる）</button></div>';
   b.scrollIntoView({behavior:'smooth',block:'center'});}
@@ -1874,8 +1874,8 @@ function openChocho(){show('chocho');if(!STAFF_SS){renderChoLock();return;}var t
 function choTab(t){['req','today','mem','bc','ln','nr','qa','bk'].forEach(function(x){document.getElementById('chT_'+x).classList.toggle('on',x===t);});document.getElementById('chBody').innerHTML='<div class="loading">読み込み中…</div>';if(t==='req')loadChoRequests();else if(t==='today')loadChoToday();else if(t==='bc')loadChoBc();else if(t==='ln')loadChoLines();else if(t==='nr')loadChoNoren();else if(t==='qa')loadChoQa();else if(t==='bk')loadChoBk();else loadChoMembers();}
 var CHO_STATUS={pending:['返事待ち','chipW'],matched:['つながった','chipG'],declined:['見送り','chipN']};
 function fmtJ(d){return d?new Date(d).toLocaleString('ja-JP',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}):'';}
-async function loadChoRequests(){var r=await api('admin_requests',{});var b=document.getElementById('chBody');if(!r.ok){b.innerHTML='<div class="stub">読み込めなかった…</div>';return;}var reqs=r.requests||[];var c={pending:0,matched:0,declined:0};reqs.forEach(function(x){if(c[x.status]!==undefined)c[x.status]++;});var h='<div class="say" style="font-size:.84rem">「会いたい」の申請は、自動で相手に届くよ。<br>ここでは、誰が誰に申請したかを見守れるよ。</div>';h+='<div class="choSum"><div><b>'+reqs.length+'</b>申請</div><div><b>'+c.pending+'</b>返事待ち</div><div><b>'+c.matched+'</b>つながった</div><div><b>'+c.declined+'</b>見送り</div></div>';if(!reqs.length)h+='<div class="stub">まだ申請はないよ。</div>';reqs.forEach(function(x){h+=reqCardHtml(x);});b.innerHTML=h;}
-function reqCardHtml(x){var f=x.from||{},t=x.to||{};var st=CHO_STATUS[x.status]||[x.status,'chipN'];var ev=x.event_name?('『'+escapeHtml(x.event_name)+'』の仲間'):'同じ集まり・クエストの仲間';var nr=x.notify_result||'';var line=nr.indexOf('request:ok')>=0?'LINE通知 ✓':(nr.indexOf('request:queued')>=0?'LINE通知 朝に送信':(nr.indexOf('request:ng(')>=0?'LINE通知 ✕（'+escapeHtml((nr.match(/request:ng\(([^)]*)\)/)||[])[1]||'')+'）':'LINE通知 未送信'));var h='<div class="reqCard">';h+='<div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><span class="chip '+st[1]+'">'+st[0]+'</span><span class="reqMeta" style="margin:0">'+fmtJ(x.created_at)+'</span></div>';h+='<div class="reqWho" style="margin-top:8px"><b>'+escapeHtml(f.name||'（退会）')+'</b> さん'+(f.tagline?'<span style="color:#c9b48c;font-size:.82rem">（'+escapeHtml(f.tagline)+'）</span>':'')+'<br>↓ 会いたい<br><b>'+escapeHtml(t.name||'（退会）')+'</b> さん'+(t.tagline?'<span style="color:#c9b48c;font-size:.82rem">（'+escapeHtml(t.tagline)+'）</span>':'')+'</div>';h+='<div class="reqMeta">'+ev+' ・ '+line+(x.responded_at?' ・ 返事 '+fmtJ(x.responded_at):'')+'</div>';h+='</div>';return h;}
+async function loadChoRequests(){var r=await api('admin_requests',{});var b=document.getElementById('chBody');if(!r.ok){b.innerHTML='<div class="stub">読み込めなかった…</div>';return;}var reqs=r.requests||[];var c={pending:0,matched:0,declined:0};reqs.forEach(function(x){if(c[x.status]!==undefined)c[x.status]++;});var h='<div class="say" style="font-size:.84rem">「連絡を取る」の申請は、自動で相手に届くよ。<br>ここでは、誰が誰に申請したかを見守れるよ。</div>';h+='<div class="choSum"><div><b>'+reqs.length+'</b>申請</div><div><b>'+c.pending+'</b>返事待ち</div><div><b>'+c.matched+'</b>つながった</div><div><b>'+c.declined+'</b>見送り</div></div>';if(!reqs.length)h+='<div class="stub">まだ申請はないよ。</div>';reqs.forEach(function(x){h+=reqCardHtml(x);});b.innerHTML=h;}
+function reqCardHtml(x){var f=x.from||{},t=x.to||{};var st=CHO_STATUS[x.status]||[x.status,'chipN'];var ev=x.event_name?('『'+escapeHtml(x.event_name)+'』の仲間'):'同じ集まり・クエストの仲間';var nr=x.notify_result||'';var line=nr.indexOf('request:ok')>=0?'LINE通知 ✓':(nr.indexOf('request:queued')>=0?'LINE通知 朝に送信':(nr.indexOf('request:ng(')>=0?'LINE通知 ✕（'+escapeHtml((nr.match(/request:ng\(([^)]*)\)/)||[])[1]||'')+'）':'LINE通知 未送信'));var h='<div class="reqCard">';h+='<div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><span class="chip '+st[1]+'">'+st[0]+'</span><span class="reqMeta" style="margin:0">'+fmtJ(x.created_at)+'</span></div>';h+='<div class="reqWho" style="margin-top:8px"><b>'+escapeHtml(f.name||'（退会）')+'</b> さん'+(f.tagline?'<span style="color:#c9b48c;font-size:.82rem">（'+escapeHtml(f.tagline)+'）</span>':'')+'<br>↓ 連絡を取る<br><b>'+escapeHtml(t.name||'（退会）')+'</b> さん'+(t.tagline?'<span style="color:#c9b48c;font-size:.82rem">（'+escapeHtml(t.tagline)+'）</span>':'')+'</div>';h+='<div class="reqMeta">'+ev+' ・ '+line+(x.responded_at?' ・ 返事 '+fmtJ(x.responded_at):'')+'</div>';h+='</div>';return h;}
 function loadChoToday(){var b=document.getElementById('chBody');var cur=(OKAMI&&OKAMI.today)?OKAMI.today:'';b.innerHTML='<div class="say" style="font-size:.84rem">酒場のホームに出る「今日のひとこと」を出せるよ。<br>空っぽにして出すと、いつものセリフに戻るよ。</div><div class="field"><textarea id="todayInput" placeholder="例：今日は新しい仲間が増えたよ。のぞいてみてね。">'+escapeHtml(cur)+'</textarea></div><button class="okbtn" id="todayBtn" onclick="postToday()">この言葉を出す</button>';}
 async function postToday(){var btn=document.getElementById('todayBtn');btn.disabled=true;btn.textContent='出してるよ…';var txt=document.getElementById('todayInput').value;var r=await api('today_post',{text:txt});btn.disabled=false;btn.textContent='この言葉を出す';if(r.ok){var o=await api('okami',{});if(o.ok)OKAMI=o;toastMsg('あさやん：「今日のひとこと、出しておいたよ」');}else toastMsg('うまく出せなかった…');}
 async function loadChoMembers(){var r=await api('admin_members',{});var b=document.getElementById('chBody');if(!r.ok){b.innerHTML='<div class="stub">読み込めなかった…</div>';return;}var ms=r.members||[];var iAmOwner=r.my_role==='owner';var h='<div class="say" style="font-size:.84rem">登録している仲間：'+ms.length+'人<br>👑＝最高管理者　🛡＝管理者（帳場が見られる人）</div>';ms.forEach(function(m){var d=m.created_at?new Date(m.created_at).toLocaleDateString('ja-JP',{month:'numeric',day:'numeric'}):'';var mark=m.role==='owner'?' 👑':(m.role==='admin'?' 🛡':'');var btn='';if(iAmOwner&&m.role!=='owner'&&m.active){btn=m.role==='admin'?'<button class="roleBtn" onclick="setRole(\''+m.id+'\',\'member\')">管理者を外す</button>':'<button class="roleBtn" onclick="setRole(\''+m.id+'\',\'admin\')">管理者にする</button>';}h+='<div class="memRow"><div style="min-width:0"><div class="mn">'+escapeHtml(m.name||'')+mark+(m.active?'':' <span style="color:#a55;font-size:.72rem">(退会)</span>')+'</div><div class="mt">'+escapeHtml(m.tagline||'')+'</div></div><div style="text-align:right"><div class="md">'+d+'</div>'+btn+'</div></div>';});b.innerHTML=h;}
@@ -1992,16 +1992,16 @@ function renderHomeEv(){var el=document.getElementById('homeEv');if(!el)return;i
 async function loadEvents(){var b=document.getElementById('evBody');if(!EVENTS)b.innerHTML='<div class="loading">読み込み中…</div>';else renderEvents();var r=await evRefresh();if(!r.ok&&!EVENTS){b.innerHTML='<div class="stub">予定を読み込めなかった…</div>';return;}renderEvents();}
 function goingFaces(list,max){return list.slice(0,max).map(function(p){return '<span class="evFace">'+avaBox((p.avatar_type==='photo')?p.avatar_url:'',p.name,26)+'</span>';}).join('')+(list.length>max?'<span class="evMore">+'+(list.length-max)+'</span>':'');}
 function renderEvents(){var b=document.getElementById('evBody');if(!b)return;
-  var h='<div class="say"><b>あさやん：</b>これからのKクラブの集まりだよ。<br>行くなら「行きます」を押しておいてね。</div>'+
+  var h='<div class="say"><b>あさやん：</b>これからのKクラブの集まりだよ。<br>行くなら「行きます」を押してもいいよ。日報で申し込んでいれば、自動で「申込済み」になるよ。</div>'+
     '<div class="evRule"><b>🍺 この酒場は「会った人とつながる」場所</b>'+
     '<ol><li><span>集まりの前</span><p>来る人は<b>まだ見えない</b>よ。</p></li>'+
     '<li><span>集まりの時間</span><p>来る人の<b>顔ぶれが開く</b>よ。会場で声をかけてね。</p></li>'+
-    '<li><span>会ったあと</span><p>「仲間をさがす」から<b>「会いたい」</b>でLINEがつながるよ。</p></li></ol>'+
+    '<li><span>会ったあと</span><p>「仲間をさがす」から<b>「連絡を取る」</b>→ 相手がOKしたら、LINEがつながるよ。</p></li></ol>'+
     '<small>※もうつながっている仲間は、前から見えるよ。<br>※見えるのは、集まりに申し込んだ人と「行きます」を押した人のうち、このアプリに登録している人だけだよ（参加者全員ではないよ）</small></div>';
   if(!EVENTS||!EVENTS.length){b.innerHTML=h+'<div class="stub">今わかっている予定はないよ。</div>';return;}
   EVENTS.forEach(function(e,i){var tm=(e.talk_to_me||[]).length+(e.talk_hidden||0);
     h+='<div class="evCard'+(e.me_going?' going':'')+'" onclick="openEvent('+i+')"><div class="evD"><b>'+escapeHtml(evDate(e).split('(')[0])+'</b><small>'+escapeHtml('('+evDate(e).split('(')[1])+'</small><i>'+escapeHtml(evWhen(e))+'</i></div><div class="evT"><div class="nm">'+escapeHtml(evTitle(e))+'</div><div class="pl">📍 '+escapeHtml(e.venue_name||e.venue||'場所は未定')+'</div><div class="pp">'+(e.going.length?goingFaces(e.going,5)+'<span class="cnt">'+(e.revealed?'アプリに登録している参加者':'つながっている仲間')+'</span>':(e.revealed?'':'<span class="evLock">🔒 顔ぶれは集まりの時間に開くよ</span>'))+(e.me_going?'<span class="chip chipG">'+(e.me_source==='nippo'?'申込済み':'行きます')+'</span>':'')+(tm?'<span class="chip chipW">話したい人 '+tm+'</span>':'')+'</div></div></div>';});
-  h+='<div class="evNote">※「行きます」は、仲間に知らせるための印だよ。集まりへの申し込みは、今までどおりの方法でしてね。</div>';
+  h+='<div class="evNote">※日報で申し込んでいる集まりは、自動で「申込済み」になるよ。<br>※「行きます」は、仲間に知らせるための印だよ。申し込みのかわりにはならないから、申し込みは今までどおりしてね。</div>';
   b.innerHTML=h;}
 function openEvent(i){CUR_EV=EVENTS[i];if(!CUR_EV)return;renderEventDetail();show('evdetail');}
 function renderEventDetail(){var e=CUR_EV;if(!e)return;var b=document.getElementById('evdBody');
@@ -2018,7 +2018,7 @@ function renderEventDetail(){var e=CUR_EV;if(!e)return;var b=document.getElement
     h+='<div class="evP"><div class="evPc" onclick="openEvPerson('+k+')">'+avaBox((p.avatar_type==='photo')?p.avatar_url:'',p.name,46)+'<div class="t"><b>'+escapeHtml(p.name)+(me?'（あなた）':'')+'</b><small>'+escapeHtml(p.tagline||p.industry||'')+'</small>'+(fromThem?'<em>🗣 あなたと話したいそうです</em>':'')+'</div></div>'+
       (me||!e.me_going?'':'<button class="evTalk'+(on?' on':'')+'" onclick="evTalk(\''+escAttr(p.id)+'\','+(on?'false':'true')+')">'+(on?'✓ 話したい':'🗣 話したい')+'</button>')+'</div>';});h+='</div>';
     if(!e.me_going)h+='<div class="evNote">「行きます」を押すと、話したい人に印を付けられるよ。</div>';}
-  h+='<div class="evNote">※「行きます」は仲間に知らせるための印だよ。申し込みは今までどおりの方法でしてね。<br>※「話したい」はLINEの交換ではなく、当日声をかけるきっかけだよ。相手には「話したいそうです」とだけ伝わるよ。</div>';
+  h+='<div class="evNote">※日報で申し込んでいれば、自動で「申込済み」になるよ。「行きます」は仲間に知らせるための印で、申し込みのかわりにはならないよ。<br>※「話したい」はLINEの交換ではなく、当日声をかけるきっかけだよ。相手には「話したいそうです」とだけ伝わるよ。</div>';
   b.innerHTML=h;
   document.getElementById('evdAct').innerHTML=e.me_source==='nippo'?'<button class="done" onclick="toastMsg(\'申込みは日報で受け付けているよ。<br>取り消すときは、日報から取り消してね\')">✅ 申込済み</button>':e.me_going?'<button class="done" onclick="evRsvp(false)">✅ 行きます（取り消す）</button>':'<button onclick="evRsvp(true)">🙋 行きます</button>';}
 function openEvPerson(k){var p=CUR_EV&&CUR_EV.going[k];if(!p)return;if(ME&&p.id===ME.id){openMycard();return;}openDetail(p,null,{back:'evdetail',event:CUR_EV});}
@@ -2047,7 +2047,7 @@ async function memoSave(){var i=document.getElementById('memoIn'),b=document.get
   if(r.ok){MEMO_ORIG=r.body||'';if(MEMO_ORIG)NOTES[MEMO_T]=MEMO_ORIG;else delete NOTES[MEMO_T];var st=document.getElementById('memoSt');if(st)st.textContent=MEMO_ORIG?'保存したよ ✓':'メモを消したよ';}else{b.disabled=false;toastMsg('うまく保存できなかった…');}}
 
 /* ===== あさやんに聞く（よくある質問＋質問箱） ===== */
-var FAQ_CATS=[['all','すべて'],['start','はじめに'],['meet','仲間・会いたい'],['line','LINE'],['quest','クエスト'],['card','カード'],['help','困ったとき']];
+var FAQ_CATS=[['all','すべて'],['start','はじめに'],['meet','仲間・連絡'],['line','LINE'],['quest','クエスト'],['card','カード'],['help','困ったとき']];
 var FAQ_GO={find:['🍺','仲間をさがす'],board:['📜','クエスト掲示板'],links:['📬','つながり'],mycard:['🪪','自分のカード']};
 var FAQ_CAT='all',FAQ_Q='',FAQ_OPEN=null,ASK_ITEMS=[],ASK_UNSEEN=0,ASK_PENDING=0;
 function fmtAns(t){return escapeHtml(t||'').replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/\n/g,'<br>');}
@@ -2098,7 +2098,7 @@ async function askSend(){var t=document.getElementById('fqAskIn');var q=(t.value
 
 /* 帳場：質問箱とよくある質問の編集 */
 var QA_ASKS=[],QA_FAQ=[];
-var FAQ_CAT_NAME={start:'はじめに',meet:'仲間・会いたい',line:'LINE',quest:'クエスト',card:'カード',help:'困ったとき'};
+var FAQ_CAT_NAME={start:'はじめに',meet:'仲間・連絡',line:'LINE',quest:'クエスト',card:'カード',help:'困ったとき'};
 function qaCatSel(id,cur){return '<select id="'+id+'" class="nrsel2">'+FAQ_CATS.slice(1).map(function(c){return '<option value="'+c[0]+'"'+(c[0]===cur?' selected':'')+'>'+c[1]+'</option>';}).join('')+'</select>';}
 function qaGoSel(id,cur){var o=[['','（なし）']].concat(Object.keys(FAQ_GO).map(function(k){return [k,FAQ_GO[k][1]];}));return '<select id="'+id+'" class="nrsel2">'+o.map(function(c){return '<option value="'+c[0]+'"'+(c[0]===(cur||'')?' selected':'')+'>'+c[1]+'</option>';}).join('')+'</select>';}
 async function loadChoQa(){var b=document.getElementById('chBody');
