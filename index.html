@@ -800,12 +800,41 @@ html,body{height:100%;background:radial-gradient(130% 90% at 50% 0%, #1c1008 0%,
 .auSub{color:#c9b48c;font-size:.76rem;margin-top:2px;}
 .auTg{color:#ecdfc6;font-size:.84rem;margin-top:4px;line-height:1.5;}
 .auGo{color:#caa45a;font-size:1.6rem;flex:0 0 auto;}
-.qc{background:rgba(0,0,0,.28);border:1.5px solid #6e4a1e;border-radius:10px;padding:10px 11px;margin-top:9px;}
-.qcH{display:flex;align-items:center;gap:7px;color:#f5d97a;font-size:.86rem;}
-.qcAv{display:inline-block;flex:0 0 auto;}
-.qcT{margin-left:auto;color:#8a7350;font-size:.7rem;white-space:nowrap;}
-.qcB{color:#f3e7cf;font-size:.9rem;line-height:1.65;margin-top:7px;white-space:pre-wrap;word-break:break-word;}
-.qcDel{margin-top:7px;background:none;border:1px solid #6e4a1e;color:#a08a66;border-radius:7px;padding:3px 10px;font-size:.72rem;font-family:'Zen Maru Gothic',sans-serif;cursor:pointer;}
+/* LINE風のコメント */
+.qchat{background:#7494c0;border-radius:14px;padding:10px 10px 6px;margin-top:8px;}
+.qc{display:flex;align-items:flex-end;gap:7px;margin-bottom:9px;}
+.qc.me{flex-direction:row-reverse;}
+.qcAv{flex:0 0 auto;margin-bottom:14px;}
+.qcW{max-width:78%;min-width:0;}
+.qcN{font-size:.7rem;color:#eef3ff;margin:0 0 3px 6px;display:flex;align-items:center;gap:5px;}
+.qcN .chip{font-size:.6rem!important;padding:1px 6px;}
+.qcRow{display:flex;align-items:flex-end;gap:5px;}
+.qc.me .qcRow{flex-direction:row-reverse;}
+.qcB{background:#fff;color:#111;font-size:.92rem;line-height:1.55;padding:8px 11px;border-radius:14px;border-top-left-radius:4px;white-space:pre-wrap;word-break:break-word;box-shadow:0 1px 1px rgba(0,0,0,.15);}
+.qc.me .qcB{background:#8de055;border-top-left-radius:14px;border-top-right-radius:4px;}
+.qcT{flex:0 0 auto;color:#e4ebf7;font-size:.62rem;line-height:1.3;white-space:nowrap;}
+.qcDel{display:block;background:none;border:0;color:#2b4166;padding:2px 6px;font-size:.66rem;font-family:'Zen Maru Gothic',sans-serif;cursor:pointer;text-decoration:underline;}
+.qc.me .qcDel{margin-left:auto;}
+.qchat .lkE{color:#eef3ff;text-align:center;padding:10px 0 14px;}
+/* 貼り紙の種類 */
+.qkinds{display:flex;flex-direction:column;gap:7px;margin:4px 0 10px;}
+.qk{display:grid;grid-template-columns:38px 1fr;grid-template-rows:auto auto;column-gap:8px;align-items:center;text-align:left;background:rgba(0,0,0,.28);border:1.5px solid #6e4a1e;border-radius:12px;padding:9px 11px;color:#f3e7cf;font-family:'Zen Maru Gothic',sans-serif;cursor:pointer;}
+.qk .qkI{grid-row:1/3;font-size:1.5rem;text-align:center;}
+.qk .qkN{font-weight:800;font-size:.95rem;}
+.qk .qkD{font-size:.72rem;color:#c9b48c;}
+.qk.on{border-color:#f5c518;background:rgba(245,197,24,.14);box-shadow:0 0 0 2px rgba(245,197,24,.25);}
+.qk.on .qkN{color:#f5d97a;}
+.qkb{font-size:.64rem;font-weight:800;border-radius:999px;padding:2px 9px;}
+.qkb.notice{background:#c84b2f;color:#fff;}
+.qkb.recruit{background:#6e4a1e;color:#ffe9c8;}
+.qkb.intro{background:#2f7fc8;color:#fff;}
+.qlineOpt{display:flex;gap:10px;align-items:flex-start;background:rgba(0,0,0,.28);border:1.5px solid #6e4a1e;border-radius:12px;padding:10px 12px;cursor:pointer;color:#f3e7cf;}
+.qlineOpt input{width:20px;height:20px;margin:2px 0 0;flex:none;accent-color:#8de055;}
+.qlineOpt small{display:block;color:#c9b48c;font-size:.74rem;margin-top:2px;line-height:1.5;}
+.qLineBox{background:rgba(141,224,85,.1);border:1.5px solid rgba(141,224,85,.5);border-radius:12px;padding:10px 12px;margin:10px 0 4px;}
+.qLineBox .lbL{color:#f3e7cf;font-size:.86rem;line-height:1.6;}
+.qLineBox .reqBtn{margin-top:8px;}
+.qintroNote{background:rgba(47,127,200,.14);border:1.5px solid rgba(47,127,200,.6);border-radius:12px;padding:10px 12px;margin:10px 0 4px;color:#f3e7cf;font-size:.86rem;line-height:1.6;}
 
 .toast{position:absolute;left:50%;bottom:84px;transform:translateX(-50%) translateY(20px);background:rgba(28,16,8,.98);border:2px solid #f5c518;color:#f5d97a;padding:14px 20px;border-radius:12px;font-size:.92rem;opacity:0;transition:all .4s;z-index:50;pointer-events:none;text-align:center;max-width:86%;line-height:1.6;}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
@@ -923,36 +952,44 @@ html,body{height:100%;background:radial-gradient(130% 90% at 50% 0%, #1c1008 0%,
       <div class="fsheet">
         <button class="grab" onclick="toggleSheet(this)" aria-label="広げる・たたむ"></button>
         <div class="fhead"><h2>クエスト掲示板</h2><span class="tot" id="qTot"></span></div>
-        <div class="fhint"><b>あさやん：</b>会ったことがない人の案内にも参加できるよ。参加すると、その人たちと仲間になれる。</div>
+        <div class="fhint"><b>あさやん：</b>壁の貼り紙だよ。📣告知 🍺募集 🙋自己紹介 の3種類。会ったことがない人の貼り紙にも参加できるし、参加すると仲間になれる。</div>
         <div class="fsticky"><div class="chips" id="qchips"></div></div>
         <div id="qList"></div>
       </div>
     </div>
-    <div class="fbar"><button class="back" onclick="show('home')">‹ 戻る</button><button class="pri" onclick="newQuest()">＋ 案内を出す</button></div>
+    <div class="fbar"><button class="back" onclick="show('home')">‹ 戻る</button><button class="pri" onclick="newQuest()">＋ 貼り紙を出す</button></div>
   </div>
 
   <!-- QUEST DETAIL -->
   <div id="qdetail" class="win hidden">
-    <div class="wtop"><button class="back" onclick="show(QD_BACK||'board')">‹ 戻る</button><h2>案内の詳細</h2></div>
+    <div class="wtop"><button class="back" onclick="show(QD_BACK||'board')">‹ 戻る</button><h2>貼り紙</h2></div>
     <div class="wbody"><div id="qdBody"></div></div>
     <div class="actbar" id="qdAct"></div>
   </div>
 
   <!-- QUEST NEW -->
   <div id="qnew" class="win hidden">
-    <div class="wtop"><button class="back" onclick="show('board')">‹ 戻る</button><h2>案内を出す</h2></div>
+    <div class="wtop"><button class="back" onclick="show('board')">‹ 戻る</button><h2>貼り紙を出す</h2></div>
     <div class="wbody">
-      <div class="say" style="margin-bottom:4px"><b>あさやん：</b>どんな集まり？ 書いた内容は、酒場のみんなに見えるよ。</div>
+      <div class="say" style="margin-bottom:4px" id="qnSay"><b>あさやん：</b>どんな貼り紙にする？ 書いた内容は、酒場のみんなに見えるよ。</div>
+      <div class="fgh" id="qnKindH">貼り紙の種類 <small>ひとつ選ぶ</small></div>
+      <div class="qkinds" id="qkinds">
+        <button type="button" class="qk" data-k="notice" onclick="setQKind('notice')"><span class="qkI">📣</span><span class="qkN">集まり・イベントの告知</span><span class="qkD">日時や場所が決まっている催し</span></button>
+        <button type="button" class="qk" data-k="recruit" onclick="setQKind('recruit')"><span class="qkI">🍺</span><span class="qkN">仲間の募集</span><span class="qkD">一緒にやる人・手伝ってくれる人をさがす</span></button>
+        <button type="button" class="qk" data-k="intro" onclick="setQKind('intro')"><span class="qkI">🙋</span><span class="qkN">自己紹介（連絡OK）</span><span class="qkD">会ったことがない人からも「連絡を取る」が届く</span></button>
+      </div>
       <div class="fgh">まずはここだけ <small>必須</small></div>
-      <div class="field"><label>タイトル</label><div class="ex">何の案内か、ひと目で分かるように</div><input id="q_title" placeholder="例：朝活もくもく会やります"></div>
-      <div class="field"><label>内容</label><div class="ex">どんな案内か・なぜやるのか・当日の流れなど、くわしく書くほど伝わるよ（3000文字まで）</div><textarea id="q_content" maxlength="3000" style="min-height:180px" placeholder="例：毎週土曜の朝、カフェで各自もくもく作業します。&#10;&#10;【当日の流れ】&#10;8:00 集合・ひとこと自己紹介&#10;8:15〜9:30 各自作業&#10;9:30〜 軽く雑談&#10;&#10;初めての人歓迎！"></textarea></div>
-      <div class="fgh">くわしく <small>任意・書くと人が集まりやすい</small></div>
-      <div class="field"><label>いつ</label><input id="q_when" maxlength="80" placeholder="例：毎週土曜 8:00〜10:00／11月15日(土) 19時〜"></div>
-      <div class="field"><label>どこで</label><input id="q_place" maxlength="80" placeholder="例：渋谷駅近くのカフェ／オンライン(Zoom)"></div>
-      <div class="field"><label>こんな人に来てほしい</label><textarea id="q_target" maxlength="200" style="min-height:60px" placeholder="例：朝の時間を有効に使いたい人。初めての人も大歓迎"></textarea></div>
-      <div class="field"><label>費用</label><input id="q_fee" maxlength="80" placeholder="例：無料（飲み物代のみ各自）"></div>
-      <div class="field"><label>業種・タグ</label><input id="q_industry" placeholder="例：朝活／勉強会"></div>
-      <div class="meetNote">出すと、あなたのカードも一緒に表示されます（みんなに見えます）</div>
+      <div class="field"><label id="qlTitle">タイトル</label><div class="ex" id="qxTitle">何の案内か、ひと目で分かるように</div><input id="q_title" maxlength="60" placeholder="例：朝活もくもく会やります"></div>
+      <div class="field"><label id="qlContent">内容</label><div class="ex" id="qxContent">どんな案内か・なぜやるのか・当日の流れなど、くわしく書くほど伝わるよ（3000文字まで）</div><textarea id="q_content" maxlength="3000" style="min-height:180px" placeholder="例：毎週土曜の朝、カフェで各自もくもく作業します。&#10;&#10;【当日の流れ】&#10;8:00 集合・ひとこと自己紹介&#10;8:15〜9:30 各自作業&#10;9:30〜 軽く雑談&#10;&#10;初めての人歓迎！"></textarea></div>
+      <div class="fgh" id="qnMoreH">くわしく <small>任意・書くと人が集まりやすい</small></div>
+      <div class="field qf-when"><label>いつ</label><input id="q_when" maxlength="80" placeholder="例：毎週土曜 8:00〜10:00／11月15日(土) 19時〜"></div>
+      <div class="field qf-place"><label>どこで</label><input id="q_place" maxlength="80" placeholder="例：渋谷駅近くのカフェ／オンライン(Zoom)"></div>
+      <div class="field qf-target"><label id="qlTarget">こんな人に来てほしい</label><textarea id="q_target" maxlength="200" style="min-height:60px" placeholder="例：朝の時間を有効に使いたい人。初めての人も大歓迎"></textarea></div>
+      <div class="field qf-fee"><label>費用</label><input id="q_fee" maxlength="80" placeholder="例：無料（飲み物代のみ各自）"></div>
+      <div class="field"><label>業種・タグ</label><input id="q_industry" maxlength="40" placeholder="例：朝活／勉強会"></div>
+      <div class="fgh">LINE <small>任意</small></div>
+      <label class="qlineOpt" id="qLineOpt"><input type="checkbox" id="q_showline"><span><b>自分のLINEをこの貼り紙に載せる</b><small id="qLineNote">載せると、酒場のみんなが見られるよ（つながっていない人も）。</small></span></label>
+      <div class="meetNote" id="qnFoot">出すと、あなたのカードも一緒に表示されます（みんなに見えます）</div>
     </div>
     <div class="actbar"><button id="qCreateBtn" onclick="createQuest()">📜 この案内を出す</button></div>
   </div>
@@ -1318,7 +1355,7 @@ function homeSituation(){
   if(nw.length)opts.push('新しい仲間が'+nw.length+'人、酒場に来たよ。<br>「仲間をさがす」でのぞいてみて。');
   var now=Date.now();
   var nq=(QUESTS||[]).filter(function(q){return !q.mine&&q.created_at&&now-Date.parse(q.created_at)<3*86400000;});
-  if(nq.length)opts.push('掲示板に新しい案内が出てるよ。<br>『'+escapeHtml(nq[0].title)+'』');
+  if(nq.length)opts.push('掲示板に新しい貼り紙が出てるよ。<br>『'+escapeHtml(nq[0].title)+'』');
   return opts.length?opts[Math.floor(Math.random()*opts.length)]:'';
 }
 function renderHome(){
@@ -1572,7 +1609,7 @@ function openDetail(p,g,from){
   DETAIL_BACK=(from&&from.back)||'find';
   var pal=avaPal(p),nd=NOREN_BY[norenOf(p)];
   var ph=(p.avatar_type==='photo'&&p.avatar_url);
-  var metLine=from&&from.questTitle?'<div class="met">📜『'+escapeHtml(from.questTitle)+'』を出した人</div>':(g?'<div class="met">'+(g.kind==='quest'?'📜 ':'🗓 ')+escapeHtml(cleanTitle(g.title))+' で一緒でした</div>':'');
+  var metLine=from&&from.questTitle?'<div class="met">'+(from.questKind==='intro'?'🙋 自己紹介『'+escapeHtml(from.questTitle)+'』を貼った人（連絡OK）':'📜『'+escapeHtml(from.questTitle)+'』を出した人')+'</div>':(g?'<div class="met">'+(g.kind==='quest'?'📜 ':'🗓 ')+escapeHtml(cleanTitle(g.title))+' で一緒でした</div>':'');
   var tags=(p.free_tags&&p.free_tags.length)?p.free_tags:[];
   var html='<div class="dhero" style="--c1:'+pal[0]+';--c2:'+pal[1]+'">'+
       '<div class="dbg">'+(ph?'<img src="'+escapeHtml(safeAva(p.avatar_url))+'" alt="">':'')+'</div>'+
@@ -1642,7 +1679,7 @@ async function renderLinkArea(p){
     h='<div class="meetNote">これはあなたのカード。みんなには、こう見えているよ。</div>';
     a='<button onclick="openMycard()">✏️ カードを直す</button>';
   }else if(!r.can_request){
-    h='<div class="meetNote">'+nm+'さんとは、まだ同じ集まり・案内で一緒になっていないよ。<br>'+(DETAIL_BACK==='qdetail'?'この案内に参加すると、':'集まりや案内で一緒になると、')+'「連絡を取る」を送れるようになるよ。</div>';
+    h='<div class="meetNote">'+nm+'さんとは、まだ同じ集まり・貼り紙で一緒になっていないよ。<br>'+(DETAIL_BACK==='qdetail'?'この貼り紙に参加すると、':'集まりや貼り紙で一緒になると、')+'「連絡を取る」を送れるようになるよ。<br><small>（「連絡OK」の自己紹介を貼っている人には、いつでも送れるよ）</small></div>';
     a='<button class="mine" disabled>まだ声をかけられないよ</button>';
   }else if(!r.contact_ok){
     h='<div class="meetNote">この方は今、「連絡のお願い」の受付をお休みしています</div>';
@@ -1709,29 +1746,55 @@ function avHtml(a){if(!a)return '';return '<span class="av">'+faceInner(a)+'</sp
 function mavHtml(a){var pal=avaPal(a);var ph=(a.avatar_type==='photo'&&a.avatar_url);return '<span class="mav" style="--c1:'+pal[0]+';--c2:'+pal[1]+'">'+(ph?'<img src="'+escapeHtml(safeAva(a.avatar_url))+'" alt="">':escapeHtml(initial(a.name)))+'</span>';}
 var Q_FILTER='all';
 function setQFilter(f){Q_FILTER=f;renderQuests();}
+var QKINDS={notice:{i:'📣',n:'告知',full:'集まり・イベントの告知'},recruit:{i:'🍺',n:'募集',full:'仲間の募集'},intro:{i:'🙋',n:'自己紹介',full:'自己紹介（連絡OK）'}};
+function qKind(q){return QKINDS[q&&q.kind]?q.kind:'recruit';}
+function qKindBadge(q){var k=qKind(q);return '<span class="qtag qkb '+k+'">'+QKINDS[k].i+' '+QKINDS[k].n+'</span>';}
+var QKIND='recruit';
+var QKIND_UI={
+  notice:{say:'どんな集まり？ 日時や場所も書くと、行く人が決めやすいよ。',title:'タイトル',xTitle:'何の催しか、ひと目で分かるように',pTitle:'例：11/15(土) 浅草で日本酒の会やります',content:'内容',xContent:'どんな会か・なぜやるのか・当日の流れなど、くわしく書くほど伝わるよ（3000文字まで）',pContent:'例：蔵元さんをお招きして、新酒を味わう会をひらきます。\n\n【当日の流れ】\n19:00 集合・ひとこと自己紹介\n19:15〜 乾杯・蔵元さんのお話\n21:00 おひらき\n\n初めての人歓迎！',target:'こんな人に来てほしい',show:['when','place','target','fee'],more:true,foot:'出すと、あなたのカードも一緒に表示されます（みんなに見えます）。参加した人どうしは「連絡を取る」が送れるようになるよ。',line:'載せると、酒場のみんなが見られるよ（つながっていない人も）。参加の連絡先として使ってもらえる。'},
+  recruit:{say:'どんな仲間をさがしてる？ 何を一緒にしたいかを書くと集まりやすいよ。',title:'タイトル',xTitle:'何の募集か、ひと目で分かるように',pTitle:'例：朝活もくもく会、メンバー募集',content:'内容',xContent:'何をするのか・なぜ仲間がほしいのか・どんなふうに進めるのか（3000文字まで）',pContent:'例：毎週土曜の朝、カフェで各自もくもく作業します。\n終わったあとに30分だけ、近況を話します。\n初めての人も歓迎です！',target:'こんな人をさがしている',show:['when','place','target'],more:true,foot:'出すと、あなたのカードも一緒に表示されます（みんなに見えます）。参加した人どうしは「連絡を取る」が送れるようになるよ。',line:'載せると、酒場のみんなが見られるよ（つながっていない人も）。'},
+  intro:{say:'「連絡OK」の自己紹介だね。これを貼ると、会ったことがない人からも「連絡を取る」が届くようになるよ（つながるのは、あなたがOKしたときだけ）。',title:'見出し',xTitle:'あなたを一言で。どんな相談・話ならOKかが分かると声をかけやすい',pTitle:'例：お店の開業・資金の相談、気軽にどうぞ',content:'くわしい紹介・案内',xContent:'どんな仕事をしているか・何を手伝えるか・どんな人と話したいか・連絡のときのお願いなど（3000文字まで）',pContent:'例：赤坂で飲食店を2店やっています。\n開業前の相談、物件さがし、仕入れ先のことなら経験からお話できます。\n\n【こんな人、歓迎】\n・飲食をはじめたい人\n・コラボイベントをしたい人\n\n【連絡のときのお願い】\nひとこと、何の相談かを書いてもらえると助かります。',target:'',show:[],more:false,foot:'あなたのカード（ひと言・どんな人？・キーワード）も一緒に表示されます。カードをしっかり書いておくと、声がかかりやすいよ。自己紹介は1人1枚。',line:'載せると、「連絡を取る」を待たずに、みんなが直接LINEで声をかけられるよ。'}
+};
+function setQKind(k){
+  if(!QKINDS[k])k='recruit';QKIND=k;var u=QKIND_UI[k];
+  document.querySelectorAll('#qkinds .qk').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-k')===k);});
+  document.getElementById('qnSay').innerHTML='<b>あさやん：</b>'+u.say;
+  document.getElementById('qlTitle').textContent=u.title;document.getElementById('qxTitle').textContent=u.xTitle;document.getElementById('q_title').placeholder=u.pTitle;
+  document.getElementById('qlContent').textContent=u.content;document.getElementById('qxContent').textContent=u.xContent;document.getElementById('q_content').placeholder=u.pContent;
+  if(u.target)document.getElementById('qlTarget').textContent=u.target;
+  ['when','place','target','fee'].forEach(function(f){var e=document.querySelector('#qnew .qf-'+f);if(e)e.style.display=u.show.indexOf(f)>=0?'':'none';});
+  document.getElementById('qnMoreH').style.display=u.more?'':'none';
+  document.getElementById('qnFoot').textContent=u.foot;document.getElementById('qLineNote').textContent=u.line;
+  var bt=document.getElementById('qCreateBtn');if(!QEDIT)bt.textContent=k==='intro'?'🙋 この自己紹介を貼る':'📜 この貼り紙を出す';
+}
+
 function renderQuests(){
   var el=document.getElementById('qList');
   var all=QUESTS||[];
   var nJ=all.filter(function(q){return q.joined&&!q.mine;}).length, nM=all.filter(function(q){return q.mine;}).length;
-  var chips=[['all','すべて',all.length]];if(nJ)chips.push(['join','✅ 参加中',nJ]);if(nM)chips.push(['mine','📜 自分の案内',nM]);
+  var chips=[['all','すべて',all.length]];
+  ['notice','recruit','intro'].forEach(function(k){var n=all.filter(function(q){return qKind(q)===k;}).length;if(n)chips.push([k,QKINDS[k].i+' '+QKINDS[k].n,n]);});
+  if(nJ)chips.push(['join','✅ 参加中',nJ]);if(nM)chips.push(['mine','📜 自分の貼り紙',nM]);
   if(!chips.some(function(c){return c[0]===Q_FILTER;}))Q_FILTER='all';
   document.getElementById('qchips').innerHTML=chips.map(function(c){return '<button class="fchip'+(c[0]===Q_FILTER?' on':'')+'" onclick="setQFilter(\''+c[0]+'\')">'+c[1]+'<span class="n">'+c[2]+'</span></button>';}).join('');
-  document.getElementById('qTot').innerHTML=all.length?'案内 <b>'+all.length+'</b> 件':'';
-  var list=all.map(function(q,i){return {q:q,i:i};}).sort(function(a,b){return (a.q.status==='closed'?1:0)-(b.q.status==='closed'?1:0)||a.i-b.i;}).filter(function(x){return Q_FILTER==='all'||(Q_FILTER==='join'?(x.q.joined&&!x.q.mine):x.q.mine);});
-  if(!all.length){el.innerHTML='<div class="fempty"><div class="big">📜</div>まだ案内はないよ。<br>下の「＋ 案内を出す」で、<br>最初の一つを出してみる？</div>';return;}
+  document.getElementById('qTot').innerHTML=all.length?'貼り紙 <b>'+all.length+'</b> 枚':'';
+  var list=all.map(function(q,i){return {q:q,i:i};}).sort(function(a,b){return (a.q.status==='closed'?1:0)-(b.q.status==='closed'?1:0)||a.i-b.i;}).filter(function(x){if(Q_FILTER==='all')return true;if(Q_FILTER==='join')return x.q.joined&&!x.q.mine;if(Q_FILTER==='mine')return x.q.mine;return qKind(x.q)===Q_FILTER;});
+  if(!all.length){el.innerHTML='<div class="fempty"><div class="big">📜</div>まだ貼り紙はないよ。<br>下の「＋ 貼り紙を出す」で、<br>最初の一枚を出してみる？</div>';return;}
   var now=Date.now();
   el.innerHTML='<div class="qlist">'+list.map(function(x,k){var q=x.q;
-    var tags=[];
+    var tags=[qKindBadge(q)];
     if(q.status==='closed')tags.push('<span class="qtag" style="background:#5a4a3a">🔒 締め切り</span>');
-    if(q.mine)tags.push('<span class="qtag mine">📜 あなたの案内</span>');else if(q.joined)tags.push('<span class="qtag join">✅ 参加中</span>');
+    if(q.mine)tags.push('<span class="qtag mine">📜 あなたの貼り紙</span>');else if(q.joined)tags.push('<span class="qtag join">✅ 参加中</span>');
     if(q.created_at&&now-Date.parse(q.created_at)<3*86400000)tags.push('<span class="qtag new">NEW</span>');
     if(q.industry)tags.push('<span class="qtag">#'+escapeHtml(q.industry)+'</span>');
     var meta=[];if(q.when_text)meta.push('<div>🗓 '+escapeHtml(q.when_text)+'</div>');if(q.place)meta.push('<div>📍 '+escapeHtml(q.place)+'</div>');
     if(!meta.length&&q.content)meta.push('<div>'+escapeHtml(q.content.replace(/\s+/g,' ').slice(0,40))+'</div>');
-    var au=q.author?('<div class="qau">'+mavHtml(q.author)+'<span>'+escapeHtml(q.author.name)+'</span></div>'):'<div class="qau"></div>';
+    var isIntro=qKind(q)==='intro';
+    var au=q.author?('<div class="qau">'+mavHtml(q.author)+'<span>'+escapeHtml(q.author.name)+(isIntro&&q.author.tagline?'<small style="display:block;font-weight:400;color:#7a5520">“'+escapeHtml(q.author.tagline)+'”</small>':'')+'</span></div>'):'<div class="qau"></div>';
+    var num=isIntro?((q.author_line?'💬 LINEあり　':'')+'💬 '+(q.comment_count||0)):'🍺 '+(q.participant_count||0)+'人　💬 '+(q.comment_count||0);
     return '<div class="qcard'+(q.mine?' mine':'')+(q.status==='closed'?' closed':'')+'" style="animation-delay:'+Math.min(k,6)*50+'ms" onclick="openQuest('+x.i+')">'+(tags.length?'<div class="qtags">'+tags.join('')+'</div>':'')+
       '<div class="qt2">'+escapeHtml(q.title)+'</div>'+(meta.length?'<div class="qmeta">'+meta.join('')+'</div>':'')+
-      '<div class="qfoot">'+au+'<div class="qnum">🍺 '+(q.participant_count||0)+'人　💬 '+(q.comment_count||0)+'</div></div></div>';
+      '<div class="qfoot">'+au+'<div class="qnum">'+num+'</div></div></div>';
   }).join('')+'</div>'+(list.length?'':'<div class="fempty">この条件の案内はないよ</div>');
 }
 function openQuest(i){
@@ -1739,33 +1802,41 @@ function openQuest(i){
   var a=qq.author;
   var who=a?('<div class="dsec"><h3>出した人</h3><div class="auCard" onclick="openQuestAuthor()"><div class="auAv">'+avaBox((a.avatar_type==='photo')?a.avatar_url:'',a.name,54)+'</div><div class="auTx"><div class="auNm">'+escapeHtml(a.name)+'</div>'+(a.company||a.industry?'<div class="auSub">'+escapeHtml([a.company,a.industry].filter(Boolean).join('・'))+'</div>':'')+(a.tagline?'<div class="auTg">'+escapeHtml(a.tagline)+'</div>':'')+'</div><div class="auGo">›</div></div><div class="meetNote" style="margin-top:6px">タップすると、プロフィールを全部見られるよ</div></div>'):'';
   var closed=qq.status==='closed';
+  var kind=qKind(qq),isIntro=kind==='intro',KN=QKINDS[kind];
   var staff=ME&&(ME.role==='owner'||ME.role==='admin');
+  var anm=a?escapeHtml(a.name):'この人';
+  var lineBox=qq.author_line?'<div class="qLineBox"><div class="lbT" style="color:#c9e6b8;font-weight:800;margin-bottom:4px">💬 '+anm+'さんのLINE（本人が載せたもの）</div>'+lineIdBox(qq.author_line,anm,null)+'</div>':'';
   var btn='';
   if(qq.mine){
-    btn='<div class="qmng"><div class="qmh">📜 あなたが出した案内</div><div class="qmb">'+
-      (closed?'<button onclick="questStatus(\'open\')">🔓 受付を再開する</button>':'<button onclick="questStatus(\'closed\')">🔒 締め切る</button>')+
-      '<button class="del" onclick="questStatus(\'deleted\')">🗑 取り下げる</button></div><div class="meetNote" style="text-align:left">締め切ると、新しい参加を止められるよ（コメントはそのまま）。取り下げると掲示板から消えるよ。</div></div>';
+    btn='<div class="qmng"><div class="qmh">📜 あなたが出した貼り紙</div><div class="qmb">'+
+      (closed?'<button onclick="questStatus(\'open\')">🔓 '+(isIntro?'また受け付ける':'受付を再開する')+'</button>':'<button onclick="questStatus(\'closed\')">🔒 '+(isIntro?'いまは受け付けない':'締め切る')+'</button>')+
+      '<button class="del" onclick="questStatus(\'deleted\')">🗑 取り下げる</button></div><div class="meetNote" style="text-align:left">'+(isIntro?'「いまは受け付けない」にすると、会ったことがない人からの「連絡を取る」が止まるよ（コメントはそのまま）。取り下げると掲示板から消えるよ。':'締め切ると、新しい参加を止められるよ（コメントはそのまま）。取り下げると掲示板から消えるよ。')+'</div></div>';
+  }else if(isIntro){
+    btn=closed?'<div class="meetNote">🔒 いまは「連絡を取る」の受付をお休みしているよ。コメントは書けるよ</div>'
+      :'<div class="qintroNote">🙋 この人は<b>「連絡OK」</b>。会ったことがなくても、右下の「連絡を取る」から声をかけられるよ。<br>相手が「OK」したら、おたがいのLINEが見られるようになる。'+(qq.author_line?'<br>下にLINEも載せてくれているから、直接でもいいよ。':'')+'</div>';
   }else if(qq.joined){
-    btn='<div class="meetNote">✅ 参加中。この案内の仲間は「仲間をさがす」で会えるよ。<br><a href="javascript:void(0)" onclick="leaveQuest()" style="color:#f1b0a8">参加をやめる</a></div>';
+    btn='<div class="meetNote">✅ 参加中。この貼り紙の仲間は「仲間をさがす」で会えるよ。<br><a href="javascript:void(0)" onclick="leaveQuest()" style="color:#f1b0a8">参加をやめる</a></div>';
   }else if(closed){
-    btn='<div class="meetNote">🔒 この案内は締め切られているよ</div>';
+    btn='<div class="meetNote">🔒 この貼り紙は締め切られているよ</div>';
   }else{
-    btn='<div class="meetNote">右下の「参加する」を押すと、この案内の人たちと仲間になれるよ</div>';
+    btn='<div class="meetNote">右下の「参加する」を押すと、この貼り紙の人たちと仲間になれるよ</div>';
   }
-  if(staff&&!qq.mine)btn+='<div class="meetNote" style="margin-top:10px"><a href="javascript:void(0)" onclick="questStatus(\'deleted\')" style="color:#a8977a">（管理）この案内を取り下げる</a></div>';
+  if(staff&&!qq.mine)btn+='<div class="meetNote" style="margin-top:10px"><a href="javascript:void(0)" onclick="questStatus(\'deleted\')" style="color:#a8977a">（管理）この貼り紙を取り下げる</a></div>';
   document.getElementById('qdAct').innerHTML = qq.mine
-    ? '<button onclick="editQuest()">✏️ 案内を直す</button>'
+    ? '<button onclick="editQuest()">✏️ 貼り紙を直す</button>'
+    : isIntro ? (closed?'<button class="mine" disabled>🔒 受付お休み中</button>':'<button onclick="openQuestAuthor()">📨 連絡を取る</button>')
     : (qq.joined ? '<button class="done" disabled>✅ 参加中</button>' : (closed?'<button class="mine" disabled>🔒 締め切りました</button>':'<button onclick="joinQuest(\''+qq.id+'\')">🍺 参加する</button>'));
   var rows=[['🗓 いつ',qq.when_text],['📍 どこで',qq.place],['🙋 対象',qq.target],['💰 費用',qq.fee]].filter(function(x){return x[1];});
   var info=rows.length?'<div class="qInfo">'+rows.map(function(x){return '<div class="qiR"><div class="qiK">'+x[0]+'</div><div class="qiV">'+escapeHtml(x[1])+'</div></div>';}).join('')+'</div>':'';
+  var head='<div class="dhead"><span class="qtag qkb '+kind+'">'+KN.i+' '+KN.full+'</span> '+(closed?'<span class="gy" style="background:#5a4a3a">🔒 '+(isIntro?'受付お休み':'締め切り')+'</span> ':'')+(qq.industry?'<span class="gy">#'+escapeHtml(qq.industry)+'</span>':'')+'<div class="nm" style="margin-top:8px">'+escapeHtml(qq.title)+'</div>'+(isIntro?'':'<div class="co">🍺 '+(qq.participant_count||0)+'人が参加</div>')+'</div>';
+  var people=isIntro?'':'<div class="dsec"><h3>🍺 参加している人（'+(qq.participant_count||0)+'）</h3><div id="qpList" class="qpList"><div class="lkE">読み込み中…</div></div></div>';
+  var whoI=isIntro&&a?who.replace('<h3>出した人</h3>','<h3>貼った人のカード</h3>'):who;
   document.getElementById('qdBody').innerHTML=
-    '<div class="dhead">'+(closed?'<span class="gy" style="background:#5a4a3a">🔒 締め切り</span> ':'')+(qq.industry?'<span class="gy">#'+escapeHtml(qq.industry)+'</span>':'')+'<div class="nm" style="margin-top:8px">'+escapeHtml(qq.title)+'</div><div class="co">🍺 '+(qq.participant_count||0)+'人が参加</div></div>'+
-    info+'<div class="dsec"><h3>内容</h3><p>'+escapeHtml(qq.content)+'</p></div>'+who+
-    '<div class="dsec"><h3>🍺 参加している人（'+(qq.participant_count||0)+'）</h3><div id="qpList" class="qpList"><div class="lkE">読み込み中…</div></div></div>'+btn+
-    '<div class="dsec" style="margin-top:18px"><h3>💬 コメント</h3><div id="qcList"><div class="loading">読み込み中…</div></div>'+
-    '<div class="field" style="margin-top:12px"><textarea id="qcInput" maxlength="500" placeholder="質問や感想を書いてね（みんなに見えるよ）"></textarea></div>'+
+    head+info+(isIntro?whoI:'')+'<div class="dsec"><h3>'+(isIntro?'くわしい紹介・案内':'内容')+'</h3><p>'+escapeHtml(qq.content)+'</p></div>'+(isIntro?'':who)+lineBox+people+btn+
+    '<div class="dsec" style="margin-top:18px"><h3>💬 コメント <small style="font-weight:400;color:#a8977a">みんなに見えるよ</small></h3><div class="qchat" id="qcList"><div class="lkE">読み込み中…</div></div>'+
+    '<div class="field" style="margin-top:12px"><textarea id="qcInput" maxlength="500" placeholder="'+(isIntro?'質問やひとことを書いてね（みんなに見えるよ）':'質問や感想を書いてね（みんなに見えるよ）')+'"></textarea></div>'+
     '<button class="okbtn" id="qcBtn" onclick="addQComment()">コメントする</button></div>';
-  CUR_Q=qq;show('qdetail');loadQComments();loadQPeople();
+  CUR_Q=qq;show('qdetail');loadQComments();if(!isIntro)loadQPeople();
 }
 var CUR_Q=null,CUR_QI=0,QD_BACK='board';
 async function loadQPeople(){
@@ -1782,12 +1853,13 @@ function openQPerson(i){var p=QP_LIST[i];if(!p)return;openDetail(p,{kind:'quest'
 function questReload(stayId){return api('quest_list',{}).then(function(r){if(r.ok)QUESTS=r.quests||[];var i=-1;(QUESTS||[]).forEach(function(q,k){if(q.id===stayId)i=k;});return i;});}
 async function questStatus(to){
   if(!CUR_Q)return;
-  var msg={closed:'この案内を締め切りますか？\n新しい参加の受付が止まります。',open:'受付を再開しますか？',deleted:'この案内を取り下げますか？\n掲示板から消えて、元に戻せません。'}[to];
+  var isI=qKind(CUR_Q)==='intro';
+  var msg={closed:isI?'いまは受け付けない、にしますか？\n会ったことがない人からの「連絡を取る」が止まります。':'この貼り紙を締め切りますか？\n新しい参加の受付が止まります。',open:isI?'また受け付けますか？':'受付を再開しますか？',deleted:'この貼り紙を取り下げますか？\n掲示板から消えて、元に戻せません。'}[to];
   if(!window.confirm||!confirm(msg))return;
   var r=await api('quest_status',{post_id:CUR_Q.id,status:to});
   if(!r.ok){toastMsg('うまくできなかった…');return;}
   if(to==='deleted'){toastMsg('取り下げたよ');await questReload();show('board');return;}
-  toastMsg(to==='closed'?'締め切ったよ':'受付を再開したよ');
+  toastMsg(to==='closed'?(isI?'お休みにしたよ':'締め切ったよ'):(isI?'また受け付けるようにしたよ':'受付を再開したよ'));
   var i=await questReload(CUR_Q.id);if(i>=0){var wb=document.querySelector('#qdetail .wbody'),wt=wb.scrollTop;openQuest(i);wb.scrollTop=wt;}
 }
 async function leaveQuest(){
@@ -1800,14 +1872,18 @@ var QEDIT=null;
 function editQuest(){if(!CUR_Q)return;QEDIT=CUR_Q.id;var q=CUR_Q;
   var set=function(id,v){var e=document.getElementById(id);if(e)e.value=v||'';};
   set('q_title',q.title);set('q_content',q.content);set('q_industry',q.industry);set('q_when',q.when_text);set('q_place',q.place);set('q_target',q.target);set('q_fee',q.fee);
-  document.querySelector('#qnew .wtop h2').textContent='案内を直す';document.getElementById('qCreateBtn').textContent='💾 直した内容で保存';
+  document.getElementById('q_showline').checked=!!q.show_line;
+  setQKind(qKind(q));document.getElementById('qkinds').style.display='none';document.getElementById('qnKindH').style.display='none';
+  document.querySelector('#qnew .wtop h2').textContent='貼り紙を直す';document.getElementById('qCreateBtn').textContent='💾 直した内容で保存';
   document.querySelector('#qnew .wtop .back').setAttribute('onclick',"show('qdetail')");
   show('qnew');}
 function newQuest(){QEDIT=null;['q_title','q_content','q_industry','q_when','q_place','q_target','q_fee'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});
-  document.querySelector('#qnew .wtop h2').textContent='案内を出す';document.getElementById('qCreateBtn').textContent='📜 この案内を出す';
+  document.getElementById('q_showline').checked=false;
+  document.getElementById('qkinds').style.display='';document.getElementById('qnKindH').style.display='';setQKind('recruit');
+  document.querySelector('#qnew .wtop h2').textContent='貼り紙を出す';
   document.querySelector('#qnew .wtop .back').setAttribute('onclick',"show('board')");show('qnew');}
 
-function openQuestAuthor(){if(!CUR_Q||!CUR_Q.author)return;openDetail(CUR_Q.author,null,{back:'qdetail',questTitle:CUR_Q.title});}
+function openQuestAuthor(){if(!CUR_Q||!CUR_Q.author)return;openDetail(CUR_Q.author,null,{back:'qdetail',questTitle:CUR_Q.title,questKind:qKind(CUR_Q)});}
 function fmtShort(d){return d?new Date(d).toLocaleString('ja-JP',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}):'';}
 async function loadQComments(){
   var el=document.getElementById('qcList');if(!el||!CUR_Q)return;
@@ -1817,7 +1893,8 @@ async function loadQComments(){
   if(!cs.length){el.innerHTML='<div class="lkE">まだコメントはないよ。最初のひとことをどうぞ</div>';return;}
   var authorId=CUR_Q.author&&CUR_Q.author.id;
   el.innerHTML=cs.map(function(c){var a=c.author||{name:'（退会）'};
-    return '<div class="qc"><div class="qcH"><span class="qcAv">'+avaBox((a.avatar_type==='photo')?a.avatar_url:'',a.name,30)+'</span><b>'+escapeHtml(a.name)+'</b>'+(a.id&&a.id===authorId?'<span class="chip chipW" style="margin-left:6px;font-size:.66rem">案内を出した人</span>':'')+'<span class="qcT">'+fmtShort(c.created_at)+'</span></div><div class="qcB">'+escapeHtml(c.body)+'</div>'+(c.can_delete?'<button class="qcDel" onclick="delQComment('+c.id+')">消す</button>':'')+'</div>';
+    var nm=c.mine?'':'<div class="qcN">'+escapeHtml(a.name)+(a.id&&a.id===authorId?'<span class="chip chipW">貼った人</span>':'')+'</div>';
+    return '<div class="qc'+(c.mine?' me':'')+'">'+(c.mine?'':'<span class="qcAv">'+avaBox((a.avatar_type==='photo')?a.avatar_url:'',a.name,30)+'</span>')+'<div class="qcW">'+nm+'<div class="qcRow"><div class="qcB">'+escapeHtml(c.body)+'</div><span class="qcT">'+fmtShort(c.created_at).replace(' ','<br>')+'</span></div>'+(c.can_delete?'<button class="qcDel" onclick="delQComment('+c.id+')">消す</button>':'')+'</div></div>';
   }).join('');
 }
 async function addQComment(){
@@ -1840,24 +1917,27 @@ async function delQComment(id){
 async function joinQuest(id){
   toastMsg('あさやん：「ちょっと待っててね…」');
   var r=await api('quest_join',{post_id:id});
-  if(r.ok){toastMsg('あさやん：「参加だね！<br>これで、この案内の仲間になったよ」');if(CUR_Q&&CUR_Q.id===id){var wb=document.querySelector('#qdetail .wbody'),wt=wb?wb.scrollTop:0;CUR_Q.joined=true;CUR_Q.participant_count=(CUR_Q.participant_count||0)+1;openQuest(CUR_QI);if(wb)wb.scrollTop=wt;}loadQuests();}
+  if(r.ok){toastMsg('あさやん：「参加だね！<br>これで、この貼り紙の仲間になったよ」');if(CUR_Q&&CUR_Q.id===id){var wb=document.querySelector('#qdetail .wbody'),wt=wb?wb.scrollTop:0;CUR_Q.joined=true;CUR_Q.participant_count=(CUR_Q.participant_count||0)+1;openQuest(CUR_QI);if(wb)wb.scrollTop=wt;}loadQuests();}
   else{toastMsg('うまく参加できなかったよ');}
 }
 async function createQuest(){
   var title=(document.getElementById('q_title').value||'').trim();
   var content=(document.getElementById('q_content').value||'').trim();
-  if(!title||!content){toastMsg('タイトルと内容を入れてね');return;}
+  if(!title||!content){toastMsg(QKIND==='intro'?'見出しと紹介を入れてね':'タイトルと内容を入れてね');return;}
   var btn=document.getElementById('qCreateBtn');btn.disabled=true;btn.textContent='出しています…';
   function qv(id){return (document.getElementById(id).value||'').trim();}
-  var payload={title:title,content:content,industry:qv('q_industry'),when_text:qv('q_when'),place:qv('q_place'),target:qv('q_target'),fee:qv('q_fee')};
+  var payload={title:title,content:content,kind:QKIND,show_line:!!document.getElementById('q_showline').checked,industry:qv('q_industry'),when_text:qv('q_when'),place:qv('q_place'),target:qv('q_target'),fee:qv('q_fee')};
+  if(QKIND==='intro'){payload.when_text='';payload.place='';payload.target='';payload.fee='';}
   if(QEDIT){payload.post_id=QEDIT;var ru=await api('quest_update',payload);btn.disabled=false;btn.textContent='💾 直した内容で保存';
     if(ru.ok){toastMsg('あさやん：「直しておいたよ」');var ii=await questReload(QEDIT);QEDIT=null;if(ii>=0)openQuest(ii);else show('board');}else toastMsg('うまく保存できなかったよ');return;}
   var r=await api('quest_create',payload);
-  btn.disabled=false;btn.textContent='📜 この案内を出す';
+  btn.disabled=false;btn.textContent=QKIND==='intro'?'🙋 この自己紹介を貼る':'📜 この貼り紙を出す';
   if(r.ok){
     ['q_title','q_content','q_industry','q_when','q_place','q_target','q_fee'].forEach(function(id){document.getElementById(id).value='';});
-    toastMsg('あさやん：「いい知らせだね。<br>みんなに届けておくよ」');show('board');
+    toastMsg(QKIND==='intro'?'あさやん：「貼っておいたよ。<br>声がかかるのを待とう」':'あさやん：「いい知らせだね。<br>みんなに届けておくよ」');show('board');
   }else if(r.error==='need_profile'){toastMsg('先に「自分のカード」でひとことを書いてね');}
+  else if(r.error==='intro_exists'){toastMsg('自己紹介は1人1枚だよ。前のを直すか、取り下げてね');}
+  else if(r.error==='contact_off'){toastMsg('カードの「連絡のお願いを受け付ける」をオンにしてから貼ってね');}
   else{toastMsg('うまく出せなかったよ');}
 }
 
@@ -2487,14 +2567,16 @@ function demoInit(){
       {event_id:'ev3',name:'【見本】朝活 もくもく会',date:demoYmd(24),time:'08:00',type:'イベント',venue:'渋谷',venue_name:'カフェ（見本）',address:'東京都渋谷区（見本）',map_url:null}],
     past:{key:'past1',title:'【見本】先月の 赤坂の会',date:demoYmd(-20),ids:['d1','d2','d3','d4','d5','d6']},
     quests:[
-      {id:'q1',title:'【見本】朝活もくもく会、メンバー募集',content:'毎週土曜の朝、カフェで各自の作業をします。\n終わったあとに30分だけ、近況を話します。\n初めての人も歓迎です！',industry:'朝活',when_text:'毎週土曜 8:00〜10:00',place:'渋谷のカフェ',target:'朝の時間を有効に使いたい人',fee:'飲み物代のみ',author:'d6',parts:['d6','d3','d7'],status:'open',created_at:new Date(Date.now()-2*86400000).toISOString()},
-      {id:'q2',title:'【見本】日本酒の蔵元さんを囲む会',content:'蔵元さんをお招きして、新酒を味わう会をひらきます。\n日本酒が初めての方も大歓迎です。',industry:'日本酒',when_text:'来月の第2金曜 19:00',place:'千尋の台所',target:'日本酒が好きな人・気になる人',fee:'5,000円',author:'d5',parts:['d5','d1','d2','d8'],status:'open',created_at:new Date(Date.now()-5*86400000).toISOString()}],
-    comments:{q1:[{id:1,m:'d3',body:'土曜の朝、行ってみたいです！',at:new Date(Date.now()-86400000).toISOString()},{id:2,m:'d6',body:'ぜひ！ 8時にお待ちしてます☕',at:new Date(Date.now()-80000000).toISOString()}],q2:[{id:3,m:'d1',body:'楽しみにしています🍶',at:new Date(Date.now()-3*86400000).toISOString()}]}};
+      {id:'q1',kind:'recruit',show_line:false,title:'【見本】朝活もくもく会、メンバー募集',content:'毎週土曜の朝、カフェで各自の作業をします。\n終わったあとに30分だけ、近況を話します。\n初めての人も歓迎です！',industry:'朝活',when_text:'毎週土曜 8:00〜10:00',place:'渋谷のカフェ',target:'朝の時間を有効に使いたい人',fee:'飲み物代のみ',author:'d6',parts:['d6','d3','d7'],status:'open',created_at:new Date(Date.now()-2*86400000).toISOString()},
+      {id:'q2',kind:'notice',show_line:true,title:'【見本】日本酒の蔵元さんを囲む会',content:'蔵元さんをお招きして、新酒を味わう会をひらきます。\n日本酒が初めての方も大歓迎です。',industry:'日本酒',when_text:'来月の第2金曜 19:00',place:'千尋の台所',target:'日本酒が好きな人・気になる人',fee:'5,000円',author:'d5',parts:['d5','d1','d2','d8'],status:'open',created_at:new Date(Date.now()-5*86400000).toISOString()},
+      {id:'q3',kind:'intro',show_line:false,title:'【見本】店舗の物件さがし、気軽に相談どうぞ',content:'飲食店・事務所の物件さがしをお手伝いしています。\n「こんな場所でやりたい」の段階でも大丈夫です。\n\n【こんな人、歓迎】\n・お店をはじめたい人\n・2店目を考えている人\n\n【連絡のときのお願い】\nひとこと、エリアと業種を書いてもらえると助かります。',industry:'不動産',when_text:null,place:null,target:null,fee:null,author:'d8',parts:['d8'],status:'open',created_at:new Date(Date.now()-86400000).toISOString()}],
+    comments:{q3:[{id:4,m:'d2',body:'居抜きの物件も相談できますか？',at:new Date(Date.now()-40000000).toISOString()},{id:5,m:'d8',body:'できますよ！ エリアを教えてもらえれば探してみます',at:new Date(Date.now()-36000000).toISOString()}],q1:[{id:1,m:'d3',body:'土曜の朝、行ってみたいです！',at:new Date(Date.now()-86400000).toISOString()},{id:2,m:'d6',body:'ぜひ！ 8時にお待ちしてます☕',at:new Date(Date.now()-80000000).toISOString()}],q2:[{id:3,m:'d1',body:'楽しみにしています🍶',at:new Date(Date.now()-3*86400000).toISOString()}]}};
 }
 function demoCard(id){if(id==='me')return DS.me?demoPub(DS.me):null;var p=DS.people[id];return p?demoPub(p):null;}
 function demoPub(m){return {id:m.id,name:m.name,company:m.company,tagline:m.tagline,detail:m.detail,industry:m.industry,free_tags:m.free_tags||[],contact_ok:m.contact_ok!==false,avatar_type:m.avatar_type||'crest',avatar_url:m.avatar_url||null,noren:m.noren||null,noren_custom:m.noren_custom||null};}
 function demoSelf(){return Object.assign(demoPub(DS.me),{role:'member',member_type:'会員',group_name:null,consent_at:new Date().toISOString(),line_id:DS.me.line_id||null,line_broken_at:null,line_broken_by:null});}
 function demoFellowIds(){var s={};DS.past.ids.forEach(function(i){s[i]=1;});DS.quests.forEach(function(q){if(q.parts.indexOf('me')>=0&&q.status!=='deleted')q.parts.forEach(function(i){if(i!=='me')s[i]=1;});});return s;}
+function demoReach(t){if(demoFellowIds()[t])return true;return DS.quests.some(function(q){return q.kind==='intro'&&q.status==='open'&&q.author===t;});}
 function demoLink(id){return DS.links[id]||'none';}
 function demoMatch(id,quiet){DS.links[id]='matched';Object.keys(DS.reqs).forEach(function(k){if(DS.reqs[k]===id)delete DS.reqs[k];});
   if(!quiet){var p=DS.people[id];toastMsg('📬 '+escapeHtml(p.name)+'さんが「OK」したよ！<br>つながったよ（お試し版なので、すぐ返事が来るよ）');try{refreshLinkBadge();}catch(e){}
@@ -2519,8 +2601,8 @@ function demoDo(a,x){var me=DS.me,now=new Date().toISOString();
   case 'connection_info':{var t=x.target_id,st=demoLink(t),rid=null;if(t==='me')return {ok:true,state:'none',is_me:true,can_request:false,contact_ok:true,line_id:null};
     var map={matched:'matched',outgoing:'outgoing_pending',incoming:'incoming_pending'};var s2=map[st]||'none';
     if(s2==='incoming_pending')Object.keys(DS.reqs).forEach(function(k){if(DS.reqs[k]===t)rid=+k;});
-    return {ok:true,state:s2,request_id:rid,can_request:s2==='none'&&!!demoFellowIds()[t],is_me:false,contact_ok:true,line_id:s2==='matched'?DS.people[t].line_id:null};}
-  case 'want_to_meet':{var t=x.target_id;if(!demoFellowIds()[t])return {ok:false,error:'not_same_event'};
+    return {ok:true,state:s2,request_id:rid,can_request:s2==='none'&&demoReach(t),is_me:false,contact_ok:true,line_id:s2==='matched'?DS.people[t].line_id:null};}
+  case 'want_to_meet':{var t=x.target_id;if(!demoReach(t))return {ok:false,error:'not_same_event'};
     var st=demoLink(t);if(st==='matched')return {ok:true,state:'matched',message:'もうつながっているよ'};
     if(st==='incoming'){demoMatch(t,true);return {ok:true,state:'matched',line_id:DS.people[t].line_id,message:'つながったよ'};}
     if(st==='outgoing')return {ok:true,state:'outgoing_pending',message:'もう送ってあるよ。返事を待ってね'};
@@ -2534,11 +2616,11 @@ function demoDo(a,x){var me=DS.me,now=new Date().toISOString();
   case 'respond_request':{var id=DS.reqs[x.request_id];if(!id)return {ok:true,state:'declined'};
     if(x.accept){demoMatch(id,true);return {ok:true,state:'matched',name:DS.people[id].name,line_id:DS.people[id].line_id};}
     delete DS.reqs[x.request_id];DS.links[id]='declined';return {ok:true,state:'declined'};}
-  case 'quest_list':return {ok:true,quests:DS.quests.filter(function(q){return q.status!=='deleted';}).map(function(q){return {id:q.id,title:q.title,content:q.content,industry:q.industry,when_text:q.when_text,place:q.place,target:q.target,fee:q.fee,created_at:q.created_at,author:demoCard(q.author),participant_count:q.parts.length,comment_count:(DS.comments[q.id]||[]).length,joined:q.parts.indexOf('me')>=0,mine:q.author==='me',status:q.status};})};
-  case 'quest_create':{if(!me||!me.tagline)return {ok:false,error:'need_profile'};var id='q'+(DS.seq++);DS.quests.unshift({id:id,title:x.title,content:x.content,industry:x.industry||null,when_text:x.when_text||null,place:x.place||null,target:x.target||null,fee:x.fee||null,author:'me',parts:['me'],status:'open',created_at:now});return {ok:true,post:{id:id}};}
-  case 'quest_update':{var q=DS.quests.filter(function(q){return q.id===x.post_id;})[0];if(q){['title','content','industry','when_text','place','target','fee'].forEach(function(k){q[k]=x[k]||null;});}return {ok:true};}
+  case 'quest_list':return {ok:true,quests:DS.quests.filter(function(q){return q.status!=='deleted';}).map(function(q){var au=q.author==='me'?DS.me:DS.people[q.author];return {id:q.id,kind:q.kind||'recruit',show_line:!!q.show_line,author_line:(q.show_line&&au&&au.line_id)?au.line_id:null,title:q.title,content:q.content,industry:q.industry,when_text:q.when_text,place:q.place,target:q.target,fee:q.fee,created_at:q.created_at,author:demoCard(q.author),participant_count:q.parts.length,comment_count:(DS.comments[q.id]||[]).length,joined:q.parts.indexOf('me')>=0,mine:q.author==='me',status:q.status};})};
+  case 'quest_create':{if(!me||!me.tagline)return {ok:false,error:'need_profile'};if(x.kind==='intro'&&DS.quests.some(function(q){return q.author==='me'&&q.kind==='intro'&&q.status!=='deleted';}))return {ok:false,error:'intro_exists'};var id='q'+(DS.seq++);DS.quests.unshift({id:id,kind:x.kind||'recruit',show_line:x.show_line===true,title:x.title,content:x.content,industry:x.industry||null,when_text:x.when_text||null,place:x.place||null,target:x.target||null,fee:x.fee||null,author:'me',parts:['me'],status:'open',created_at:now});return {ok:true,post:{id:id}};}
+  case 'quest_update':{var q=DS.quests.filter(function(q){return q.id===x.post_id;})[0];if(q){['title','content','industry','when_text','place','target','fee'].forEach(function(k){q[k]=x[k]||null;});if('show_line' in x)q.show_line=x.show_line===true;}return {ok:true};}
   case 'quest_status':{var q=DS.quests.filter(function(q){return q.id===x.post_id;})[0];if(q)q.status=x.status;return {ok:true,status:x.status};}
-  case 'quest_join':{var q=DS.quests.filter(function(q){return q.id===x.post_id;})[0];if(q&&q.parts.indexOf('me')<0)q.parts.push('me');return {ok:true};}
+  case 'quest_join':{var q=DS.quests.filter(function(q){return q.id===x.post_id;})[0];if(q&&q.kind==='intro')return {ok:false,error:'is_intro'};if(q&&q.parts.indexOf('me')<0)q.parts.push('me');return {ok:true};}
   case 'quest_leave':{var q=DS.quests.filter(function(q){return q.id===x.post_id;})[0];if(q)q.parts=q.parts.filter(function(i){return i!=='me';});return {ok:true};}
   case 'quest_people':{var q=DS.quests.filter(function(q){return q.id===x.post_id;})[0];return {ok:true,people:q?q.parts.map(demoCard).filter(Boolean):[]};}
   case 'quest_comments':return {ok:true,comments:(DS.comments[x.post_id]||[]).map(function(c){return {id:c.id,body:c.body,created_at:c.at,author:demoCard(c.m),mine:c.m==='me',can_delete:c.m==='me'};})};
