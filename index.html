@@ -6,6 +6,8 @@
 <meta name="robots" content="noindex, nofollow, noarchive">
 <meta name="googlebot" content="noindex, nofollow">
 <meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src data: blob: https://yvfllgldbjroongkhkgg.supabase.co; connect-src https://yvfllgldbjroongkhkgg.supabase.co; base-uri 'none'; form-action 'none'; object-src 'none'; frame-ancestors 'none'">
+<style id="fb">html{display:none}</style><script>if(self===top){document.getElementById('fb').remove();}else{try{top.location=self.location;}catch(e){}}</script>
 <title>Kクラブ酒場</title>
 <link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=DotGothic16&family=Zen+Maru+Gothic:wght@400;500;700;900&display=swap" rel="stylesheet">
 <style>
@@ -1006,6 +1008,7 @@ html,body{height:100%;background:radial-gradient(130% 90% at 50% 0%, #1c1008 0%,
         <button id="chT_ln" class="chTab" style="display:none" onclick="choTab('ln')">セリフ</button>
         <button id="chT_qa" class="chTab" style="display:none" onclick="choTab('qa')">質問<span id="qaBadge" class="badge hidden" style="margin-left:4px"></span></button>
         <button id="chT_bk" class="chTab" style="display:none" onclick="choTab('bk')">控え</button>
+        <button id="chT_keys" class="chTab" style="display:none" onclick="choTab('keys')">鍵</button>
         <button id="chT_nr" class="chTab" style="display:none" onclick="choTab('nr')">のれん<span id="nrBadge" class="badge hidden" style="margin-left:4px"></span></button>
       </div>
       <div id="chBody"><div class="loading">読み込み中…</div></div>
@@ -1041,14 +1044,16 @@ html,body{height:100%;background:radial-gradient(130% 90% at 50% 0%, #1c1008 0%,
 <script>
 var EDGE='https://yvfllgldbjroongkhkgg.supabase.co/functions/v1/sakaba';
 var STAFF_SS=null;
-var TOKEN=null, ME=null, OKAMI=null, GROUPS=[], QUESTS=[], ENTERED=null;
+var TOKEN=null, ME=null, OKAMI=null, GROUPS=[], QUESTS=[], ENTERED=null, URL_TOKEN=null;
 
 function getToken(){
   try{
     var u=new URL(location.href);
     var t=u.searchParams.get('t');
-    if(t){try{localStorage.setItem('sakaba_token',t);}catch(e){} return t;}
-    if(location.hash){var m=location.hash.match(/t=([^&]+)/);if(m){var v=decodeURIComponent(m[1]);try{localStorage.setItem('sakaba_token',v);}catch(e){} return v;}}
+    if(!t&&location.hash){var m=location.hash.match(/t=([^&]+)/);if(m)t=decodeURIComponent(m[1]);}
+    if(t){var cur=null;try{cur=localStorage.getItem('sakaba_token');}catch(e){}
+      if(cur&&cur!==t){URL_TOKEN=t;return cur;} /* 別の入口が開かれた：いま覚えている人のまま入り、あとで確かめる */
+      try{localStorage.setItem('sakaba_token',t);}catch(e){} return t;}
     var ls=null;try{ls=localStorage.getItem('sakaba_token');}catch(e){}
     if(ls)return ls;
   }catch(e){}
@@ -1058,7 +1063,7 @@ function setToken(t){TOKEN=t;try{localStorage.setItem('sakaba_token',t);}catch(e
 var OPEN_CHO=/(^|[#&])cho=1/.test(location.hash||'');
 function stripToken(){
   try{
-    if(!TOKEN||localStorage.getItem('sakaba_token')!==TOKEN)return; /* スマホに覚えられないときはURLに残す */
+    if(!URL_TOKEN&&(!TOKEN||localStorage.getItem('sakaba_token')!==TOKEN))return; /* スマホに覚えられないときはURLに残す */
     var u=new URL(location.href);var had=u.searchParams.has('t')||/t=/.test(u.hash);
     if(!had)return;
     u.searchParams.delete('t');u.searchParams.delete('openExternalBrowser');u.hash='';
@@ -1079,8 +1084,9 @@ async function api(action,extra){
 }
 function escapeHtml(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
 function initial(n){return String(n||'？').replace(/\s/g,'').charAt(0);}
+function safeAva(u){u=String(u||'');return (/^https:\/\/yvfllgldbjroongkhkgg\.supabase\.co\//i.test(u)||(DEMO&&/^data:image\//.test(u)))?u:'';}
 function faceInner(p){
-  if(p.avatar_type==='photo'&&p.avatar_url)return '<img src="'+escapeHtml(p.avatar_url)+'">';
+  if(p.avatar_type==='photo'&&safeAva(p.avatar_url))return '<img src="'+escapeHtml(safeAva(p.avatar_url))+'">';
   return escapeHtml(initial(p.name));
 }
 
@@ -1306,7 +1312,7 @@ function homeSituation(){
   var all=uniqFellows();
   if(ASK_UNSEEN)return 'あなたの質問に、返事を書いておいたよ。<br>「❓ あさやんに聞く」を見てね。';
   var inc=all.filter(function(x){return x.p.link==='incoming';});
-  if(inc.length)return inc[0].p.name+'さんから「連絡のお願い」が届いてるよ。<br>下の「つながり」を見てごらん。';
+  if(inc.length)return escapeHtml(inc[0].p.name)+'さんから「連絡のお願い」が届いてるよ。<br>下の「つながり」を見てごらん。';
   var opts=[];
   var nw=all.filter(function(x){return x.p.is_new;});
   if(nw.length)opts.push('新しい仲間が'+nw.length+'人、酒場に来たよ。<br>「仲間をさがす」でのぞいてみて。');
@@ -1343,7 +1349,7 @@ function renderRec(){
   if(cands.length){var x=seedPick(cands,'p');REC={type:'p',x:x};
     var p=x.p,pal=avaPal(p),ph=(p.avatar_type==='photo'&&p.avatar_url);
     el.innerHTML='<div class="rec"><div class="rl">🍀 今日の出会い<span>あさやんのおすすめ</span><button class="rx" onclick="hideRec(event)" aria-label="今日は閉じる">✕</button></div>'+
-      '<div class="rc" onclick="openRec()"><span class="rav" style="--c1:'+pal[0]+';--c2:'+pal[1]+'">'+(ph?'<img src="'+escapeHtml(p.avatar_url)+'" alt="">':escapeHtml(initial(p.name)))+'</span><span class="rt"><b>'+escapeHtml(p.name)+'</b><small>'+escapeHtml(p.tagline||p.industry||'')+'</small></span><span class="rgo">会ってみる ›</span></div></div>';
+      '<div class="rc" onclick="openRec()"><span class="rav" style="--c1:'+pal[0]+';--c2:'+pal[1]+'">'+(ph?'<img src="'+escapeHtml(safeAva(p.avatar_url))+'" alt="">':escapeHtml(initial(p.name)))+'</span><span class="rt"><b>'+escapeHtml(p.name)+'</b><small>'+escapeHtml(p.tagline||p.industry||'')+'</small></span><span class="rgo">会ってみる ›</span></div></div>';
     return;}
   var qs=(QUESTS||[]).filter(function(q){return !q.mine&&!q.joined;});
   if(qs.length){var q=seedPick(qs,'q');REC={type:'q',q:q};
@@ -1491,7 +1497,7 @@ function cleanTitle(t){return String(t||'集まり').replace(/^[【\[]\s*/,'').r
 var FIND_ANIM=true;
 function pcHtml(p,i){
   var photo=(p.avatar_type==='photo'&&p.avatar_url);
-  var img=photo?'<img loading="lazy" src="'+escapeHtml(p.avatar_url)+'" alt="">':'<span class="ini">'+escapeHtml(initial(p.name))+'</span>';
+  var img=photo?'<img loading="lazy" src="'+escapeHtml(safeAva(p.avatar_url))+'" alt="">':'<span class="ini">'+escapeHtml(initial(p.name))+'</span>';
   var pal=avaPal(p);
   var bdg='';
   if(LINK_BADGE[p.link])bdg='<span class="bdg '+p.link+'">'+LINK_BADGE[p.link]+'</span>';
@@ -1546,7 +1552,7 @@ function renderFind(quiet){
     var hot=uniqFellows().filter(function(x){return x.p.link==='incoming';});
     if(hot.length){
       hot.forEach(function(x){lookup[x.p.id]=x;});
-      html+='<div class="hotbar" data-gi=""><div class="hl">📬 あなたと連絡を取りたい人が <b>'+hot.length+'人</b></div><div class="hots">'+hot.map(function(x){var pal=avaPal(x.p);var ph=(x.p.avatar_type==='photo'&&x.p.avatar_url);return '<div class="pc hotp" data-id="'+escapeHtml(x.p.id)+'"><span class="hav" style="--c1:'+pal[0]+';--c2:'+pal[1]+'">'+(ph?'<img src="'+escapeHtml(x.p.avatar_url)+'" alt="">':escapeHtml(initial(x.p.name)))+'</span><span class="hn">'+escapeHtml(x.p.name)+'</span><span class="hgo">返事する ›</span></div>';}).join('')+'</div></div>';ri++;
+      html+='<div class="hotbar" data-gi=""><div class="hl">📬 あなたと連絡を取りたい人が <b>'+hot.length+'人</b></div><div class="hots">'+hot.map(function(x){var pal=avaPal(x.p);var ph=(x.p.avatar_type==='photo'&&x.p.avatar_url);return '<div class="pc hotp" data-id="'+escapeHtml(x.p.id)+'"><span class="hav" style="--c1:'+pal[0]+';--c2:'+pal[1]+'">'+(ph?'<img src="'+escapeHtml(safeAva(x.p.avatar_url))+'" alt="">':escapeHtml(initial(x.p.name)))+'</span><span class="hn">'+escapeHtml(x.p.name)+'</span><span class="hgo">返事する ›</span></div>';}).join('')+'</div></div>';ri++;
     }
   }
   GROUPS.forEach(function(g,gi){
@@ -1569,9 +1575,9 @@ function openDetail(p,g,from){
   var metLine=from&&from.questTitle?'<div class="met">📜『'+escapeHtml(from.questTitle)+'』を出した人</div>':(g?'<div class="met">'+(g.kind==='quest'?'📜 ':'🗓 ')+escapeHtml(cleanTitle(g.title))+' で一緒でした</div>':'');
   var tags=(p.free_tags&&p.free_tags.length)?p.free_tags:[];
   var html='<div class="dhero" style="--c1:'+pal[0]+';--c2:'+pal[1]+'">'+
-      '<div class="dbg">'+(ph?'<img src="'+escapeHtml(p.avatar_url)+'" alt="">':'')+'</div>'+
+      '<div class="dbg">'+(ph?'<img src="'+escapeHtml(safeAva(p.avatar_url))+'" alt="">':'')+'</div>'+
       '<div class="dst" id="dtState"></div>'+
-      '<div class="dface">'+(ph?'<img src="'+escapeHtml(p.avatar_url)+'" alt="">':'<span>'+escapeHtml(initial(p.name))+'</span>')+'</div>'+
+      '<div class="dface">'+(ph?'<img src="'+escapeHtml(safeAva(p.avatar_url))+'" alt="">':'<span>'+escapeHtml(initial(p.name))+'</span>')+'</div>'+
     '</div>'+
     '<div class="dname"><div class="nm">'+escapeHtml(p.name||'')+'</div>'+(p.company?'<div class="co">'+escapeHtml(p.company)+'</div>':'')+
       '<div class="dchips"><span class="dnr" style="--na:'+nd.a+';--nb:'+nd.b+'"><i>'+(p.noren_custom?escapeHtml(p.noren_custom.charAt(0)):nd.c)+'</i>'+escapeHtml(groupName(p))+'</span>'+(p.industry?'<span class="dind">'+escapeHtml(p.industry)+'</span>':'')+'</div></div>'+
@@ -1700,7 +1706,7 @@ async function loadQuests(){
   renderQuests();
 }
 function avHtml(a){if(!a)return '';return '<span class="av">'+faceInner(a)+'</span>';}
-function mavHtml(a){var pal=avaPal(a);var ph=(a.avatar_type==='photo'&&a.avatar_url);return '<span class="mav" style="--c1:'+pal[0]+';--c2:'+pal[1]+'">'+(ph?'<img src="'+escapeHtml(a.avatar_url)+'" alt="">':escapeHtml(initial(a.name)))+'</span>';}
+function mavHtml(a){var pal=avaPal(a);var ph=(a.avatar_type==='photo'&&a.avatar_url);return '<span class="mav" style="--c1:'+pal[0]+';--c2:'+pal[1]+'">'+(ph?'<img src="'+escapeHtml(safeAva(a.avatar_url))+'" alt="">':escapeHtml(initial(a.name)))+'</span>';}
 var Q_FILTER='all';
 function setQFilter(f){Q_FILTER=f;renderQuests();}
 function renderQuests(){
@@ -1769,7 +1775,7 @@ async function loadQPeople(){
   var ps=r.people||[];QP_LIST=ps;
   if(!ps.length){el.innerHTML='<div class="lkE">まだいないよ</div>';return;}
   var aid=CUR_Q.author&&CUR_Q.author.id;
-  el.innerHTML=ps.map(function(p,i){var pal=avaPal(p),ph=(p.avatar_type==='photo'&&p.avatar_url);return '<button class="qpP" onclick="openQPerson('+i+')"><span class="qpA" style="--c1:'+pal[0]+';--c2:'+pal[1]+'">'+(ph?'<img src="'+escapeHtml(p.avatar_url)+'" alt="">':escapeHtml(initial(p.name)))+(p.id===aid?'<i>主</i>':'')+'</span><span class="qpN">'+escapeHtml(p.name)+'</span></button>';}).join('');
+  el.innerHTML=ps.map(function(p,i){var pal=avaPal(p),ph=(p.avatar_type==='photo'&&p.avatar_url);return '<button class="qpP" onclick="openQPerson('+i+')"><span class="qpA" style="--c1:'+pal[0]+';--c2:'+pal[1]+'">'+(ph?'<img src="'+escapeHtml(safeAva(p.avatar_url))+'" alt="">':escapeHtml(initial(p.name)))+(p.id===aid?'<i>主</i>':'')+'</span><span class="qpN">'+escapeHtml(p.name)+'</span></button>';}).join('');
 }
 var QP_LIST=[];
 function openQPerson(i){var p=QP_LIST[i];if(!p)return;openDetail(p,{kind:'quest',title:CUR_Q.title},{back:'qdetail'});}
@@ -1907,7 +1913,7 @@ function lvCancel(){var b=document.getElementById('lvBox');if(b)b.outerHTML=lvHt
 async function lvDo(){var g=document.getElementById('lvGo');if(!g||g.disabled)return;g.disabled=true;g.textContent='消しています…';
   var r=await api('leave_sakaba',{confirm:'leave'});
   if(!r.ok){g.disabled=false;g.textContent='消して、やめる';toastMsg(r.error==='is_owner'?'あさやんのカードは消せないよ':'うまく消せなかったよ。もう一度ためしてね');return;}
-  try{localStorage.removeItem('sakaba_token');}catch(e){}
+  if(!DEMO){try{localStorage.removeItem('sakaba_token');}catch(e){}}
   TOKEN='';ME=null;
   document.getElementById('mycardBody').innerHTML='<div class="stub">🍺<br><b>カードを消したよ。</b><br>今までありがとう。<br><br>また来たくなったら、<br>LINEに届いた酒場のリンクから、<br>いつでも入ってきてね。</div>';
   var act=document.getElementById('mcAct');if(act)act.style.display='none';
@@ -1957,8 +1963,8 @@ async function saveProfile(){
 function toastMsg(html){var t=document.getElementById('toast');t.innerHTML=html;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},3400);}
 
 /* ===== 帳場 (admin / owner) ===== */
-function openChocho(){show('chocho');if(!STAFF_SS){renderChoLock();return;}var tb=document.querySelector('#chocho .chTabs');if(tb)tb.style.display='';var lt=document.querySelector('#chocho .lockTop');if(lt)lt.style.display='';if(ME&&ME.role==='owner')nrBadgeRefresh();['chT_bc','chT_ln','chT_nr','chT_qa','chT_bk'].forEach(function(i){var bt=document.getElementById(i);if(bt)bt.style.display=(ME&&ME.role==='owner')?'':'none';});choTab('req');}
-function choTab(t){['req','today','mem','bc','ln','nr','qa','bk'].forEach(function(x){document.getElementById('chT_'+x).classList.toggle('on',x===t);});document.getElementById('chBody').innerHTML='<div class="loading">読み込み中…</div>';if(t==='req')loadChoRequests();else if(t==='today')loadChoToday();else if(t==='bc')loadChoBc();else if(t==='ln')loadChoLines();else if(t==='nr')loadChoNoren();else if(t==='qa')loadChoQa();else if(t==='bk')loadChoBk();else loadChoMembers();}
+function openChocho(){show('chocho');if(!STAFF_SS){renderChoLock();return;}var tb=document.querySelector('#chocho .chTabs');if(tb)tb.style.display='';var lt=document.querySelector('#chocho .lockTop');if(lt)lt.style.display='';if(ME&&ME.role==='owner')nrBadgeRefresh();['chT_bc','chT_ln','chT_nr','chT_qa','chT_bk','chT_keys'].forEach(function(i){var bt=document.getElementById(i);if(bt)bt.style.display=(ME&&ME.role==='owner')?'':'none';});choTab('req');}
+function choTab(t){['req','today','mem','bc','ln','nr','qa','bk','keys'].forEach(function(x){document.getElementById('chT_'+x).classList.toggle('on',x===t);});document.getElementById('chBody').innerHTML='<div class="loading">読み込み中…</div>';if(t==='req')loadChoRequests();else if(t==='today')loadChoToday();else if(t==='bc')loadChoBc();else if(t==='ln')loadChoLines();else if(t==='nr')loadChoNoren();else if(t==='qa')loadChoQa();else if(t==='bk')loadChoBk();else if(t==='keys')loadChoKeys();else loadChoMembers();}
 var CHO_STATUS={pending:['返事待ち','chipW'],matched:['つながった','chipG'],declined:['見送り','chipN']};
 function fmtJ(d){return d?new Date(d).toLocaleString('ja-JP',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}):'';}
 async function loadChoRequests(){var r=await api('admin_requests',{});var b=document.getElementById('chBody');if(!r.ok){b.innerHTML='<div class="stub">読み込めなかった…</div>';return;}var reqs=r.requests||[];var c={pending:0,matched:0,declined:0};reqs.forEach(function(x){if(c[x.status]!==undefined)c[x.status]++;});var h='<div class="say" style="font-size:.84rem">「連絡を取る」の申請は、自動で相手に届くよ。<br>ここでは、誰が誰に申請したかを見守れるよ。</div>';h+='<div class="choSum"><div><b>'+reqs.length+'</b>申請</div><div><b>'+c.pending+'</b>返事待ち</div><div><b>'+c.matched+'</b>つながった</div><div><b>'+c.declined+'</b>見送り</div></div>';if(!reqs.length)h+='<div class="stub">まだ申請はないよ。</div>';reqs.forEach(function(x){h+=reqCardHtml(x);});b.innerHTML=h;}
@@ -1966,7 +1972,21 @@ function reqCardHtml(x){var f=x.from||{},t=x.to||{};var st=CHO_STATUS[x.status]|
 function loadChoToday(){var b=document.getElementById('chBody');var cur=(OKAMI&&OKAMI.today)?OKAMI.today:'';b.innerHTML='<div class="say" style="font-size:.84rem">酒場のホームに出る「今日のひとこと」を出せるよ。<br>空っぽにして出すと、いつものセリフに戻るよ。</div><div class="field"><textarea id="todayInput" placeholder="例：今日は新しい仲間が増えたよ。のぞいてみてね。">'+escapeHtml(cur)+'</textarea></div><button class="okbtn" id="todayBtn" onclick="postToday()">この言葉を出す</button>';}
 async function postToday(){var btn=document.getElementById('todayBtn');btn.disabled=true;btn.textContent='出してるよ…';var txt=document.getElementById('todayInput').value;var r=await api('today_post',{text:txt});btn.disabled=false;btn.textContent='この言葉を出す';if(r.ok){var o=await api('okami',{});if(o.ok)OKAMI=o;toastMsg('あさやん：「今日のひとこと、出しておいたよ」');}else toastMsg('うまく出せなかった…');}
 async function loadChoMembers(){var r=await api('admin_members',{});var b=document.getElementById('chBody');if(!r.ok){b.innerHTML='<div class="stub">読み込めなかった…</div>';return;}var ms=r.members||[];var iAmOwner=r.my_role==='owner';var h='<div class="say" style="font-size:.84rem">登録している仲間：'+ms.length+'人<br>👑＝最高管理者　🛡＝管理者（帳場が見られる人）</div>';ms.forEach(function(m){var d=m.created_at?new Date(m.created_at).toLocaleDateString('ja-JP',{month:'numeric',day:'numeric'}):'';var mark=m.role==='owner'?' 👑':(m.role==='admin'?' 🛡':'');var btn='';if(iAmOwner&&m.role!=='owner'&&m.active){btn=m.role==='admin'?'<button class="roleBtn" onclick="setRole(\''+m.id+'\',\'member\')">管理者を外す</button>':'<button class="roleBtn" onclick="setRole(\''+m.id+'\',\'admin\')">管理者にする</button>';}h+='<div class="memRow"><div style="min-width:0"><div class="mn">'+escapeHtml(m.name||'')+mark+(m.active?'':' <span style="color:#a55;font-size:.72rem">(退会)</span>')+'</div><div class="mt">'+escapeHtml(m.tagline||'')+'</div></div><div style="text-align:right"><div class="md">'+d+'</div>'+btn+'</div></div>';});b.innerHTML=h;}
-async function setRole(id,role){var r=await api('admin_set_role',{target_id:id,role:role});if(r.ok){toastMsg(role==='admin'?'あさやん：「管理者にしておいたよ」':'あさやん：「管理者から外しておいたよ」');loadChoMembers();}else toastMsg('うまくできなかった…');}
+async function setRole(id,role){var r=await api('admin_set_role',{target_id:id,role:role});if(r.ok){if(role==='admin'&&r.enroll_code)showEnrollCode(r.enroll_code);else toastMsg('あさやん：「管理者から外しておいたよ。帳場の鍵も消したよ」');loadChoMembers();}else toastMsg('うまくできなかった…');}
+function showEnrollCode(code){var b=document.getElementById('bcModal');if(!b){toastMsg('登録コード：'+escapeHtml(code));return;}
+  document.getElementById('bcText').textContent='管理者にしたよ。\n\nこの人が はじめて帳場の鍵（Face ID）を登録するときに、次の登録コードが要るよ。本人にだけ伝えてね（7日間だけ使えるよ）。\n\n登録コード：'+code;document.getElementById('bcWhen').textContent='';document.getElementById('bcMore').textContent='';BC_SHOW={id:-1,text:''};b.classList.remove('hidden');}
+async function pkReissue(id){var r=await api('pk_reissue',{target_id:id});if(r.ok&&r.enroll_code)showEnrollCode(r.enroll_code);else toastMsg('うまく出せなかった…');}
+async function pkRevoke(id){if(!window.confirm||!confirm('この鍵を消しますか？\nその人は、もう一度 登録コードで鍵を登録しなおすことになります。'))return;var r=await api('pk_revoke',{id:id});if(r.ok){toastMsg('鍵を消したよ');loadChoKeys();}else toastMsg('うまく消せなかった…');}
+async function loadChoKeys(){var b=document.getElementById('chBody');var r=await api('pk_list',{});if(!r.ok){b.innerHTML='<div class="stub">読み込めなかった…</div>';return;}
+  var nm={};(r.staff||[]).forEach(function(x){nm[x.id]=x;});
+  var h='<div class="say" style="font-size:.84rem">帳場を開ける「鍵」（Face ID）の一覧だよ。<br>知らない鍵があったら消してね。管理者が鍵を登録しなおすときは「登録コードを出す」。</div>';
+  var keys=r.keys||[];h+='<div class="fgh">登録されている鍵 <small>'+keys.length+'</small></div>';
+  if(!keys.length)h+='<div class="lkE">まだ鍵はないよ</div>';
+  keys.forEach(function(k){var m=nm[k.member_id]||{name:'（不明）',role:''};h+='<div class="qc"><div class="qcH"><b>'+escapeHtml(m.name)+'</b><span class="chip chipW" style="margin-left:6px;font-size:.66rem">'+(m.role==='owner'?'あさやん':'管理者')+'</span><span class="qcT">登録 '+fmtShort(k.created_at)+(k.last_used_at?'／最後に使用 '+fmtShort(k.last_used_at):'')+'</span></div><button class="qcDel" data-id="'+escapeHtml(k.id)+'" onclick="pkRevoke(+this.dataset.id)">この鍵を消す</button></div>';});
+  h+='<div class="fgh" style="margin-top:14px">管理者 <small>鍵がない人には登録コードを</small></div>';
+  (r.staff||[]).filter(function(x){return x.role==='admin';}).forEach(function(x){var has=keys.some(function(k){return k.member_id===x.id;});h+='<div class="qc"><div class="qcH"><b>'+escapeHtml(x.name)+'</b><span class="qcT">'+(has?'鍵あり':(x.enroll_expires&&Date.parse(x.enroll_expires)>Date.now()?'登録コード発行済み':'鍵なし'))+'</span></div>'+(has?'':'<button class="reqBtn" style="margin-top:6px" data-id="'+escapeHtml(x.id)+'" onclick="pkReissue(this.dataset.id)">🔑 登録コードを出す</button>')+'</div>';});
+  if(!(r.staff||[]).some(function(x){return x.role==='admin';}))h+='<div class="lkE">管理者はまだいないよ（「会員」タブで任命できるよ）</div>';
+  b.innerHTML=h;}
 
 /* ===== registration wizard ===== */
 var NIPPO_NAME='',JUST_REGISTERED=false;
@@ -2094,7 +2114,7 @@ function openEvent(i){CUR_EV=EVENTS[i];if(!CUR_EV)return;renderEventDetail();sho
 function renderEventDetail(){var e=CUR_EV;if(!e)return;var b=document.getElementById('evdBody');
   var h='<div class="evHead"><div class="evWhen">'+escapeHtml(evDate(e))+(e.end_time?'〜'+escapeHtml(e.end_time):'')+'<span>'+escapeHtml(evWhen(e))+'</span></div><div class="evName">'+escapeHtml(evTitle(e))+'</div>'+
     '<div class="evPlace">📍 '+escapeHtml(e.venue_name||e.venue||'場所は未定')+(e.address?'<small>'+escapeHtml(e.address)+'</small>':'')+'</div>'+
-    (e.map_url?'<a class="evMap" href="'+escAttr(e.map_url)+'" target="_blank" rel="noopener">🗺 地図をひらく</a>':'')+'</div>';
+    (e.map_url?'<a class="evMap" href="'+escAttr(/^https:\/\//i.test(e.map_url)?e.map_url:'#')+'" target="_blank" rel="noopener">🗺 地図をひらく</a>':'')+'</div>';
   var tm=(e.talk_to_me||[]);
   if(e.me_going&&e.talk_hidden&&!e.revealed)h+='<div class="evTalkMe"><b>🗣 あなたと当日話したい人が '+e.talk_hidden+'人いるよ</b><small>誰なのかは、集まりの時間（'+escapeHtml(evRevealAt(e))+'）になったら分かるよ</small></div>';
   if(e.me_going&&tm.length){var who=e.going.filter(function(p){return tm.indexOf(p.id)>=0;});h+='<div class="evTalkMe"><b>🗣 あなたと当日話したい人</b>'+who.map(function(p){return '<span>'+escapeHtml(p.name)+'さん</span>';}).join('')+'<small>会場で声をかけてみてね</small></div>';}
@@ -2260,7 +2280,7 @@ async function renderChoLock(){
   if(!r.ok){b.innerHTML='<div class="stub">確かめられなかった…もう一度開いてね</div>';return;}
   if(r.session_ok){openChocho();return;}
   if(r.has_passkey){b.innerHTML='<div class="lockBox"><div class="lk">🔒</div><b>帳場は Face ID で開くよ</b><p>ここは酒場の大事な場所。<br>あなた本人か、確かめさせてね。</p><button class="lockBtn" id="lockGo" onclick="choUnlock()">Face ID で開く</button><div id="lockMsg" class="sm"></div></div>';}
-  else{b.innerHTML='<div class="lockBox"><div class="lk">🔑</div><b>はじめに、このスマホを帳場の鍵にしよう</b><p>このスマホの Face ID（または指紋）を、帳場の鍵として登録するよ。<br>次からは、Face ID を通さないと帳場は開かないよ。</p><button class="lockBtn" id="lockGo" onclick="choRegister()">このスマホを鍵にする</button><div id="lockMsg" class="sm">※スマホを替えたり、なくしたりしたときは、開発の担当にお願いすれば登録をやり直せるよ</div></div>';}
+  else{b.innerHTML='<div class="lockBox"><div class="lk">🔑</div><b>はじめに、このスマホを帳場の鍵にしよう</b><p>このスマホの Face ID（または指紋）を、帳場の鍵として登録するよ。<br>次からは、Face ID を通さないと帳場は開かないよ。</p><div class="field" style="margin-top:10px"><label>登録コード（6けた）</label><div class="ex">あさやんから受け取った数字。あさやん本人は、開発者から受け取ったもの。</div><input id="enrollCode" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder="123456"></div><button class="lockBtn" id="lockGo" onclick="choRegister()">このスマホを鍵にする</button><div id="lockMsg" class="sm">※スマホを替えたり、なくしたりしたときは、開発の担当にお願いすれば登録をやり直せるよ</div></div>';}
 }
 function lockBusy(on,t){var g=document.getElementById('lockGo');if(g){g.disabled=on;if(t)g.textContent=t;}}
 function lockMsg(t){var m=document.getElementById('lockMsg');if(m)m.innerHTML=t;}
@@ -2278,10 +2298,11 @@ async function choUnlock(){
 async function choRegister(){
   lockBusy(true,'登録しています…');
   try{
-    var lib=await waLib();var o=await api('pk_reg_options',{});
-    if(!o.ok){lockBusy(false,'このスマホを鍵にする');lockMsg('うまく始められなかった…もう一度押してね');return;}
+    var ec=(document.getElementById('enrollCode')||{}).value||'';ec=String(ec).replace(/\D/g,'');
+    var lib=await waLib();var o=await api('pk_reg_options',{enroll_code:ec});
+    if(!o.ok){lockBusy(false,'このスマホを鍵にする');lockMsg(o.error==='need_enroll_code'?'登録コードが合わないよ。6けたの数字を確かめてね':'うまく始められなかった…もう一度押してね');return;}
     var resp=await lib.startRegistration(o.options);
-    var v=await api('pk_reg_verify',{response:resp});
+    var v=await api('pk_reg_verify',{response:resp,enroll_code:ec});
     if(v.ok&&v.staff_session){STAFF_SS=v.staff_session;toastMsg('あさやん：「このスマホを帳場の鍵にしたよ」');openChocho();return;}
     lockBusy(false,'このスマホを鍵にする');lockMsg('登録できなかったよ。もう一度ためしてね');
   }catch(e){lockBusy(false,'このスマホを鍵にする');lockMsg(e&&e.name==='InvalidStateError'?'このスマホは、もう鍵として登録されているよ。「Face ID で開く」を使ってね':'うまくいかなかった…もう一度ためしてね');}
@@ -2574,7 +2595,10 @@ document.addEventListener('click',function(e){if(!DEMO)return;var a=e.target&&e.
   if(!TOKEN){document.getElementById('tokenAsk').classList.remove('hidden');return;}
   ENTERED=await api('enter',{});
   if(ENTERED&&ENTERED.member){ME=ENTERED.member;}
+  if(URL_TOKEN)switchAsk();
 })();
+function switchAsk(){var nm=(ME&&ME.name)?ME.name:'';var ok=window.confirm?confirm('このスマホには'+(nm?'「'+nm+'」さん':'別の人')+'の入口が覚えられています。\n\n開いたリンクは、別の入口です。\nこのリンクの人として入り直しますか？\n\n（自分の入口でないリンクなら「キャンセル」を押してね）'):false;
+  if(ok){try{localStorage.setItem('sakaba_token',URL_TOKEN);}catch(e){}location.replace(location.pathname);}else{stripToken();}}
 document.getElementById('tokenGo').addEventListener('click',async function(){
   var t=(document.getElementById('tokenInput').value||'').trim();if(!t)return;
   this.disabled=true;this.textContent='…';
