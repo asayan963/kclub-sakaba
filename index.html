@@ -836,6 +836,20 @@ html,body{height:100%;background:radial-gradient(130% 90% at 50% 0%, #1c1008 0%,
 .qLineBox .reqBtn{margin-top:8px;}
 .qintroNote{background:rgba(47,127,200,.14);border:1.5px solid rgba(47,127,200,.6);border-radius:12px;padding:10px 12px;margin:10px 0 4px;color:#f3e7cf;font-size:.86rem;line-height:1.6;}
 
+#crop{position:absolute;inset:0;z-index:70;background:rgba(0,0,0,.86);display:flex;align-items:center;justify-content:center;padding:16px;}
+#crop.hidden{display:none;}
+.cpBox{width:100%;max-width:340px;background:linear-gradient(180deg,#2a1808,#1a0f05);border:2px solid #c9a35c;border-radius:16px;padding:14px;box-shadow:0 12px 40px rgba(0,0,0,.7);}
+.cpSay{color:#f3e7cf;font-size:.86rem;line-height:1.6;margin-bottom:10px;}
+.cpSay b{color:#f5d97a;}
+.cpView{position:relative;width:260px;height:260px;margin:0 auto;overflow:hidden;border-radius:12px;background:#000;touch-action:none;user-select:none;-webkit-user-select:none;}
+.cpView img{position:absolute;left:0;top:0;transform-origin:0 0;max-width:none;pointer-events:none;-webkit-user-drag:none;}
+.cpMask{position:absolute;left:0;top:0;width:260px;height:260px;border-radius:50%;box-shadow:0 0 0 400px rgba(0,0,0,.62);pointer-events:none;border:2px solid rgba(245,217,122,.9);box-sizing:border-box;}
+.cpZoom{display:flex;align-items:center;gap:8px;margin:12px 4px 4px;color:#c9b48c;font-size:.8rem;}
+.cpZoom input{flex:1;accent-color:#f5c518;}
+.cpBtns{display:flex;gap:8px;margin-top:10px;}
+.cpBtns button{flex:1;padding:12px;border-radius:12px;font-family:'Zen Maru Gothic',sans-serif;font-weight:800;font-size:.95rem;cursor:pointer;}
+.cpCancel{background:none;border:1.5px solid #6e4a1e;color:#c9b48c;}
+.cpOk{background:linear-gradient(180deg,#f5c518,#d9a106);border:0;color:#2a1808;}
 .toast{position:absolute;left:50%;bottom:84px;transform:translateX(-50%) translateY(20px);background:rgba(28,16,8,.98);border:2px solid #f5c518;color:#f5d97a;padding:14px 20px;border-radius:12px;font-size:.92rem;opacity:0;transition:all .4s;z-index:50;pointer-events:none;text-align:center;max-width:86%;line-height:1.6;}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 </style>
@@ -1072,6 +1086,15 @@ html,body{height:100%;background:radial-gradient(130% 90% at 50% 0%, #1c1008 0%,
   </div>
 
   <div id="bcModal" class="bcov hidden"><div class="bcbox"><div class="bch">📣 あさやんから<small id="bcWhen"></small></div><div class="bct" id="bcText"></div><div class="bcn" id="bcMore"></div><button onclick="bcOk()">わかった</button></div></div>
+  <!-- 写真の切り抜き -->
+  <div id="crop" class="hidden">
+    <div class="cpBox">
+      <div class="cpSay"><b>あさやん：</b>丸の中に顔が入るように、<b>指で動かして</b>ね。<br>広げると大きく、つまむと小さくなるよ。</div>
+      <div class="cpView" id="cpView"><img id="cpImg" alt="" draggable="false"><div class="cpMask"></div></div>
+      <div class="cpZoom"><span>小</span><input type="range" id="cpZoom" min="0" max="100" value="0" oninput="cpZoomInput(this.value)"><span>大</span></div>
+      <div class="cpBtns"><button class="cpCancel" onclick="cpCancel()">やめる</button><button class="cpOk" onclick="cpDone()">✓ これで決定</button></div>
+    </div>
+  </div>
   <div id="toast" class="toast"></div>
 </div>
 
@@ -2024,8 +2047,8 @@ function mcPreview(){var el=document.getElementById('mcPrev');if(!el||!ME)return
   FIND_ANIM=false;el.innerHTML=pcHtml(p,0);}
 function mcChanged(keep){if(!keep)mcNorenRender();mcPreview();var sb=document.getElementById('saveBtn');sb.classList.add('dirty');sb.textContent='変更を保存する';}
 function setContact(v){if(CONTACT!==v)setTimeout(mcChanged,0);CONTACT=v;document.getElementById('ct_on').classList.toggle('on',v);document.getElementById('ct_off').classList.toggle('on',!v);}
-function mcPhoto(input){var file=input.files&&input.files[0];if(!file)return;
-  resizeImage(file,360,function(dataUrl){if(!dataUrl){toastMsg('この画像は読めなかった…');return;}
+function mcPhoto(input){var file=input.files&&input.files[0];if(!file)return;input.value='';
+  openCropper(file,function(dataUrl,cancelled){if(cancelled)return;if(!dataUrl){toastMsg('この画像は読めなかった…');return;}toastMsg('アップロード中…');
     api('upload_avatar',{data_url:dataUrl}).then(function(r){if(r.ok){ME=r.member;var a=document.getElementById('mcAva');if(a)a.innerHTML=avaBox(ME.avatar_url,ME.name,64);mcPreview();toastMsg('写真を変えたよ');}else toastMsg('うまく上げられなかった…');});});}
 async function saveProfile(){
   var btn=document.getElementById('saveBtn');btn.disabled=true;btn.textContent='保存中…';
@@ -2137,15 +2160,63 @@ var WIZ_NEED={name:'お名前を入れてね',industry:'お仕事を短い言葉
 function wizNext(){var s=WIZ[wizI];saveWizCurrent();
   if(s.req){var v=wizData[s.key];if(!v){toastMsg('あさやん：「'+WIZ_NEED[s.key]+'」');var i=document.getElementById('wizInput');if(i)i.focus();return;}}
   if(wizI<WIZ.length-1){wizI++;renderWiz();}else finishWiz();}
+/* 写真の切り抜き（丸の中を自分で決める） */
+var CP={img:null,w:0,h:0,s:1,min:1,tx:0,ty:0,V:260,cb:null,pts:{},pd:0,ps:0,pc:null};
+function openCropper(file,cb){
+  if(!file)return;
+  var img=new Image();
+  img.onload=function(){cpBind();
+    CP.img=img;CP.w=img.naturalWidth||img.width;CP.h=img.naturalHeight||img.height;CP.cb=cb;
+    if(!CP.w||!CP.h){cb(null);return;}
+    var view=document.getElementById('cpView');CP.V=view.clientWidth||260;
+    CP.min=CP.V/Math.min(CP.w,CP.h);CP.s=CP.min;
+    CP.tx=(CP.V-CP.w*CP.s)/2;CP.ty=(CP.V-CP.h*CP.s)/2;
+    var el=document.getElementById('cpImg');el.src=img.src;el.style.width=CP.w+'px';el.style.height=CP.h+'px';
+    document.getElementById('cpZoom').value=0;
+    document.getElementById('crop').classList.remove('hidden');cpDraw();
+  };
+  img.onerror=function(){cb(null);};
+  img.src=URL.createObjectURL(file);
+}
+function cpClamp(){var W=CP.w*CP.s,H=CP.h*CP.s;if(CP.tx>0)CP.tx=0;if(CP.ty>0)CP.ty=0;if(CP.tx+W<CP.V)CP.tx=CP.V-W;if(CP.ty+H<CP.V)CP.ty=CP.V-H;}
+function cpDraw(){cpClamp();document.getElementById('cpImg').style.transform='translate('+CP.tx+'px,'+CP.ty+'px) scale('+CP.s+')';}
+function cpSetScale(ns,cx,cy){ns=Math.max(CP.min,Math.min(CP.min*5,ns));var k=ns/CP.s;CP.tx=cx-(cx-CP.tx)*k;CP.ty=cy-(cy-CP.ty)*k;CP.s=ns;cpDraw();
+  var z=document.getElementById('cpZoom');if(z)z.value=Math.round((CP.s/CP.min-1)/4*100);}
+function cpZoomInput(v){cpSetScale(CP.min*(1+v/100*4),CP.V/2,CP.V/2);}
+function cpBind(){var view=document.getElementById('cpView');if(!view||view._cp)return;view._cp=true;
+  view.addEventListener('pointerdown',function(e){e.preventDefault();CP.pts[e.pointerId]={x:e.clientX,y:e.clientY};try{view.setPointerCapture(e.pointerId);}catch(_e){}
+    var ks=Object.keys(CP.pts);if(ks.length===2){var a=CP.pts[ks[0]],b=CP.pts[ks[1]];CP.pd=Math.hypot(a.x-b.x,a.y-b.y);CP.ps=CP.s;}});
+  view.addEventListener('pointermove',function(e){if(!CP.pts[e.pointerId])return;e.preventDefault();var prev=CP.pts[e.pointerId];var ks=Object.keys(CP.pts);
+    if(ks.length>=2){var o=CP.pts[ks[0]===String(e.pointerId)?ks[1]:ks[0]];var r=view.getBoundingClientRect();
+      var mx=(o.x+e.clientX)/2-r.left,my=(o.y+e.clientY)/2-r.top;var d=Math.hypot(o.x-e.clientX,o.y-e.clientY);
+      var pmx=(o.x+prev.x)/2-r.left,pmy=(o.y+prev.y)/2-r.top;CP.tx+=mx-pmx;CP.ty+=my-pmy;
+      if(CP.pd>0)cpSetScale(CP.ps*d/CP.pd,mx,my);else cpDraw();}
+    else{CP.tx+=e.clientX-prev.x;CP.ty+=e.clientY-prev.y;cpDraw();}
+    CP.pts[e.pointerId]={x:e.clientX,y:e.clientY};});
+  var up=function(e){delete CP.pts[e.pointerId];CP.pd=0;var ks=Object.keys(CP.pts);if(ks.length===1)CP.ps=CP.s;};
+  view.addEventListener('pointerup',up);view.addEventListener('pointercancel',up);view.addEventListener('pointerleave',function(e){if(e.pointerType==='mouse')up(e);});
+  view.addEventListener('wheel',function(e){e.preventDefault();var r=view.getBoundingClientRect();cpSetScale(CP.s*(e.deltaY<0?1.08:0.93),e.clientX-r.left,e.clientY-r.top);},{passive:false});
+}
+function cpCancel(){document.getElementById('crop').classList.add('hidden');var cb=CP.cb;CP.cb=null;if(CP.img&&CP.img.src)try{URL.revokeObjectURL(CP.img.src);}catch(_e){}if(cb)cb(null,true);}
+function cpDone(){var OUT=480,c=document.createElement('canvas');c.width=OUT;c.height=OUT;var g=c.getContext('2d');
+  var sx=-CP.tx/CP.s,sy=-CP.ty/CP.s,sw=CP.V/CP.s;
+  try{g.drawImage(CP.img,sx,sy,sw,sw,0,0,OUT,OUT);}catch(_e){}
+  var out=null;try{out=c.toDataURL('image/jpeg',0.86);}catch(_e){}
+  document.getElementById('crop').classList.add('hidden');var cb=CP.cb;CP.cb=null;if(CP.img&&CP.img.src)try{URL.revokeObjectURL(CP.img.src);}catch(_e){}
+  if(cb)cb(out);}
+document.addEventListener('DOMContentLoaded',cpBind);
 function resizeImage(file,maxSize,cb){var img=new Image();
   img.onload=function(){var w=img.width,h=img.height;
     if(w>h){if(w>maxSize){h=Math.round(h*maxSize/w);w=maxSize;}}else{if(h>maxSize){w=Math.round(w*maxSize/h);h=maxSize;}}
     var c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);
     try{cb(c.toDataURL('image/jpeg',0.82));}catch(e){cb(null);}};
   img.onerror=function(){cb(null);};img.src=URL.createObjectURL(file);}
-function wizPhoto(input){var file=input.files&&input.files[0];if(!file)return;
-  document.getElementById('wizPhotoMsg').textContent='アップロード中…';
-  resizeImage(file,360,function(dataUrl){if(!dataUrl){document.getElementById('wizPhotoMsg').textContent='この画像は読めなかった…別の写真でためしてね';return;}
+function wizPhoto(input){var file=input.files&&input.files[0];if(!file)return;input.value='';
+  document.getElementById('wizPhotoMsg').textContent='丸の中に顔が入るように動かしてね';
+  openCropper(file,function(dataUrl,cancelled){var msg=document.getElementById('wizPhotoMsg');
+    if(cancelled){if(msg)msg.textContent='';return;}
+    if(!dataUrl){if(msg)msg.textContent='この画像は読めなかった…別の写真でためしてね';return;}
+    if(msg)msg.textContent='アップロード中…';
     api('upload_avatar',{data_url:dataUrl}).then(function(r){
       if(r.ok){ME=r.member;renderWiz();document.getElementById('wizPhotoMsg').textContent='いい顔だね！ 写真を載せたよ';}
       else{document.getElementById('wizPhotoMsg').textContent='うまく上げられなかった…もう一度試してね';}});});}
