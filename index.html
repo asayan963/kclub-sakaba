@@ -1646,7 +1646,6 @@ function openDetail(p,g,from){
     (p.detail?'<div class="dsec dcard"><h3>どんな人？</h3><p>'+escapeHtml(p.detail)+'</p></div>':'')+
     (tags.length?'<div class="dsec dcard"><h3>キーワード</h3><div class="dtags">'+tags.map(function(x){return '<span>#'+escapeHtml(x)+'</span>';}).join('')+'</div></div>':'');
   html+='<div id="linkArea"><div class="meetNote">確認中…</div></div>';
-  if(from&&from.event)html+='<div id="talkArea">'+talkBoxHtml(p,from.event)+'</div>';
   if(!ME||p.id!==ME.id)html+='<div class="dsec dcard memoBox"><h3>📝 自分だけのメモ <small>相手にも、ほかの誰にも見えません</small></h3><textarea id="memoIn" maxlength="1000" placeholder="例：新店舗の話をした。次は紹介先の話を聞く" oninput="memoDirty()"></textarea><div class="memoBar"><span id="memoSt"></span><button id="memoBtn" onclick="memoSave()" disabled>メモを保存</button></div></div>';
   document.getElementById('detailBody').innerHTML=html;
   if(!ME||p.id!==ME.id)memoLoad(p.id);
@@ -2008,7 +2007,7 @@ function lvHtml(){return '<div class="lvBox" id="lvBox"><button class="lvLink" o
 function lvOpen(){var b=document.getElementById('lvBox');if(!b)return;
   b.innerHTML='<div class="lvPanel"><div class="lvT">🚪 酒場をやめますか？</div>'+
   '<div class="lvTx">やめると、次のものが<b>すべて消えます</b>。元にはもどせません。</div>'+
-  '<ul class="lvUl"><li>あなたのカード（顔写真・LINEのリンクもふくむ）</li><li>つながった仲間と、「連絡を取る」のやりとり</li><li>集まりの「行きます」と「当日話したい」</li><li>あなたが書いたメモ</li><li>あなたが出したクエストと、コメント</li></ul>'+
+  '<ul class="lvUl"><li>あなたのカード（顔写真・LINEのリンクもふくむ）</li><li>つながった仲間と、「連絡を取る」のやりとり</li><li>集まりの「行きます」</li><li>あなたが書いたメモ</li><li>あなたが出したクエストと、コメント</li></ul>'+
   '<div class="lvTx">※仲間のほうからも、あなたのカードは見えなくなります。<br>※Kクラブの会員をやめることではないよ（酒場のカードが消えるだけ）。<br>※安全のための控え（バックアップ）からも、2週間で消えます。<br>※また来たくなったら、LINEに届いた酒場のリンクから入れば、新しくカードを作り直せるよ。</div>'+
   '<button class="lvGo" id="lvGo" onclick="lvDo()">消して、やめる</button><button class="lvNo" onclick="lvCancel()">やめない（もどる）</button></div>';
   b.scrollIntoView({behavior:'smooth',block:'center'});}
@@ -2238,27 +2237,32 @@ var WD=['日','月','火','水','木','金','土'];
 function evDate(e){var q=String(e.date).split('-').map(Number);var wd=new Date(Date.UTC(q[0],q[1]-1,q[2])).getUTCDay();return q[1]+'/'+q[2]+'('+WD[wd]+')'+(e.time?' '+e.time:'');}
 function evDays(e){var a=Date.parse(e.date+'T00:00:00+09:00'),b=Date.parse((EV_TODAY||new Date(Date.now()+9*3600000).toISOString().slice(0,10))+'T00:00:00+09:00');return Math.round((a-b)/86400000);}
 function evWhen(e){var n=evDays(e);return n===0?'今日':n===1?'明日':n===2?'あさって':n+'日後';}
-function evRevealAt(e){return evDate(e).split(' ')[0]+(e.time?' '+e.time:'');}
+function evRevealAt(e){if(e.reveal_at){var d=new Date(e.reveal_at);if(!isNaN(d))return evDate(e).split(' ')[0]+' '+d.toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit',timeZone:'Asia/Tokyo'});}return evDate(e).split(' ')[0]+(e.end_time?' '+e.end_time:'');}
 function evTitle(e){return cleanTitle?cleanTitle(e.name):e.name;}
 function evRefresh(){return api('events_upcoming',{}).then(function(r){if(r.ok){EVENTS=r.events||[];EV_TODAY=r.today||'';if(CUR_PANEL==='home')renderHomeEv();}return r;});}
 function renderHomeEv(){var el=document.getElementById('homeEv');if(!el)return;if(!EVENTS){el.innerHTML='';if(EVENTS===null)evRefresh();return;}
   if(!EVENTS.length){el.innerHTML='';return;}
-  var mine=EVENTS.filter(function(e){return e.me_going;});var e=mine[0]||EVENTS[0];var n=evDays(e);
-  var soon=e.me_going&&n<=1;var tm=(e.talk_to_me||[]).length+(e.talk_hidden||0);
-  var line=soon?('<b>'+evWhen(e)+'は『'+escapeHtml(evTitle(e))+'』だね！</b><br>'+(tm?'<span class="evHot">あなたと話したい人が '+tm+'人いるよ。</span>':'')+(e.revealed?'来る仲間をチェックしておこう':'顔ぶれは集まりの時間に開くよ')):('<b>'+escapeHtml(evDate(e))+'</b>　'+escapeHtml(evTitle(e))+'<br><small>'+(e.me_going?(e.me_source==='nippo'?'✅ 申込済み':'✅ 行きます'):'')+(EVENTS.length>1?(e.me_going?'・':'')+'ほか'+(EVENTS.length-1)+'件の予定':'')+'</small>');
+  var up=EVENTS.filter(function(e){return !e.ended;}),done=EVENTS.filter(function(e){return e.ended;});
+  var mine=up.filter(function(e){return e.me_going;});var e=mine[0]||up[0];
+  if(!e){var d=done.filter(function(x){return x.me_going&&x.going.length;})[0];if(!d){el.innerHTML='';return;}
+    el.innerHTML='<button class="homeEv soon" onclick="show(\'events\')"><span class="ic">📅</span><span class="tx"><b>『'+escapeHtml(evTitle(d))+'』おつかれさま！</b><br>来ていた仲間の顔ぶれが見られるよ</span><span class="go">›</span></button>';return;}
+  var n=evDays(e);var soon=e.me_going&&n<=1;
+  var line=soon?('<b>'+evWhen(e)+'は『'+escapeHtml(evTitle(e))+'』だね！</b><br>'+(n===0?'いってらっしゃい。顔ぶれは終わってから開くよ':'楽しみだね。顔ぶれは終わってから開くよ')):('<b>'+escapeHtml(evDate(e))+'</b>　'+escapeHtml(evTitle(e))+'<br><small>'+(e.me_going?(e.me_source==='nippo'?'✅ 申込済み':'✅ 行きます'):'')+(up.length>1?(e.me_going?'・':'')+'ほか'+(up.length-1)+'件の予定':'')+'</small>');
   el.innerHTML='<button class="homeEv'+(soon?' soon':'')+'" onclick="show(\'events\')"><span class="ic">📅</span><span class="tx">'+line+'</span><span class="go">›</span></button>';}
 async function loadEvents(){var b=document.getElementById('evBody');if(!EVENTS)b.innerHTML='<div class="loading">読み込み中…</div>';else renderEvents();var r=await evRefresh();if(!r.ok&&!EVENTS){b.innerHTML='<div class="stub">予定を読み込めなかった…</div>';return;}renderEvents();}
 function goingFaces(list,max){return list.slice(0,max).map(function(p){return '<span class="evFace">'+avaBox((p.avatar_type==='photo')?p.avatar_url:'',p.name,26)+'</span>';}).join('')+(list.length>max?'<span class="evMore">+'+(list.length-max)+'</span>':'');}
 function renderEvents(){var b=document.getElementById('evBody');if(!b)return;
-  var h='<div class="say"><b>あさやん：</b>これからのKクラブの集まりだよ。<br>行くなら「行きます」を押してもいいよ。集まりやイベントに申し込んでいれば、自動で「申込済み」になるよ。</div>'+
+  var h='<div class="say"><b>あさやん：</b>Kクラブの集まりだよ。<br>行くなら「行きます」を押してもいいよ。集まりやイベントに申し込んでいれば、自動で「申込済み」になるよ。</div>'+
     '<div class="evRule"><b>🍺 この酒場は「会った人とつながる」場所</b>'+
-    '<ol><li><span>集まりの前</span><p>来る人は<b>まだ見えない</b>よ。</p></li>'+
-    '<li><span>集まりの時間</span><p>来る人の<b>顔ぶれが開く</b>よ。会場で声をかけてね。</p></li>'+
-    '<li><span>会ったあと</span><p>「仲間をさがす」から<b>「連絡を取る」</b>→ 相手がOKしたら、LINEがつながるよ。</p></li></ol>'+
+    '<ol><li><span>集まりの前</span><p>来る人は<b>見えない</b>よ。会場で、まず会おう。</p></li>'+
+    '<li><span>終わったら</span><p>来ていた人の<b>顔ぶれが開く</b>よ。</p></li>'+
+    '<li><span>会ったあと</span><p>カードを開いて<b>「連絡を取る」</b>→ 相手がOKしたら、LINEがつながるよ。</p></li></ol>'+
     '<small>※もうつながっている仲間は、前から見えるよ。<br>※見えるのは、集まりに申し込んだ人と「行きます」を押した人のうち、このアプリに登録している人だけだよ（参加者全員ではないよ）</small></div>';
   if(!EVENTS||!EVENTS.length){b.innerHTML=h+'<div class="stub">今わかっている予定はないよ。</div>';return;}
-  EVENTS.forEach(function(e,i){var tm=(e.talk_to_me||[]).length+(e.talk_hidden||0);
-    h+='<div class="evCard'+(e.me_going?' going':'')+'" onclick="openEvent('+i+')"><div class="evD"><b>'+escapeHtml(evDate(e).split('(')[0])+'</b><small>'+escapeHtml('('+evDate(e).split('(')[1])+'</small><i>'+escapeHtml(evWhen(e))+'</i></div><div class="evT"><div class="nm">'+escapeHtml(evTitle(e))+'</div><div class="pl">📍 '+escapeHtml(e.venue_name||e.venue||'場所は未定')+'</div><div class="pp">'+(e.going.length?goingFaces(e.going,5)+'<span class="cnt">'+(e.revealed?'アプリに登録している参加者':'つながっている仲間')+'</span>':(e.revealed?'':'<span class="evLock">🔒 顔ぶれは集まりの時間に開くよ</span>'))+(e.me_going?'<span class="chip chipG">'+(e.me_source==='nippo'?'申込済み':'行きます')+'</span>':'')+(tm?'<span class="chip chipW">話したい人 '+tm+'</span>':'')+'</div></div></div>';});
+  var card=function(e,i){return '<div class="evCard'+(e.me_going?' going':'')+(e.ended?' ended':'')+'" onclick="openEvent('+i+')"><div class="evD"><b>'+escapeHtml(evDate(e).split('(')[0])+'</b><small>'+escapeHtml('('+evDate(e).split('(')[1])+'</small><i>'+escapeHtml(evWhen(e))+'</i></div><div class="evT"><div class="nm">'+escapeHtml(evTitle(e))+'</div><div class="pl">📍 '+escapeHtml(e.venue_name||e.venue||'場所は未定')+'</div><div class="pp">'+(e.going.length?goingFaces(e.going,5)+'<span class="cnt">'+(e.revealed?'アプリに登録している参加者':'つながっている仲間')+'</span>':(e.revealed?'<span class="evLock">アプリに登録している参加者はいなかったよ</span>':'<span class="evLock">🔒 顔ぶれは終わってから開くよ</span>'))+(e.me_going?'<span class="chip chipG">'+(e.me_source==='nippo'?'申込済み':'行きます')+'</span>':'')+'</div></div></div>';};
+  var up=[],done=[];EVENTS.forEach(function(e,i){(e.ended?done:up).push(card(e,i));});
+  if(up.length)h+='<div class="lkH">📅 これからの集まり</div>'+up.join('');else h+='<div class="stub">これからの予定は、まだないよ。</div>';
+  if(done.length)h+='<div class="lkH" style="margin-top:14px">🍻 終わった集まり <small style="font-weight:400;color:#a8977a">顔ぶれが見られるよ（2週間）</small></div>'+done.reverse().join('');
   h+='<div class="evNote">※申し込んでいる集まりやイベントは、自動で「申込済み」になるよ。<br>※「行きます」は、仲間に知らせるための印だよ。申し込みのかわりにはならないから、申し込みは今までどおりしてね。</div>';
   b.innerHTML=h;}
 function openEvent(i){CUR_EV=EVENTS[i];if(!CUR_EV)return;renderEventDetail();show('evdetail');}
@@ -2266,35 +2270,21 @@ function renderEventDetail(){var e=CUR_EV;if(!e)return;var b=document.getElement
   var h='<div class="evHead"><div class="evWhen">'+escapeHtml(evDate(e))+(e.end_time?'〜'+escapeHtml(e.end_time):'')+'<span>'+escapeHtml(evWhen(e))+'</span></div><div class="evName">'+escapeHtml(evTitle(e))+'</div>'+
     '<div class="evPlace">📍 '+escapeHtml(e.venue_name||e.venue||'場所は未定')+(e.address?'<small>'+escapeHtml(e.address)+'</small>':'')+'</div>'+
     (e.map_url?'<a class="evMap" href="'+escAttr(/^https:\/\//i.test(e.map_url)?e.map_url:'#')+'" target="_blank" rel="noopener">🗺 地図をひらく</a>':'')+'</div>';
-  var tm=(e.talk_to_me||[]);
-  if(e.me_going&&e.talk_hidden&&!e.revealed)h+='<div class="evTalkMe"><b>🗣 あなたと当日話したい人が '+e.talk_hidden+'人いるよ</b><small>誰なのかは、集まりの時間（'+escapeHtml(evRevealAt(e))+'）になったら分かるよ</small></div>';
-  if(e.me_going&&tm.length){var who=e.going.filter(function(p){return tm.indexOf(p.id)>=0;});h+='<div class="evTalkMe"><b>🗣 あなたと当日話したい人</b>'+who.map(function(p){return '<span>'+escapeHtml(p.name)+'さん</span>';}).join('')+'<small>会場で声をかけてみてね</small></div>';}
-  if(e.revealed){h+='<div class="lkH">🙋 参加する人（このアプリに登録している人）</div>';if(!e.going.length)h+='<div class="lkE">アプリに登録している参加者は、まだいないよ</div>';}
-  else{h+='<div class="evHidden">🔒 来る人の顔ぶれは、<b>集まりの時間（'+escapeHtml(evRevealAt(e))+'）</b>に開くよ。<br>この酒場は<b>「会った人とつながる」</b>場所だから、当日、会場で会えるのを楽しみにしててね。</div>';
+  if(e.revealed){h+='<div class="evHidden" style="border-color:rgba(143,193,169,.6)">🍻 おつかれさま！ 来ていた人の顔ぶれだよ。<br>話した人のカードを開いて、<b>「連絡を取る」</b>を送ってみてね。</div><div class="lkH">🙋 参加した人（このアプリに登録している人）</div>';if(!e.going.length)h+='<div class="lkE">アプリに登録している参加者はいなかったよ</div>';}
+  else{h+='<div class="evHidden">🔒 来る人の顔ぶれは、<b>集まりが終わってから（'+escapeHtml(evRevealAt(e))+'ごろ）</b>開くよ。<br>この酒場は<b>「会った人とつながる」</b>場所だから、まず会場で会おう。</div>';
     if(e.going.length)h+='<div class="lkH">🤝 行く予定の、つながっている仲間</div>';}
-  if(e.going.length){h+='<div class="evPeople">';e.going.forEach(function(p,k){var me=ME&&p.id===ME.id;var on=(e.my_talks||[]).indexOf(p.id)>=0;var fromThem=tm.indexOf(p.id)>=0;
-    h+='<div class="evP"><div class="evPc" onclick="openEvPerson('+k+')">'+avaBox((p.avatar_type==='photo')?p.avatar_url:'',p.name,46)+'<div class="t"><b>'+escapeHtml(p.name)+(me?'（あなた）':'')+'</b><small>'+escapeHtml(p.tagline||p.industry||'')+'</small>'+(fromThem?'<em>🗣 あなたと話したいそうです</em>':'')+'</div></div>'+
-      (me||!e.me_going?'':'<button class="evTalk'+(on?' on':'')+'" onclick="evTalk(\''+escAttr(p.id)+'\','+(on?'false':'true')+')">'+(on?'✓ 話したい':'🗣 話したい')+'</button>')+'</div>';});h+='</div>';
-    if(!e.me_going)h+='<div class="evNote">「行きます」を押すと、話したい人に印を付けられるよ。</div>';}
-  h+='<div class="evNote">※この集まりに申し込んでいれば、自動で「申込済み」になるよ。「行きます」は仲間に知らせるための印で、申し込みのかわりにはならないよ。<br>※「話したい」はLINEの交換ではなく、当日声をかけるきっかけだよ。相手には「話したいそうです」とだけ伝わるよ。</div>';
+  if(e.going.length){h+='<div class="evPeople">';e.going.forEach(function(p,k){var me=ME&&p.id===ME.id;
+    h+='<div class="evP"><div class="evPc" onclick="openEvPerson('+k+')">'+avaBox((p.avatar_type==='photo')?p.avatar_url:'',p.name,46)+'<div class="t"><b>'+escapeHtml(p.name)+(me?'（あなた）':'')+'</b><small>'+escapeHtml(p.tagline||p.industry||'')+'</small></div><span class="auGo">›</span></div></div>';});h+='</div>';}
+  h+='<div class="evNote">※この集まりに申し込んでいれば、自動で「申込済み」になるよ。「行きます」は仲間に知らせるための印で、申し込みのかわりにはならないよ。</div>';
   b.innerHTML=h;
-  document.getElementById('evdAct').innerHTML=e.me_source==='nippo'?'<button class="done" onclick="toastMsg(\'申し込みは済んでいるよ。<br>取り消すときは、申し込んだところから取り消してね\')">✅ 申込済み</button>':e.me_going?'<button class="done" onclick="evRsvp(false)">✅ 行きます（取り消す）</button>':'<button onclick="evRsvp(true)">🙋 行きます</button>';}
-function openEvPerson(k){var p=CUR_EV&&CUR_EV.going[k];if(!p)return;if(ME&&p.id===ME.id){openMycard();return;}openDetail(p,null,{back:'evdetail',event:CUR_EV});}
+  document.getElementById('evdAct').innerHTML=e.ended?'<button class="mine" disabled>🍻 終わった集まり</button>':e.me_source==='nippo'?'<button class="done" onclick="toastMsg(\'申し込みは済んでいるよ。<br>取り消すときは、申し込んだところから取り消してね\')">✅ 申込済み</button>':e.me_going?'<button class="done" onclick="evRsvp(false)">✅ 行きます（取り消す）</button>':'<button onclick="evRsvp(true)">🙋 行きます</button>';}
+function openEvPerson(k){var p=CUR_EV&&CUR_EV.going[k];if(!p)return;if(ME&&p.id===ME.id){openMycard();return;}openDetail(p,{kind:'event',title:evTitle(CUR_EV)},{back:'evdetail'});}
 var EV_BUSY=false;
-async function evRsvp(go){if(EV_BUSY||!CUR_EV)return;if(!go&&window.confirm&&!confirm('「行きます」を取り消しますか？\n（付けた「話したい」も消えます）'))return;EV_BUSY=true;
+async function evRsvp(go){if(EV_BUSY||!CUR_EV)return;if(!go&&window.confirm&&!confirm('「行きます」を取り消しますか？'))return;EV_BUSY=true;
   var id=CUR_EV.event_id;var r=await api('event_rsvp',{event_id:id,going:go});EV_BUSY=false;
   if(!r.ok){toastMsg('うまくできなかった…');return;}
-  toastMsg(go?'あさやん：「行くんだね！ 来る仲間も見てみてね」':'取り消したよ');
+  toastMsg(go?'あさやん：「行くんだね！ 会場で、いい出会いがありますように」':'取り消したよ');
   await evRefresh();CUR_EV=(EVENTS||[]).filter(function(x){return x.event_id===id;})[0]||null;if(CUR_EV)renderEventDetail();else show('events');}
-async function evTalk(tid,on){if(EV_BUSY||!CUR_EV)return;EV_BUSY=true;var id=CUR_EV.event_id;var r=await api('event_talk',{event_id:id,target_id:tid,on:on});EV_BUSY=false;
-  if(!r.ok){toastMsg('うまくできなかった…');return;}
-  if(on)toastMsg('あさやん：「伝えておいたよ。当日、声をかけてみてね」');
-  await evRefresh();CUR_EV=(EVENTS||[]).filter(function(x){return x.event_id===id;})[0]||CUR_EV;
-  if(CUR_PANEL==='evdetail')renderEventDetail();else{var ta=document.getElementById('talkArea');if(ta&&DETAIL_P)ta.innerHTML=talkBoxHtml(DETAIL_P,CUR_EV);}}
-function talkBoxHtml(p,e){if(!e||!ME||p.id===ME.id)return '';var going=e.going.some(function(x){return x.id===p.id;});if(!going)return '';
-  var on=(e.my_talks||[]).indexOf(p.id)>=0,them=(e.talk_to_me||[]).indexOf(p.id)>=0;
-  return '<div class="dsec dcard evTalkBox"><h3>📅 '+escapeHtml(evDate(e))+' の集まりで</h3>'+(them?'<p class="hot">🗣 '+escapeHtml(p.name)+'さんが、あなたと当日話したいそうです</p>':'')+
-    (e.me_going?'<button class="evTalk big'+(on?' on':'')+'" onclick="evTalk(\''+escAttr(p.id)+'\','+(on?'false':'true')+')">'+(on?'✓ 当日話したい（取り消す）':'🗣 当日この人と話したい')+'</button>':'<p>あなたも「行きます」を押すと、話したい印を付けられるよ</p>')+'</div>';}
 
 /* ===== 自分だけのメモ ===== */
 var NOTES={},MEMO_T=null,MEMO_ORIG='';
@@ -2631,9 +2621,9 @@ function demoInit(){
   ];
   var people={};P.forEach(function(x){people[x[0]]={id:x[0],name:x[1],company:x[2],industry:x[3],noren:x[4],noren_custom:null,tagline:x[5],detail:x[6],free_tags:x[7],contact_ok:true,avatar_type:'crest',avatar_url:null,line_id:'https://line.me/ti/p/~demo'};});
   DS={people:people,me:null,registered:false,links:{},reqSeq:1,reqs:{},notes:{},talks:[],asks:[],reads:{},seq:100,
-    rsvp:{ev1:['d1','d2','d3','d5'],ev2:['d4','d6'],ev3:['d7']},
+    rsvp:{ev1:['d1','d2','d3','d5','me'],ev2:['d4','d6'],ev3:['d7']},
     events:[
-      {event_id:'ev1',name:'【見本】今夜の 浅草・日本酒の会',date:demoYmd(0),time:demoHm(-60),type:'集まり',venue:'浅草',venue_name:'千尋の台所（見本）',address:'東京都台東区（見本）',map_url:null},
+      {event_id:'ev1',name:'【見本】昨日の 浅草・日本酒の会',date:demoYmd(-1),time:'19:00',end_time:'21:00',type:'集まり',venue:'浅草',venue_name:'千尋の台所（見本）',address:'東京都台東区（見本）',map_url:null},
       {event_id:'ev2',name:'【見本】赤坂の 焼肉を楽しむ会',date:demoYmd(10),time:'19:00',type:'集まり',venue:'赤坂',venue_name:'焼肉店（見本）',address:'東京都港区赤坂（見本）',map_url:null},
       {event_id:'ev3',name:'【見本】朝活 もくもく会',date:demoYmd(24),time:'08:00',type:'イベント',venue:'渋谷',venue_name:'カフェ（見本）',address:'東京都渋谷区（見本）',map_url:null}],
     past:{key:'past1',title:'【見本】先月の 赤坂の会',date:demoYmd(-20),ids:['d1','d2','d3','d4','d5','d6']},
@@ -2700,13 +2690,11 @@ function demoDo(a,x){var me=DS.me,now=new Date().toISOString();
   case 'bc_current':return {ok:true,items:DS.reads[1]?[]:[{id:1,text:'お試し版へようこそ！\nここで押したり書いたりしたことは、あなたのスマホの中だけ。本物の酒場には届かないから、自由にさわってみてね。',created_at:now}]};
   case 'bc_read':DS.reads[x.id]=1;return {ok:true};
   case 'events_upcoming':{var fr={};Object.keys(DS.links).forEach(function(k){if(DS.links[k]==='matched')fr[k]=1;});var nowMs=Date.now();
-    return {ok:true,today:demoYmd(0),events:DS.events.map(function(e){var g=DS.rsvp[e.event_id]||[];var start=new Date(e.date+'T'+(e.time||'00:00')+':00').getTime();var rev=nowMs>=start;
-      var vis=g.filter(function(id){return id!=='me'&&(rev||fr[id]);});var tin=DS.talks.filter(function(t){return t.e===e.event_id&&t.t==='me';}).map(function(t){return t.f;});
-      return Object.assign({},e,{revealed:rev,reveal_at:new Date(start).toISOString(),going:vis.map(demoCard).concat(rev&&g.indexOf('me')>=0?[demoCard('me')]:[]),me_going:g.indexOf('me')>=0,me_source:g.indexOf('me')>=0?'sakaba':null,talk_to_me:tin.filter(function(i){return vis.indexOf(i)>=0;}),talk_hidden:tin.filter(function(i){return vis.indexOf(i)<0;}).length,my_talks:DS.talks.filter(function(t){return t.e===e.event_id&&t.f==='me';}).map(function(t){return t.t;})});})};}
-  case 'event_rsvp':{var L=DS.rsvp[x.event_id]=DS.rsvp[x.event_id]||[];if(x.going===false){DS.rsvp[x.event_id]=L.filter(function(i){return i!=='me';});DS.talks=DS.talks.filter(function(t){return !(t.e===x.event_id&&t.f==='me');});return {ok:true,going:false};}
-    if(L.indexOf('me')<0)L.push('me');if(x.event_id==='ev1'&&!DS.talks.some(function(t){return t.f==='d2';}))DS.talks.push({e:'ev1',f:'d2',t:'me'});return {ok:true,going:true};}
-  case 'event_talk':{if(x.on===false){DS.talks=DS.talks.filter(function(t){return !(t.e===x.event_id&&t.f==='me'&&t.t===x.target_id);});return {ok:true,on:false};}
-    DS.talks.push({e:x.event_id,f:'me',t:x.target_id});return {ok:true,on:true};}
+    return {ok:true,today:demoYmd(0),events:DS.events.map(function(e){var g=DS.rsvp[e.event_id]||[];var end=new Date(e.date+'T'+(e.end_time||e.time||'23:59')+':00').getTime();if(!e.end_time&&e.time)end+=3*3600000;var rev=nowMs>=end;
+      var vis=g.filter(function(id){return id!=='me'&&(rev||fr[id]);});
+      return Object.assign({},e,{revealed:rev,ended:rev,reveal_at:new Date(end).toISOString(),going:vis.map(demoCard).concat(rev&&g.indexOf('me')>=0?[demoCard('me')]:[]).filter(Boolean),me_going:g.indexOf('me')>=0,me_source:g.indexOf('me')>=0?'sakaba':null});})};}
+  case 'event_rsvp':{var L=DS.rsvp[x.event_id]=DS.rsvp[x.event_id]||[];if(x.going===false){DS.rsvp[x.event_id]=L.filter(function(i){return i!=='me';});return {ok:true,going:false};}
+    if(L.indexOf('me')<0)L.push('me');return {ok:true,going:true};}
   case 'note_get':return {ok:true,body:DS.notes[x.target_id]||'',updated_at:DS.notes[x.target_id]?now:null};
   case 'note_save':{var b=String(x.body||'').trim();if(b)DS.notes[x.target_id]=b;else delete DS.notes[x.target_id];return {ok:true,body:b};}
   case 'notes_list':return {ok:true,notes:Object.keys(DS.notes).map(function(k){return {target_id:k,body:DS.notes[k],updated_at:now};})};
