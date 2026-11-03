@@ -34,6 +34,26 @@ html,body{height:100%;background:radial-gradient(130% 90% at 50% 0%, #1c1008 0%,
 #tour.withOkami #tourShade{background:linear-gradient(180deg,rgba(0,0,0,.35),rgba(0,0,0,.35) 40%,rgba(0,0,0,.7) 70%,rgba(0,0,0,.85));}
 #tourOkami{position:absolute;right:-4%;bottom:27%;height:50%;max-height:520px;opacity:0;transform:translateX(30px);transition:opacity .6s,transform .6s;pointer-events:none;filter:drop-shadow(0 6px 18px rgba(0,0,0,.6));}
 #tour.withOkami #tourOkami{opacity:1;transform:translateX(0);}
+#tourTitle{position:absolute;top:12px;left:12px;z-index:3;background:rgba(4,4,18,.85);border:2px solid #fff;border-radius:8px;padding:5px 10px;color:#fff;font-size:.78rem;line-height:1.45;max-width:62%;}
+#tourTitle span{margin-left:8px;color:#9aa0d8;}
+#tourTitle b{display:block;color:#ffe08a;font-size:1rem;font-weight:400;margin-top:1px;}
+#tourDemo{position:absolute;left:5%;right:5%;bottom:calc(3% + 10.6em + 14px);z-index:2;opacity:0;transform:translateY(14px);transition:opacity .5s,transform .5s;pointer-events:none;}
+#tourDemo.on{opacity:1;transform:none;}
+.dmBox{background:rgba(24,14,7,.95);border:2px solid #caa45a;border-radius:14px;padding:10px 12px 12px;box-shadow:0 8px 26px rgba(0,0,0,.6);font-family:'Zen Maru Gothic',sans-serif;color:#f3e7cf;text-align:center;}
+.dmH{font-size:.74rem;color:#c9b48c;margin-bottom:8px;text-align:left;}
+.dmEv{font-size:.86rem;margin-bottom:8px;text-align:left;}
+.dmEv b{color:#f5d97a;}
+.dmNote{font-size:.74rem;color:#e8dcc0;margin-top:8px;}
+.dmBtn{display:inline-block;padding:9px 22px;border-radius:11px;font-weight:900;font-size:.95rem;}
+.dmBtn.gold{background:linear-gradient(180deg,#f5d97a,#caa45a);color:#2a1606;}
+.dmBtn.green{background:linear-gradient(180deg,#3fbf5a,#259a3f);color:#fff;}
+.dmTiles .tile{min-height:64px;cursor:default;}
+.dmTiles .tile.dim,.dmWide.dim{opacity:.35;}
+.dmWide{display:flex;flex-direction:row;gap:10px;align-items:center;justify-content:center;padding:10px;}
+.dmWide .tn{font-size:.9rem;margin:0;}
+.pulse{animation:dmPulse 1.4s ease-in-out infinite;}
+@keyframes dmPulse{0%,100%{box-shadow:0 0 0 0 rgba(255,224,138,.0);transform:scale(1);}50%{box-shadow:0 0 0 6px rgba(255,224,138,.35);transform:scale(1.05);}}
+#tour .dqwin{min-height:10.6em;}
 .dqSkip{position:absolute;top:12px;right:12px;z-index:3;background:rgba(6,6,20,.75);border:2px solid #fff;color:#fff;border-radius:8px;padding:6px 12px;font-family:inherit;font-size:.82rem;cursor:pointer;}
 .dqwin{position:absolute;left:3%;right:3%;bottom:3%;z-index:2;background:rgba(4,4,18,.93);border:3px solid #fff;border-radius:10px;box-shadow:0 0 0 3px #000,inset 0 0 0 2px #000;color:#fff;padding:20px 16px 28px;font-size:1.04rem;line-height:1.85;min-height:9.2em;cursor:pointer;-webkit-tap-highlight-color:transparent;}
 .dqname{position:absolute;top:-15px;left:14px;background:#04041a;border:2px solid #fff;border-radius:6px;padding:0 10px;font-size:.8rem;line-height:1.6;color:#ffe08a;}
@@ -44,7 +64,7 @@ html,body{height:100%;background:radial-gradient(130% 90% at 50% 0%, #1c1008 0%,
 .dqbtns{margin-top:10px;display:flex;flex-direction:column;gap:4px;}
 .dqbtns button,.dqcmd button{display:block;width:100%;text-align:left;background:none;border:none;color:#fff;font-family:inherit;font-size:1.04rem;padding:7px 4px 7px 26px;cursor:pointer;position:relative;border-radius:6px;}
 .dqbtns button::before,.dqcmd button::before{content:'▶';position:absolute;left:4px;opacity:0;}
-.dqbtns button:hover::before,.dqbtns button:focus::before,.dqbtns button:first-child::before,.dqcmd button:first-of-type::before,.dqcmd button:hover::before,.dqcmd button:focus::before{opacity:1;}
+.dqbtns button.main::before,.dqcmd button.rec::before{opacity:1;}
 .dqbtns button:active,.dqcmd button:active{background:rgba(255,255,255,.12);}
 .dqbtns .main{color:#ffe08a;}
 /* 戦い */
@@ -82,6 +102,15 @@ html,body{height:100%;background:radial-gradient(130% 90% at 50% 0%, #1c1008 0%,
 .dqcmd{padding:16px 14px 10px;cursor:default;}
 .dqcmd .cmdSay{font-size:.86rem;color:#cfd3ff;margin:0 0 4px 4px;}
 .dqcmd .dqname{color:#fff;}
+.dqcmd button small{display:block;font-size:.72rem;color:#9aa0d8;margin-top:1px;}
+.dqcmd .cmdSay{color:#ffe08a !important;}
+.dqcmd button.rec{color:#ffe08a;}
+#btOkami{position:absolute;right:-6%;bottom:calc(3% + 9.2em + 10px);height:48%;opacity:0;transform:translateX(30px);transition:opacity .5s,transform .5s;pointer-events:none;z-index:1;filter:drop-shadow(0 6px 18px rgba(0,0,0,.6));}
+#battle.okOn #btOkami{opacity:1;transform:none;}
+.btTag{display:block;font-size:.7rem;color:#9aa0d8;}
+.btSum{display:flex;flex-direction:column;gap:6px;font-size:.92rem;line-height:1.5;}
+.btSum div{display:flex;gap:8px;align-items:flex-start;}
+.btSum span{color:#ffe08a;}
 .fqReplay{display:flex;gap:8px;margin:10px 0 4px;}
 .fqReplay button{flex:1;background:rgba(4,4,18,.85);border:2px solid #fff;color:#fff;border-radius:10px;padding:10px 6px;font-family:'DotGothic16','Zen Maru Gothic',sans-serif;font-size:.84rem;cursor:pointer;line-height:1.4;}
 #vignette{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 30%,transparent 34%,rgba(0,0,0,.5) 100%);pointer-events:none;}
@@ -705,6 +734,7 @@ html,body{height:100%;background:radial-gradient(130% 90% at 50% 0%, #1c1008 0%,
   <div id="tour" class="hidden">
     <div id="tourBg"></div><div id="tourShade"></div>
     <img id="tourOkami" alt="">
+    <div id="tourTitle"></div><div id="tourDemo"></div>
     <button class="dqSkip" onclick="tourSkip()">とばす ▶▶</button>
     <div class="dqwin" id="tourWin" onclick="tourTap()"><div class="dqname">あさやん</div><div class="dqtxt" id="tourTxt"></div><div class="dqbtns hidden" id="tourBtns"></div><div class="dqnext off" id="tourNext">▼</div></div>
   </div>
@@ -712,7 +742,7 @@ html,body{height:100%;background:radial-gradient(130% 90% at 50% 0%, #1c1008 0%,
   <!-- ドラクエ風：てれちょうちん -->
   <div id="battle" class="hidden">
     <div id="btBg"></div><div id="btField"></div>
-    <div class="dqwin" id="btStatus"><span id="btName"></span>　ご縁 <b id="btEn">0</b></div>
+    <div class="dqwin" id="btStatus"><span class="btTag">つながる練習</span><span id="btName"></span>　ご縁 <b id="btEn">0</b></div>
     <button class="dqSkip" onclick="btSkip()">とばす ▶▶</button>
     <div id="btMon" class="shy"><svg viewBox="0 0 200 250" aria-label="てれちょうちん">
       <defs>
@@ -752,9 +782,9 @@ html,body{height:100%;background:radial-gradient(130% 90% at 50% 0%, #1c1008 0%,
         <g class="spark" fill="#fff6c8"><path d="M30 60 l4 10 l10 4 l-10 4 l-4 10 l-4 -10 l-10 -4 l10 -4 Z"/><path d="M172 70 l3 7 l7 3 l-7 3 l-3 7 l-3 -7 l-7 -3 l7 -3 Z"/><path d="M168 196 l3 7 l7 3 l-7 3 l-3 7 l-3 -7 l-7 -3 l7 -3 Z"/></g>
       </g>
     </svg></div>
-    <div id="btCard"></div>
-    <div class="dqwin dqcmd hidden" id="btCmd"><div class="dqname">どうする？</div><div class="cmdSay">てれちょうちんは こちらを ちらちら見ている。</div>
-      <button onclick="btDo('card')">カードを みせる</button><button onclick="btDo('talk')">はなしかける</button><button onclick="btDo('run')">にげる</button></div>
+    <img id="btOkami" alt=""><div id="btCard"></div>
+    <div class="dqwin dqcmd hidden" id="btCmd"><div class="dqname">どうする？</div><div class="cmdSay" id="btHint"></div>
+      <button onclick="btDo('card')">カードを みせる<small>自分のことを 知ってもらう</small></button><button onclick="btDo('talk')">はなしかける<small>「会いたい」を おくる</small></button><button onclick="btDo('run')">にげる</button></div>
     <div class="dqwin" id="btWin" onclick="btTap()"><div class="dqname" id="btWho" style="display:none">あさやん</div><div class="dqtxt" id="btTxt"></div><div class="dqbtns hidden" id="btBtns"></div><div class="dqnext off" id="btNext">▼</div></div>
     <div id="btFlash"></div>
   </div>
@@ -1030,14 +1060,14 @@ function type(){
 goHome.addEventListener('click',function(){
   dialogue.classList.add('hidden');
   if(ENTERED&&ENTERED.status==='left'){showLeft();return;}
-  if(ENTERED&&ENTERED.status==='new'){startTour(false);}else{show('home');if(OPEN_CHO&&ME&&(ME.role==='owner'||ME.role==='admin')){OPEN_CHO=false;openChocho();}}
+  if(ENTERED&&ENTERED.status==='new'){startTour('intro');}else{show('home');if(OPEN_CHO&&ME&&(ME.role==='owner'||ME.role==='admin')){OPEN_CHO=false;openChocho();}}
 });
 var CONSENT_MSG='ようこそ。\nここは、集まりで出会った仲間と、\nまたつながれる場所。\n\nそして、\n告知したい人や、\n仲間を募りたい人も\n集まる場所だよ。\n\nこれから、あなたのことを\n少しだけ聞かせてね。\n\nここで答えることは、\n仲間みんなに見える情報になるよ。\nだから、見てもらうつもりで\nしっかり答えてね。\n\n顔写真も、問題なければ\nぜひ載せてね。\n\nそれと、LINEに届いたリンクは\nあなた専用の入口だよ。\nほかの人には送らないでね。\n\nはじめても大丈夫かな？';
 function typeInto(elId,curId,msg,onDone){var el=document.getElementById(elId),cur=document.getElementById(curId),i=0;if(el._tt)clearInterval(el._tt);el.innerHTML='';if(cur)cur.style.display='inline-block';var t=setInterval(function(){if(i>=msg.length){clearInterval(t);el._tt=null;if(cur)cur.style.display='none';if(onDone)onDone();return;}var ch=msg[i++];el.innerHTML+=(ch==='\n')?'<br>':escapeHtml(ch);},30);el._tt=t;}
 var CONSENT_TYPED=false;
 function typeConsent(){var ok=document.getElementById('consentOk');if(CONSENT_TYPED){var ce=document.getElementById('consentTxt');if(ce._tt){clearInterval(ce._tt);ce._tt=null;}ce.innerHTML=CONSENT_MSG.split('\n').map(escapeHtml).join('<br>');document.getElementById('consentCur').style.display='none';ok.classList.remove('hidden');return;}ok.classList.add('hidden');typeInto('consentTxt','consentCur',CONSENT_MSG,function(){CONSENT_TYPED=true;ok.classList.remove('hidden');});}
 function backToOpening(){document.getElementById('consent').classList.add('hidden');dialogue.classList.remove('hidden');dialogue.classList.add('show');type();}
-function backToConsent(){show('home');startTour(false,TOUR.length-1);}
+function backToConsent(){show('home');startTour('intro',TOURS.intro.length-1);}
 function showLeft(){show('home');document.getElementById('homeSay').innerHTML='<b>あさやん：</b>ごめんね、この合言葉では、今は酒場に入れないみたい。<br>くわしくはKクラブの公式LINEで聞いてみてね。';[].forEach.call(document.querySelectorAll('#home .tile'),function(b){b.style.display='none';});}
 async function doConsent(btn){if(btn.disabled)return;var lab=btn.textContent;
   btn.disabled=true;btn.textContent='…';
@@ -1055,19 +1085,40 @@ function dqType(el,msg,speed,done){if(el._t)clearInterval(el._t);var i=0;el.inne
   el._t=setInterval(function(){if(i>=msg.length){clearInterval(el._t);el._t=null;if(done)done();return;}var ch=msg[i++];el.innerHTML+=(ch==='\n')?'<br>':escapeHtml(ch);},speed||42);}
 function dqFinish(el){if(!el._t)return false;clearInterval(el._t);el._t=null;el.innerHTML=String(el._msg).split('\n').map(escapeHtml).join('<br>');if(el._done)el._done();return true;}
 
-/* ===== 酒場の案内（はじめての人／もう一度見る） ===== */
-var TOUR=[
- {f:[0.52,0.38],s:2.4,ok:'w',t:'ようこそ、Kクラブ酒場へ！\nわたしは この酒場のおかみ、\nあさやんだよ。'},
- {f:[0.5,0.5],s:1,ok:null,t:'ここは、Kクラブの集まりで\n出会った仲間と、\nまた つながれる場所なんだ。'},
- {f:[0.22,0.84],s:2.3,ok:null,t:'集まりで会った人を ここで見つけて、\n「会いたい」を送れるよ。\nおたがいに送ったら、LINEで つながれるんだ。'},
- {f:[0.26,0.1],s:2.8,ok:null,t:'壁の貼り紙は「クエスト」。\n告知したい人や、仲間を募りたい人が\nここに貼り出していくよ。'},
- {f:[0.45,0.56],s:1.9,ok:'c',t:'これから、あなたの「カード」をつくるよ。\n名前・仕事・ひとことを、\nわたしが順番に聞くからね。'},
- {f:[0.45,0.56],s:1.9,ok:'c',t:'カードに書いたことは、仲間みんなに見えるよ。\n見てもらうつもりで書いてね。\n顔写真もあると、声をかけてもらいやすいよ。'},
- {f:[0.5,0.45],s:1.3,ok:'w',t:'それと、大事なこと。\nLINEに届いたリンクは、あなた専用の入口だよ。\nほかの人には送らないでね。'},
- {f:[0.52,0.38],s:2.4,ok:'w',t:'さあ、はじめても大丈夫かな？',last:true}
-];
-var TOUR_I=0,TOUR_REPLAY=false;
-function startTour(replay,at){TOUR_REPLAY=!!replay;TOUR_I=at||0;var t=document.getElementById('tour');t.classList.remove('hidden');
+/* ===== 酒場の案内（入口：カードづくりの前／歩き方：カードができたあと） ===== */
+var DM={
+ ev:'<div class="dmBox"><div class="dmH">📅 次の集まり</div><div class="dmEv"><b>11/26(木) 19:00</b>　赤坂の会</div><span class="dmBtn gold pulse">🙋 行きます</span></div>',
+ find:'<div class="dmBox"><div class="dmH">ホームのボタン</div><div class="tiles dmTiles"><div class="tile pulse"><div class="ti">🍺</div><div class="tn">仲間を<br>さがす</div></div><div class="tile dim"><div class="ti">📜</div><div class="tn">クエスト<br>掲示板</div></div><div class="tile dim"><div class="ti">📬</div><div class="tn">つながり<br>&nbsp;</div></div><div class="tile dim"><div class="ti">🪪</div><div class="tn">自分の<br>カード</div></div></div></div>',
+ meet:'<div class="dmBox"><div class="dmH">仲間のカードを開くと、右下に</div><span class="dmBtn gold pulse">🍺 会いたい</span><div class="dmNote">→ 相手に、公式LINEでお知らせが届く</div></div>',
+ line:'<div class="dmBox"><div class="dmH">📬 つながり（おたがいに「会いたい」）</div><span class="dmBtn green pulse">💬 LINEで友だち追加する</span><div class="dmNote">→ ボタンを押すだけで、相手をLINEに追加できる</div></div>',
+ quest:'<div class="dmBox"><div class="dmH">ホームのボタン</div><div class="tiles dmTiles"><div class="tile dim"><div class="ti">🍺</div><div class="tn">仲間を<br>さがす</div></div><div class="tile pulse"><div class="ti">📜</div><div class="tn">クエスト<br>掲示板</div></div><div class="tile dim"><div class="ti">📬</div><div class="tn">つながり<br>&nbsp;</div></div><div class="tile dim"><div class="ti">🪪</div><div class="tn">自分の<br>カード</div></div></div></div>',
+ card:'<div class="dmBox"><div class="dmH">ホームのボタン</div><div class="tiles dmTiles"><div class="tile dim"><div class="ti">🍺</div><div class="tn">仲間を<br>さがす</div></div><div class="tile dim"><div class="ti">📜</div><div class="tn">クエスト<br>掲示板</div></div><div class="tile dim"><div class="ti">📬</div><div class="tn">つながり<br>&nbsp;</div></div><div class="tile pulse"><div class="ti">🪪</div><div class="tn">自分の<br>カード</div></div></div><div class="dmNote">→ 写真・くわしい紹介・LINEのリンクを足せる</div></div>',
+ faq:'<div class="dmBox"><div class="dmH">ホームのいちばん下</div><div class="tile wide pulse dmWide"><div class="ti">❓</div><div><div class="tn">あさやんに聞く</div></div></div><div class="dmNote">→ 使い方を調べる・あさやんに質問を送る</div></div>'
+};
+var TOURS={
+ intro:[
+  {f:[0.52,0.38],s:2.4,ok:'w',t:'ようこそ、Kクラブ酒場へ！\nわたしは この酒場のおかみ、\nあさやんだよ。'},
+  {f:[0.5,0.5],s:1,ok:null,t:'ここは、Kクラブの集まりで\n出会った仲間と、\nまた つながれる場所なんだ。'},
+  {f:[0.45,0.56],s:1.9,ok:'c',t:'まずは、あなたの「カード」を\nつくるよ。名前・仕事・ひとことを、\nわたしが順番に聞くからね。'},
+  {f:[0.45,0.56],s:1.9,ok:'c',t:'カードに書いたことは、\n仲間みんなに見えるよ。\n見てもらうつもりで書いてね。'},
+  {f:[0.5,0.45],s:1.3,ok:'w',t:'それと、大事なこと。\nLINEに届いたリンクは、あなた専用の入口だよ。\nほかの人には送らないでね。'},
+  {f:[0.52,0.38],s:2.4,ok:'w',t:'さあ、はじめても大丈夫かな？',last:true}
+ ],
+ guide:[
+  {f:[0.52,0.38],s:2.4,ok:'w',t:'カードができたね！\nここからは、この酒場の\n「歩き方」を案内するよ。'},
+  {f:[0.22,0.84],s:2.3,ti:'① 次の集まり',dm:'ev',t:'ホームの「次の集まり」で、\nこれからの集まりが見られるよ。\n行くなら「行きます」を押しておいてね。'},
+  {f:[0.22,0.84],s:2.3,ti:'① 次の集まり',dm:'ev',t:'来る人の顔ぶれは、\n集まりの時間になったら開くよ。\n会場で、気になる人に声をかけてね。'},
+  {f:[0.45,0.56],s:1.9,ti:'② 仲間をさがす',dm:'find',t:'集まりのあとは「仲間をさがす」。\nいっしょだった仲間のカードが\nここに並ぶよ。'},
+  {f:[0.45,0.56],s:1.9,ti:'③ 会いたい',dm:'meet',t:'また話したい人がいたら、\nカードを開いて「会いたい」を押そう。\n相手に、公式LINEでお知らせが届くよ。'},
+  {f:[0.88,0.75],s:2.2,ti:'④ LINEでつながる',dm:'line',t:'おたがいに「会いたい」を送ったら、\nつながり成立！ 「つながり」から、\n相手をLINEの友だちに追加できるよ。'},
+  {f:[0.26,0.1],s:2.8,ti:'⑤ クエスト掲示板',dm:'quest',t:'壁の貼り紙は「クエスト」。\n告知したいこと、仲間を募りたいことを\nだれでも貼り出せるよ。'},
+  {f:[0.45,0.56],s:1.9,ti:'⑥ 自分のカード',dm:'card',t:'カードは、いつでも直せるよ。\nLINEのリンクを入れておくと、\nつながった相手があなたを追加できるよ。'},
+  {f:[0.52,0.42],s:1.5,ti:'⑦ こまったときは',dm:'faq',t:'わからないときは\n「あさやんに聞く」を開いてね。\nわたしに質問も送れるよ。'},
+  {f:[0.52,0.38],s:2.4,ok:'w',t:'さいごに、ちょっとだけ\n「つながる練習」をしてみよう！',last:true}
+ ]
+};
+var TOUR_KIND='intro',TOUR=TOURS.intro,TOUR_I=0,TOUR_REPLAY=false;
+function startTour(kind,at,replay){TOUR_KIND=kind||'intro';TOUR=TOURS[TOUR_KIND];TOUR_REPLAY=!!replay;TOUR_I=at||0;var t=document.getElementById('tour');t.classList.remove('hidden');
   var o=document.getElementById('tourOkami');if(!o._set){o._set=1;o.src=OKAMI_IMG.w;}
   tourScene(true);}
 function tourFrame(f,s,instant){var st=document.getElementById('tour'),bg=document.getElementById('tourBg');
@@ -1077,15 +1128,21 @@ function tourFrame(f,s,instant){var st=document.getElementById('tour'),bg=docume
   if(instant){bg.style.transition='none';}bg.style.transform='translate('+x+'px,'+y+'px) scale('+s+')';if(instant){void bg.offsetWidth;bg.style.transition='';}}
 function tourScene(first){var sc=TOUR[TOUR_I],t=document.getElementById('tour'),o=document.getElementById('tourOkami');
   tourFrame(sc.f,sc.s,first);
-  if(sc.ok){if(o.src!==OKAMI_IMG[sc.ok])o.src=OKAMI_IMG[sc.ok];t.classList.add('withOkami');}else t.classList.remove('withOkami');
+  if(sc.ok&&!sc.dm){if(o.src!==OKAMI_IMG[sc.ok])o.src=OKAMI_IMG[sc.ok];t.classList.add('withOkami');}else t.classList.remove('withOkami');
+  var dm=document.getElementById('tourDemo');if(sc.dm){dm.innerHTML=DM[sc.dm];dm.classList.add('on');}else{dm.classList.remove('on');}
+  var tt=document.getElementById('tourTitle');var n=TOUR.length;
+  tt.innerHTML=(TOUR_KIND==='guide'?'酒場の歩き方':'はじめに')+'<span>'+(TOUR_I+1)+' / '+n+'</span>'+(sc.ti?'<b>'+escapeHtml(sc.ti)+'</b>':'');
   var bt=document.getElementById('tourBtns'),nx=document.getElementById('tourNext');bt.classList.add('hidden');bt.innerHTML='';nx.classList.add('off');
-  var msg=(sc.last&&TOUR_REPLAY)?'案内は ここまで。\nわからないことがあったら、\nいつでも「あさやんに聞く」で聞いてね。':sc.t;
-  dqType(document.getElementById('tourTxt'),msg,40,function(){
-    if(sc.last){bt.innerHTML=TOUR_REPLAY?'<button class="main" onclick="event.stopPropagation();tourClose()">とじる</button><button onclick="event.stopPropagation();TOUR_I=0;tourScene()">もう一度 きく</button>':'<button class="main" id="tourGo" onclick="event.stopPropagation();doConsent(this)">はい、はじめる</button><button onclick="event.stopPropagation();TOUR_I=0;tourScene()">もう一度 きく</button>';bt.classList.remove('hidden');}
+  dqType(document.getElementById('tourTxt'),sc.t,38,function(){
+    if(sc.last){
+      if(TOUR_KIND==='intro')bt.innerHTML='<button class="main" id="tourGo" onclick="event.stopPropagation();doConsent(this)">はい、はじめる</button><button onclick="event.stopPropagation();TOUR_I=0;tourScene()">もう一度 きく</button>';
+      else bt.innerHTML='<button class="main" id="tourGo" onclick="event.stopPropagation();tourClose();btStart('+(TOUR_REPLAY?'true':'false')+')">練習する</button>'+(TOUR_REPLAY?'<button onclick="event.stopPropagation();tourClose()">とじる</button>':'<button onclick="event.stopPropagation();tourClose();btEndDirect()">練習しないで すすむ</button>')+'<button onclick="event.stopPropagation();TOUR_I=0;tourScene()">もう一度 きく</button>';
+      bt.classList.remove('hidden');}
     else nx.classList.remove('off');});}
 function tourTap(){var el=document.getElementById('tourTxt');if(dqFinish(el))return;if(TOUR[TOUR_I].last)return;TOUR_I++;tourScene();}
 function tourSkip(){var el=document.getElementById('tourTxt');if(el._t){clearInterval(el._t);el._t=null;}TOUR_I=TOUR.length-1;tourScene();}
 function tourClose(){document.getElementById('tour').classList.add('hidden');}
+function btEndDirect(){openMycard();}
 window.addEventListener('resize',function(){var t=document.getElementById('tour');if(t&&!t.classList.contains('hidden')){var sc=TOUR[TOUR_I];tourFrame(sc.f,sc.s,true);}});
 
 /* ===== てれちょうちん（カードができたあとの練習） ===== */
@@ -1093,39 +1150,48 @@ var BT={shown:false,ran:0,q:[],then:null,replay:false,done:false};
 function btStart(replay){BT={shown:false,ran:0,q:[],then:null,replay:!!replay,done:false};
   var b=document.getElementById('battle');b.classList.remove('hidden');
   document.getElementById('btName').textContent=(ME&&ME.name)||'あなた';document.getElementById('btEn').textContent='0';
-  var m=document.getElementById('btMon');m.className='shy';void m.offsetWidth;m.classList.add('appear');
+  var m=document.getElementById('btMon');m.className='shy';m.style.visibility='hidden';
   document.getElementById('btCard').className='';document.getElementById('btCmd').classList.add('hidden');document.getElementById('btWin').style.visibility='';
-  btSay(['てれちょうちん が あらわれた！','てれちょうちんは もじもじしている…'],btCmd);}
+  var ok=document.getElementById('btOkami');if(!ok._set){ok._set=1;ok.src=OKAMI_IMG.w;}b.classList.add('okOn');
+  btSay(['あさやん：これから「つながる練習」をするよ。\n本物の酒場と、同じ やり方だからね。','あさやん：あいては、人見知りの「てれちょうちん」。\n仲間になれたら、練習は成功だよ。','あさやん：やり方は かんたん。\n① まず「カードを みせる」\n② つぎに「はなしかける」'],function(){
+    b.classList.remove('okOn');m.style.visibility='';void m.offsetWidth;m.classList.add('appear');
+    btSay(['てれちょうちん が あらわれた！','てれちょうちんは もじもじしている…'],btCmd);});}
 function btSay(lines,then){BT.q=lines.slice();BT.then=then;btNextLine();}
 function btNextLine(){var el=document.getElementById('btTxt'),nx=document.getElementById('btNext'),who=document.getElementById('btWho');nx.classList.add('off');
   if(!BT.q.length){var f=BT.then;BT.then=null;if(f)f();return;}
   var line=BT.q.shift();var isOk=line.indexOf('あさやん：')===0;who.style.display=isOk?'':'none';if(isOk)line=line.slice(5);
-  dqType(el,line,38,function(){nx.classList.remove('off');});}
+  dqType(el,line,36,function(){nx.classList.remove('off');});}
 function btTap(){var el=document.getElementById('btTxt');if(dqFinish(el))return;if(!document.getElementById('btCmd').classList.contains('hidden'))return;if(!document.getElementById('btBtns').classList.contains('hidden'))return;btNextLine();}
-function btCmd(){document.getElementById('btNext').classList.add('off');document.getElementById('btWin').style.visibility='hidden';document.getElementById('btCmd').classList.remove('hidden');}
-function btMon(cls){var m=document.getElementById('btMon');['shy','calm','happy','hide','hit','appear'].forEach(function(c){if(c!=='shy'&&c!=='calm'&&c!=='happy')m.classList.remove(c);});if(cls==='shy'||cls==='calm'||cls==='happy'){m.classList.remove('shy','calm','happy');}void m.offsetWidth;m.classList.add(cls);}
+function btCmd(){document.getElementById('btNext').classList.add('off');
+  [].forEach.call(document.querySelectorAll('#btCmd button'),function(x,i){x.classList.toggle('rec',i===(BT.shown?1:0));});
+  document.getElementById('btHint').innerHTML=BT.shown?'💡 ヒント：カードを見せたね。つぎは「はなしかける」！':'💡 ヒント：まずは「カードを みせる」から。';
+  document.getElementById('btWin').style.visibility='hidden';document.getElementById('btCmd').classList.remove('hidden');}
+function btMon(cls){var m=document.getElementById('btMon');m.classList.remove('hide','hit','appear');if(cls==='shy'||cls==='calm'||cls==='happy'){m.classList.remove('shy','calm','happy');}void m.offsetWidth;m.classList.add(cls);}
 function btDo(k){document.getElementById('btCmd').classList.add('hidden');document.getElementById('btWin').style.visibility='';
   if(k==='card'){
-    if(BT.shown){btSay(['てれちょうちんは もう あなたのカードを見たよ。','はなしかけて みよう！'],btCmd);return;}
+    if(BT.shown){btSay(['てれちょうちんは もう あなたのカードを見たよ。','あさやん：つぎは「はなしかける」を えらんでね。'],btCmd);return;}
     BT.shown=true;var c=document.getElementById('btCard');var p=ME?{id:ME.id,noren:ME.noren,noren_custom:ME.noren_custom,name:ME.name||'あなた',company:ME.company,industry:ME.industry,tagline:ME.tagline||'',avatar_type:ME.avatar_type,avatar_url:ME.avatar_url,link:'none'}:{id:'x',name:'あなた',tagline:'',link:'none'};
     FIND_ANIM=false;try{c.innerHTML=pcHtml(p,0);}catch(e){c.innerHTML='';}c.classList.add('on');
-    btSay(['あなたは カードを みせた！'],function(){setTimeout(function(){c.classList.remove('on');btMon('calm');
-      btSay(['てれちょうちんの 「てれ」が 30 さがった！','てれちょうちんは すこし あんしんした ようだ。'],btCmd);},500);});
+    btSay(['あなたは じぶんの カードを みせた！'],function(){setTimeout(function(){c.classList.remove('on');btMon('calm');
+      btSay(['てれちょうちんは あなたのことを すこし知った。','てれちょうちんは あんしんした ようだ！','あさやん：本物の酒場でも同じ。\nカードがあると「どんな人か」が伝わって、\n声をかけてもらいやすくなるよ。'],btCmd);},500);});
     return;}
   if(k==='talk'){
-    if(!BT.shown){btMon('hide');btSay(['あなたは はなしかけた！','しかし てれちょうちんは かくれてしまった！','あさやん：まずは カードを見せて、\nあなたのことを 知ってもらおう。'],btCmd);return;}
+    if(!BT.shown){btMon('hide');btSay(['あなたは はなしかけた！','しかし てれちょうちんは かくれてしまった！','あさやん：知らない人に いきなり話しかけられたら、\nびっくりするよね。\nまずは カードを見せてあげよう。'],btCmd);return;}
     btMon('hit');btSay(['あなたは 「会いたい」を おくった！','てれちょうちんも 「会いたい」を おくりかえした！'],function(){
       var fl=document.getElementById('btFlash');fl.classList.remove('go');void fl.offsetWidth;fl.classList.add('go');btMon('happy');document.getElementById('btEn').textContent='1';
-      btSay(['てれちょうちんが 仲間に なった！','ご縁 が 1 あがった！'],btLesson);});
+      btSay(['おたがいの「会いたい」が そろった！','てれちょうちんが 仲間に なった！','あさやん：本物の酒場でも、\nおたがいに「会いたい」を送ったら、\nLINEで つながれるよ。'],btLesson);});
     return;}
   if(k==='run'){BT.ran++;
-    if(BT.ran<2){btSay(['あなたは にげだした！','しかし あさやんに まわりこまれた！','あさやん：せっかくだから、\n話しかけてみようよ。'],btCmd);return;}
-    btSay(['あなたは うまく にげきれた…','あさやん：まあ、照れくさいのは みんな同じさ。'],btLesson);return;}
+    if(BT.ran<2){btSay(['あなたは にげだした！','しかし あさやんに まわりこまれた！','あさやん：だいじょうぶ、これは練習だよ。\nまずは カードを見せてみよう。'],btCmd);return;}
+    btSay(['あなたは うまく にげきれた…','あさやん：まあ、照れくさいのは みんな同じさ。\nやり方だけ、まとめておくね。'],btLesson);return;}
 }
-function btLesson(){btSay(['あさやん：いまのが、この酒場の つながり方だよ。','あさやん：① カードで、自分のことを知ってもらう。\n② 集まりで会った人に「会いたい」を送る。\n③ おたがいに送ったら、LINEで つながる。','あさやん：照れくさいのは、みんな同じ。\nちょっとの勇気で、ご縁は始まるよ。'],function(){
+function btLesson(){btSay(['あさやん：練習は おしまい！\nいまのが、この酒場の つながり方だよ。'],function(){
+  var el=document.getElementById('btTxt');document.getElementById('btWho').style.display='';
+  el.innerHTML='<div class="btSum"><div><span>①</span>🪪 カードで、自分のことを知ってもらう</div><div><span>②</span>🍺 集まりで会った人に「会いたい」を送る</div><div><span>③</span>💬 おたがいなら、LINEで つながる</div></div>';
   var bt=document.getElementById('btBtns');bt.innerHTML=BT.replay?'<button class="main" onclick="event.stopPropagation();btEnd()">とじる</button>':'<button class="main" onclick="event.stopPropagation();btEnd()">じぶんの カードを見る</button>';bt.classList.remove('hidden');document.getElementById('btNext').classList.add('off');});}
-function btSkip(){var el=document.getElementById('btTxt');if(el._t){clearInterval(el._t);el._t=null;}document.getElementById('btCmd').classList.add('hidden');document.getElementById('btWin').style.visibility='';document.getElementById('btBtns').classList.add('hidden');BT.q=[];btLesson();}
+function btSkip(){var el=document.getElementById('btTxt');if(el._t){clearInterval(el._t);el._t=null;}document.getElementById('btCmd').classList.add('hidden');document.getElementById('btWin').style.visibility='';document.getElementById('btBtns').classList.add('hidden');document.getElementById('btMon').style.visibility='';document.getElementById('battle').classList.remove('okOn');BT.q=[];btLesson();}
 function btEnd(){if(BT.done)return;BT.done=true;document.getElementById('btBtns').classList.add('hidden');document.getElementById('btBtns').innerHTML='';document.getElementById('battle').classList.add('hidden');if(!BT.replay)openMycard();}
+
 
 /* panels */
 var panels=['home','find','detail','board','mycard','qdetail','consent','qnew','wizard','chocho','links','faq','events','evdetail'];
@@ -1903,7 +1969,7 @@ async function finishWiz(){
   if(!r.ok){if(nb){nb.disabled=false;nb.textContent='もう一度ためす';}toastMsg('うまく保存できなかった…もう一度押してみてね');return;}
   ME=r.member;JUST_REGISTERED=true;
   if(nb){nb.disabled=false;nb.textContent='カードをつくる';}
-  btStart(false);
+  startTour('guide');
 }
 
 
@@ -2008,7 +2074,7 @@ function renderFaq(){
         (x.answer?'<div class="a"><b>あさやん：</b>'+fmtAns(x.answer)+'</div>':'<div class="w">あさやんが返事を考え中だよ…</div>')+'</div>';});
     h+='</div>';
   }
-  h+='<div class="fqReplay"><button onclick="startTour(true)">🍺 酒場の案内を<br>もう一度見る</button><button onclick="btStart(true)">🏮 てれちょうちんと<br>もう一度会う</button></div>';
+  h+='<div class="fqReplay"><button onclick="startTour(\'guide\',0,true)">🍺 酒場の歩き方を<br>もう一度見る</button><button onclick="btStart(true)">🏮 てれちょうちんと<br>もう一度練習する</button></div>';
   h+='<div class="fqSearch"><input id="fqIn" type="search" placeholder="🔍 言葉でさがす（例：LINE、写真）" value="'+escAttr(FAQ_Q)+'" oninput="FAQ_Q=this.value;FAQ_OPEN=null;renderFaqList()"></div>';
   h+='<div class="fqCats" id="fqCats"></div><div id="fqList"></div>';
   h+='<div class="fqAskBox"><div class="fqH">💬 ここにないことを、あさやんに聞く</div><textarea id="fqAskIn" maxlength="300" placeholder="例：イベントの写真はどこで見られる？"></textarea><button class="okbtn" id="fqAskBtn" onclick="askSend()">あさやんに送る</button><div class="fqNote">返事は、この画面に届くよ。少し時間がかかることもあるから、気長に待っててね。</div></div>';
