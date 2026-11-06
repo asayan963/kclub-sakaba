@@ -520,6 +520,8 @@ html,body{height:100%;background:radial-gradient(130% 90% at 50% 0%, #1c1008 0%,
 .homeEv b{color:#f5d97a;}
 .homeEv small{color:#c9b48c;}
 .homeEv .go{color:#caa45a;font-size:1.2rem;flex:none;}
+.homeEv.focus .go{font-size:.78rem;font-weight:900;color:#2a1600;background:linear-gradient(180deg,#ffd76a,#e0a92a);border-radius:999px;padding:5px 10px;white-space:nowrap;}
+.homeEv.focus{padding:12px;}
 .evHot{color:#ffb27a;font-weight:700;}
 .evCard{display:flex;gap:12px;background:linear-gradient(180deg,#2a1810,#1b0f07);border:1.5px solid #6e4a1e;border-radius:14px;padding:11px;margin-bottom:9px;cursor:pointer;}
 .evCard.going{border-color:#3f9b6e;}
@@ -1386,9 +1388,6 @@ function todayKey(){var d=new Date();return d.getFullYear()+'-'+(d.getMonth()+1)
 function seedPick(arr,salt){if(!arr.length)return null;var s=todayKey()+(ME&&ME.id||'')+salt,h=0;for(var i=0;i<s.length;i++)h=(h*31+s.charCodeAt(i))>>>0;return arr[h%arr.length];}
 function homeSituation(){
   var all=uniqFellows();
-  if(ASK_UNSEEN)return 'あなたの質問に、返事を書いておいたよ。<br>「❓ あさやんに聞く」を見てね。';
-  var inc=all.filter(function(x){return x.p.link==='incoming';});
-  if(inc.length)return escapeHtml(inc[0].p.name)+'さんから「連絡のお願い」が届いてるよ。<br>下の「つながり」を見てごらん。';
   var opts=[];
   var nw=all.filter(function(x){return x.p.is_new;});
   if(nw.length)opts.push('新しい仲間が'+nw.length+'人、酒場に来たよ。<br>「仲間をさがす」でのぞいてみて。');
@@ -1403,7 +1402,7 @@ function renderHome(){
   else say=homeSituation()||escapeHtml(pickLine('home')||'おかえり！ 今日も来てくれて嬉しいよ。');
   document.getElementById('homeSay').innerHTML='<b>あさやん：</b>'+say;
   var ow=document.getElementById('homeLnWarn');if(ow)ow.remove();var lw=lnWarnHtml(ME,'home');if(lw)document.getElementById('homeRec').insertAdjacentHTML('beforebegin',lw);
-  renderRec();renderHomeEv();
+  renderFocus();
   var cm=document.getElementById('chochoMenu');if(cm){cm.style.display=(ME&&(ME.role==='owner'||ME.role==='admin'))?'flex':'none';}
   refreshLinkBadge();
   if(Date.now()-HOME_AT>60000){HOME_AT=Date.now();
@@ -1411,12 +1410,12 @@ function renderHome(){
     Promise.all([api('fellows',{}),api('quest_list',{})]).then(function(rs){
       if(rs[0].ok)GROUPS=rs[0].groups||[];if(rs[1].ok)QUESTS=rs[1].quests||[];
       if(CUR_PANEL==='home'&&!(OKAMI&&OKAMI.today)){var sit=homeSituation();if(sit)document.getElementById('homeSay').innerHTML='<b>あさやん：</b>'+sit;}
-      if(CUR_PANEL==='home')renderRec();
+      if(CUR_PANEL==='home')renderFocus();
     });
   }
 }
 var REC=null;
-function renderRec(){
+function renderRecCard(){
   var el=document.getElementById('homeRec');if(!el)return;
   var hidden=false;try{hidden=localStorage.getItem('sakaba_rec_hide')===todayKey();}catch(e){}
   if(hidden){el.innerHTML='';return;}
@@ -1768,9 +1767,11 @@ async function loadLinks(){
   r.outgoing.forEach(function(x){h+=linkRow(x.card,'<div class="lbL">返事を待っているよ</div>');});
   b.innerHTML=h;
 }
+var INCOMING=[];
 async function refreshLinkBadge(){
   if(!ME)return;var r=await api('my_links',{});if(!r.ok)return;
-  var n=(r.incoming||[]).length;var bd=document.getElementById('linkBadge');if(!bd)return;
+  INCOMING=r.incoming||[];if(CUR_PANEL==='home')renderFocus();
+  var n=INCOMING.length;var bd=document.getElementById('linkBadge');if(!bd)return;
   if(n>0){bd.textContent=n;bd.classList.remove('hidden');}else bd.classList.add('hidden');
 }
 
@@ -2255,12 +2256,21 @@ function evDays(e){var a=Date.parse(e.date+'T00:00:00+09:00'),b=Date.parse((EV_T
 function evWhen(e){var n=evDays(e);return n===0?'今日':n===1?'明日':n===2?'あさって':n+'日後';}
 function evRevealAt(e){if(e.reveal_at){var d=new Date(e.reveal_at);if(!isNaN(d))return evDate(e).split(' ')[0]+' '+d.toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit',timeZone:'Asia/Tokyo'});}return evDate(e).split(' ')[0]+(e.end_time?' '+e.end_time:'');}
 function evTitle(e){return cleanTitle?cleanTitle(e.name):e.name;}
-function evRefresh(){return api('events_upcoming',{}).then(function(r){if(r.ok){EVENTS=r.events||[];EV_TODAY=r.today||'';if(CUR_PANEL==='home')renderHomeEv();}return r;});}
-function renderHomeEv(){var el=document.getElementById('homeEv');if(!el)return;if(!EVENTS){el.innerHTML='';if(EVENTS===null)evRefresh();return;}
+function evRefresh(){return api('events_upcoming',{}).then(function(r){if(r.ok){EVENTS=r.events||[];EV_TODAY=r.today||'';if(CUR_PANEL==='home')renderFocus();}return r;});}
+function homeEvHtml(){if(!EVENTS){if(EVENTS===null)evRefresh();return '';}
   var mine=EVENTS.filter(function(e){return e.me_going&&evDays(e)>=-3;});var d=mine[0];
-  if(!d){el.innerHTML='';return;}
+  if(!d)return '';
   var n=d.going.filter(function(p){return !ME||p.id!==ME.id;}).length;
-  el.innerHTML='<button class="homeEv soon" onclick="openEventById(\''+escAttr(d.event_id)+'\')"><span class="ic">🍻</span><span class="tx"><b>『'+escapeHtml(evTitle(d))+'』おつかれさま！</b><br>'+(n?'来ていた仲間 '+n+'人の顔ぶれが見られるよ':'集まりの様子が見られるよ')+'</span><span class="go">›</span></button>';}
+  return '<button class="homeEv soon" onclick="openEventById(\''+escAttr(d.event_id)+'\')"><span class="ic">🍻</span><span class="tx"><b>『'+escapeHtml(evTitle(d))+'』おつかれさま！</b><br>'+(n?'来ていた仲間 '+n+'人の顔ぶれが見られるよ':'集まりの様子が見られるよ')+'</span><span class="go">›</span></button>';}
+/* ホームの「いまいちばん大事なこと」を1枚だけ出す：連絡のお願い → 質問の返事 → 集まりのおつかれさま → 今日の出会い */
+function renderFocus(){var ev=document.getElementById('homeEv'),rc=document.getElementById('homeRec');if(!ev||!rc)return;
+  var h='';
+  if(INCOMING.length){var c=INCOMING[0].card||{},more=INCOMING.length-1;
+    h='<button class="homeEv soon focus" onclick="show(\'links\')"><span class="ic">📬</span><span class="tx"><b>'+escapeHtml(c.name||'仲間')+'さんから「連絡のお願い」が届いたよ</b><br>'+(more>0?'ほかに '+more+'人からも届いているよ':'OKすると、おたがいのLINEを追加できるよ')+'</span><span class="go">返事する ›</span></button>';}
+  else if(ASK_UNSEEN){h='<button class="homeEv soon focus" onclick="show(\'faq\')"><span class="ic">❓</span><span class="tx"><b>あなたの質問に、返事が届いたよ</b><br>「あさやんに聞く」で見てね</span><span class="go">見る ›</span></button>';}
+  else h=homeEvHtml();
+  ev.innerHTML=h;
+  if(h)rc.innerHTML='';else renderRecCard();}
 function openEventById(id){var i=(EVENTS||[]).findIndex(function(e){return e.event_id===id;});if(i<0){show('events');return;}show('events');openEvent(i);}
 async function loadEvents(){var b=document.getElementById('evBody');if(!EVENTS)b.innerHTML='<div class="loading">読み込み中…</div>';else renderEvents();var r=await evRefresh();if(!r.ok&&!EVENTS){b.innerHTML='<div class="stub">予定を読み込めなかった…</div>';return;}renderEvents();}
 function goingFaces(list,max){return list.slice(0,max).map(function(p){return '<span class="evFace">'+avaBox((p.avatar_type==='photo')?p.avatar_url:'',p.name,26)+'</span>';}).join('')+(list.length>max?'<span class="evMore">+'+(list.length-max)+'</span>':'');}
@@ -2305,7 +2315,7 @@ function fmtAns(t){return escapeHtml(t||'').replace(/\*\*(.+?)\*\*/g,'<b>$1</b>'
 function askBadges(){var b=document.getElementById('faqBadge');if(b){if(ASK_UNSEEN){b.textContent=ASK_UNSEEN;b.classList.remove('hidden');}else b.classList.add('hidden');}
   var q=document.getElementById('qaBadge');if(q){if(ASK_PENDING){q.textContent=ASK_PENDING;q.classList.remove('hidden');}else q.classList.add('hidden');}
   var cm=document.getElementById('chochoMenu');if(cm){var cb=document.getElementById('choBadge');if(!cb){cm.insertAdjacentHTML('afterbegin','<span id="choBadge" class="badge hidden"></span>');cb=document.getElementById('choBadge');}if(ASK_PENDING){cb.textContent=ASK_PENDING;cb.classList.remove('hidden');}else cb.classList.add('hidden');}}
-function askRefresh(){return api('ask_mine',{}).then(function(r){if(!r.ok)return r;ASK_ITEMS=r.items||[];ASK_UNSEEN=r.unseen||0;ASK_PENDING=r.pending||0;askBadges();
+function askRefresh(){return api('ask_mine',{}).then(function(r){if(!r.ok)return r;ASK_ITEMS=r.items||[];ASK_UNSEEN=r.unseen||0;ASK_PENDING=r.pending||0;askBadges();if(CUR_PANEL==='home')renderFocus();
   if(CUR_PANEL==='home'&&ASK_UNSEEN&&!(OKAMI&&OKAMI.today))document.getElementById('homeSay').innerHTML='<b>あさやん：</b>'+homeSituation();return r;});}
 async function loadFaq(){
   if(!OKAMI||!OKAMI.faq){var o=await api('okami',{});if(o.ok)OKAMI=o;}
