@@ -535,8 +535,20 @@ html,body{height:100%;background:radial-gradient(130% 90% at 50% 0%, #1c1008 0%,
 .evFace{display:inline-block;margin-right:-6px;}
 .evFace img,.evFace div{border-width:1.5px !important;}
 .evRule{background:rgba(245,197,24,.06);border:1.5px solid rgba(245,197,24,.45);border-radius:12px;padding:10px 12px;margin:0 0 12px;color:#f3e6c8;font-size:.8rem;line-height:1.6;}
-.evRule>b{display:block;color:#f5d97a;font-family:'Zen Maru Gothic',sans-serif;font-size:.88rem;margin-bottom:6px;}
+.evRule>summary{list-style:none;display:flex;align-items:center;gap:6px;cursor:pointer;}
+.evRule>summary::-webkit-details-marker{display:none;}
+.evRule>summary b{flex:1;color:#f5d97a;font-family:'Zen Maru Gothic',sans-serif;font-size:.88rem;}
+.evRuleT{font-style:normal;flex:none;font-size:.7rem;color:#caa45a;border:1px solid rgba(202,164,90,.6);border-radius:999px;padding:1px 8px;}
+.evRuleT::after{content:'しくみを見る ▾';}
+.evRule[open] .evRuleT::after{content:'とじる ▴';}
+.evRule[open]>summary{margin-bottom:6px;}
 .evRule ol{list-style:none;margin:0;padding:0;}
+.fhintD>summary{list-style:none;cursor:pointer;}
+.fhintD>summary::-webkit-details-marker{display:none;}
+.fhintD .evRuleT{display:inline-block;margin-left:6px;vertical-align:1px;}
+.fhintD .evRuleT::after{content:'くわしく ▾';}
+.fhintD[open] .evRuleT::after{content:'とじる ▴';}
+.fhintMore{margin-top:6px;}
 .evRule li{display:flex;gap:8px;align-items:baseline;padding:4px 0;border-top:1px dashed rgba(202,164,90,.25);}
 .evRule li:first-child{border-top:none;}
 .evRule li span{flex:none;width:78px;font-size:.7rem;font-weight:800;color:#2a1600;background:#caa45a;border-radius:999px;text-align:center;padding:1px 0;}
@@ -966,7 +978,7 @@ html,body{height:100%;background:radial-gradient(130% 90% at 50% 0%, #1c1008 0%,
       <div class="fsheet">
         <button class="grab" onclick="toggleSheet(this)" aria-label="広げる・たたむ"></button>
         <div class="fhead"><h2>クエスト掲示板</h2><span class="tot" id="qTot"></span></div>
-        <div class="fhint"><b>あさやん：</b>壁の貼り紙だよ。📣告知 🍺募集 🙋自己紹介 の3種類。会ったことがない人の貼り紙にも参加できるし、参加すると仲間になれる。</div>
+        <details class="fhint fhintD"><summary><b>あさやん：</b>気になる貼り紙に参加すると、仲間になれるよ。<i class="evRuleT"></i></summary><div class="fhintMore">貼り紙は 📣告知・🍺募集・🙋自己紹介 の3種類。会ったことがない人の貼り紙にも参加できるよ。🙋自己紹介の人には、会ったことがなくても「連絡を取る」が送れるよ。</div></details>
         <div class="fsticky"><div class="chips" id="qchips"></div></div>
         <div id="qList"></div>
       </div>
@@ -2254,11 +2266,11 @@ async function loadEvents(){var b=document.getElementById('evBody');if(!EVENTS)b
 function goingFaces(list,max){return list.slice(0,max).map(function(p){return '<span class="evFace">'+avaBox((p.avatar_type==='photo')?p.avatar_url:'',p.name,26)+'</span>';}).join('')+(list.length>max?'<span class="evMore">+'+(list.length-max)+'</span>':'');}
 function renderEvents(){var b=document.getElementById('evBody');if(!b)return;
   var h='<div class="say"><b>あさやん：</b>終わったKクラブの集まりだよ。<br>その日 来ていた仲間の顔ぶれが見られるよ。</div>'+
-    '<div class="evRule"><b>🍺 この酒場は「会った人とつながる」場所</b>'+
+    (function(){if(window.EVRULE_OPEN===undefined){var seen=false;try{seen=localStorage.getItem('sakaba_evrule')==='1';localStorage.setItem('sakaba_evrule','1');}catch(e){}window.EVRULE_OPEN=!seen;}return '<details class="evRule"'+(window.EVRULE_OPEN?' open':'')+' ontoggle="window.EVRULE_OPEN=this.open"><summary><b>🍺 この酒場は「会った人とつながる」場所</b><i class="evRuleT"></i></summary>';})()+
     '<ol><li><span>集まり</span><p>まず会場で会おう。アプリには<b>まだ出ない</b>よ。</p></li>'+
     '<li><span>終わったら</span><p>その集まりと、来ていた人の<b>顔ぶれが出る</b>よ。</p></li>'+
     '<li><span>そのあと</span><p>話した人のカードを開いて<b>「連絡を取る」</b>→ 相手がOKしたら、おたがいのLINEを追加できるよ。</p></li></ol>'+
-    '<small>※並ぶのは、その集まりに来た人・申し込んだ人のうち、このアプリに登録している人だけだよ（参加者全員ではないよ）</small></div>';
+    '<small>※並ぶのは、その集まりに来た人・申し込んだ人のうち、このアプリに登録している人だけだよ（参加者全員ではないよ）</small></details>';
   var shown=(EVENTS||[]).map(function(e,i){return {e:e,i:i};}).filter(function(x){return x.e.going.length;});
   if(!shown.length){b.innerHTML=h+'<div class="stub">ここ1か月で、アプリに登録している人が来た集まりは、まだないよ。</div>';return;}
   h+='<div class="lkH">🍻 ここ1か月の集まり</div>';
