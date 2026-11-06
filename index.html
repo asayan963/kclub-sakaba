@@ -1557,7 +1557,7 @@ function onFindSearch(){var v=!!document.getElementById('search').value;document
 function clearFindSearch(){document.getElementById('search').value='';onFindSearch();}
 var AVA_PAL=[['#c98b4a','#5a3416'],['#b5584a','#4a1a14'],['#6f9a6a','#203a22'],['#5f84a8','#1c2d44'],['#a07ab0','#3a2246'],['#5aa09a','#173a38'],['#c9a24a','#5a4210'],['#9a7a5a','#3a2a1a']];
 function avaPal(p){var s=String(p.name||p.id||''),h=0;for(var i=0;i<s.length;i++)h=(h*31+s.charCodeAt(i))>>>0;return AVA_PAL[h%AVA_PAL.length];}
-function cleanTitle(t){return String(t||'集まり').replace(/^[【\[]\s*/,'').replace(/\s*[】\]]$/,'')||'集まり';}
+function cleanTitle(t){var s=String(t||'').trim();var m=s.match(/^[【\[]\s*([^【】\[\]]*?)\s*[】\]]$/);return (m?m[1]:s)||'集まり';}
 var FIND_ANIM=true;
 function pcHtml(p,i){
   var photo=(p.avatar_type==='photo'&&p.avatar_url);
@@ -1731,7 +1731,7 @@ async function respond(rid,accept){
   if(RESP_BUSY)return;RESP_BUSY=true;
   var r;try{r=await api('respond_request',{request_id:rid,accept:accept});}finally{RESP_BUSY=false;}
   if(!r.ok){toastMsg('うまくできなかった…もう一度試してね');return;}
-  if(r.state==='matched')toastMsg('あさやん：「つながったね！<br>お互いのLINE IDが見られるよ」');
+  if(r.state==='matched')toastMsg('あさやん：「つながったね！<br>おたがいのLINEを追加できるよ」');
   else toastMsg('あさやん：「わかった、今回は見送っておくね」');
   if(DETAIL_P&&!document.getElementById('detail').classList.contains('hidden'))renderLinkArea(DETAIL_P);
   if(!document.getElementById('links').classList.contains('hidden'))loadLinks();
@@ -1747,7 +1747,7 @@ async function loadLinks(){
   if(!r.ok){b.innerHTML='<div class="stub">読み込めなかった…</div>';return;}
   var h='<div class="lkH">📬 届いている「連絡のお願い」（'+r.incoming.length+'）</div>';
   if(!r.incoming.length)h+='<div class="lkE">今は届いていないよ</div>';
-  r.incoming.forEach(function(x){h+=linkRow(x.card,'<div class="lbL">つながると、お互いのLINE IDが見られるようになるよ。</div><div style="display:flex;gap:8px;margin-top:10px"><button class="okbtn" style="flex:1;margin:0;padding:10px;font-size:.95rem" onclick="respond('+x.request_id+',true)">OKして つながる</button><button class="reqBtn" style="flex:1;margin:0" onclick="respond('+x.request_id+',false)">今回は見送る</button></div>');});
+  r.incoming.forEach(function(x){h+=linkRow(x.card,'<div class="lbL">つながると、おたがいのLINEを追加できるようになるよ。</div><div style="display:flex;gap:8px;margin-top:10px"><button class="okbtn" style="flex:1;margin:0;padding:10px;font-size:.95rem" onclick="respond('+x.request_id+',true)">OKして つながる</button><button class="reqBtn" style="flex:1;margin:0" onclick="respond('+x.request_id+',false)">今回は見送る</button></div>');});
   h+='<div class="lkH">🤝 つながった仲間（'+r.matched.length+'）</div>';
   if(!r.matched.length)h+='<div class="lkE">まだいないよ。「仲間をさがす」から声をかけてみよう</div>';
   r.matched.forEach(function(x){var nt=NOTES[x.card.id];h+=linkRow(x.card,(nt?'<div class="lkMemo">📝 '+escapeHtml(nt.length>40?nt.slice(0,40)+'…':nt)+'</div>':'')+lineIdBox(x.card.line_id,escapeHtml(x.card.name),x.card.id));});
@@ -2257,7 +2257,7 @@ function renderEvents(){var b=document.getElementById('evBody');if(!b)return;
     '<div class="evRule"><b>🍺 この酒場は「会った人とつながる」場所</b>'+
     '<ol><li><span>集まり</span><p>まず会場で会おう。アプリには<b>まだ出ない</b>よ。</p></li>'+
     '<li><span>終わったら</span><p>その集まりと、来ていた人の<b>顔ぶれが出る</b>よ。</p></li>'+
-    '<li><span>そのあと</span><p>話した人のカードを開いて<b>「連絡を取る」</b>→ 相手がOKしたら、LINEがつながるよ。</p></li></ol>'+
+    '<li><span>そのあと</span><p>話した人のカードを開いて<b>「連絡を取る」</b>→ 相手がOKしたら、おたがいのLINEを追加できるよ。</p></li></ol>'+
     '<small>※並ぶのは、その集まりに来た人・申し込んだ人のうち、このアプリに登録している人だけだよ（参加者全員ではないよ）</small></div>';
   var shown=(EVENTS||[]).map(function(e,i){return {e:e,i:i};}).filter(function(x){return x.e.going.length;});
   if(!shown.length){b.innerHTML=h+'<div class="stub">ここ1か月で、アプリに登録している人が来た集まりは、まだないよ。</div>';return;}
