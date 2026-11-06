@@ -713,6 +713,11 @@ html,body{height:100%;background:radial-gradient(130% 90% at 50% 0%, #1c1008 0%,
 .dsec{margin-bottom:14px;}
 .dsec h3{font-family:'Zen Maru Gothic',serif;color:#f5d97a;font-size:.86rem;letter-spacing:.06em;margin-bottom:5px;}
 .dsec p{font-size:.95rem;line-height:1.65;color:#ecdfc6;white-space:pre-wrap;}
+.dcommon{background:linear-gradient(180deg,rgba(6,199,85,.12),rgba(6,199,85,.05));border:1.5px solid rgba(110,220,150,.55);border-radius:12px;padding:8px 11px;margin:-4px 0 12px;}
+.dcommon b{display:block;color:#9fe8b8;font-size:.8rem;margin-bottom:5px;}
+.dcommon div{display:flex;flex-wrap:wrap;gap:5px;}
+.dcommon span{font-size:.74rem;color:#eafff0;background:rgba(6,199,85,.22);border-radius:999px;padding:2px 9px;}
+.dcommon small{display:block;color:#8fbf9f;font-size:.66rem;margin-top:5px;}
 .met{font-size:.8rem;color:#c9b48c;background:rgba(202,164,90,.15);border-radius:8px;padding:7px 10px;margin-bottom:12px;}
 .tags span{display:inline-block;background:rgba(202,164,90,.25);border:1px solid #caa45a;color:#f5d97a;font-size:.78rem;padding:3px 10px;border-radius:20px;margin:0 6px 6px 0;}
 .meetBtn{width:100%;background:linear-gradient(180deg,#e0a93a,#b9801f);border:none;color:#2a1600;font-family:'Zen Maru Gothic',serif;font-weight:800;font-size:1.05rem;letter-spacing:.08em;padding:14px;border-radius:12px;cursor:pointer;margin-top:4px;}
@@ -1664,6 +1669,19 @@ function renderFind(quiet){
 function toggleFindRow(k){var sc=document.getElementById('findScroll');var top=sc.scrollTop;FIND_OPEN[k]=!FIND_OPEN[k];renderFind(true);sc.scrollTop=top;}
 function railGo(btn,dir){var t=btn.parentNode.querySelector('.track');t.scrollBy({left:dir*(t.clientWidth-60),behavior:'smooth'});}
 
+/* あなたとの共通点（話しかけるきっかけ） */
+function commonHtml(p,g){if(!ME||!p||p.id===ME.id)return '';var out=[];
+  var evs=(GROUPS||[]).filter(function(x){return x.kind==='event'&&(x.fellows||[]).some(function(f){return f.id===p.id;});});
+  var qs=(GROUPS||[]).filter(function(x){return x.kind==='quest'&&(x.fellows||[]).some(function(f){return f.id===p.id;});});
+  if(evs.length>1)out.push('🗓 集まりで'+evs.length+'回いっしょ');
+  else if(evs.length===1&&!(g&&g.kind==='event'&&g.key===evs[0].key))out.push('🗓 '+cleanTitle(evs[0].title));
+  if(qs.length&&!(g&&g.kind==='quest'&&qs.length===1))out.push('📜 クエスト'+qs.length+'つ');
+  if(p.industry&&ME.industry&&normInd(p.industry)===normInd(ME.industry))out.push('同じお仕事：'+p.industry);
+  else if(norenOf(p)===norenOf(ME)&&(p.industry||p.noren))out.push('同じのれん：'+groupName(p));
+  var mt={};(ME.free_tags||[]).forEach(function(t){mt[String(t).toLowerCase()]=1;});
+  (p.free_tags||[]).filter(function(t){return mt[String(t).toLowerCase()];}).slice(0,3).forEach(function(t){out.push('#'+t);});
+  if(!out.length)return '';
+  return '<div class="dcommon"><b>🤝 あなたと同じ</b><div>'+out.map(function(x){return '<span>'+escapeHtml(x)+'</span>';}).join('')+'</div><small>話しかけるきっかけにどうぞ</small></div>';}
 function openDetail(p,g,from){
   DETAIL_BACK=(from&&from.back)||'find';
   var pal=avaPal(p),nd=NOREN_BY[norenOf(p)];
@@ -1677,7 +1695,7 @@ function openDetail(p,g,from){
     '</div>'+
     '<div class="dname"><div class="nm">'+escapeHtml(p.name||'')+'</div>'+(p.company?'<div class="co">'+escapeHtml(p.company)+'</div>':'')+
       '<div class="dchips"><span class="dnr" style="--na:'+nd.a+';--nb:'+nd.b+'"><i>'+(p.noren_custom?escapeHtml(p.noren_custom.charAt(0)):nd.c)+'</i>'+escapeHtml(groupName(p))+'</span>'+(p.industry?'<span class="dind">'+escapeHtml(p.industry)+'</span>':'')+'</div></div>'+
-    metLine+
+    metLine+commonHtml(p,g)+
     (p.tagline?'<div class="dsign"><span class="q">“</span>'+escapeHtml(p.tagline)+'</div>':'')+
     (p.detail?'<div class="dsec dcard"><h3>どんな人？</h3><p>'+escapeHtml(p.detail)+'</p></div>':'')+
     (tags.length?'<div class="dsec dcard"><h3>キーワード</h3><div class="dtags">'+tags.map(function(x){return '<span>#'+escapeHtml(x)+'</span>';}).join('')+'</div></div>':'');
