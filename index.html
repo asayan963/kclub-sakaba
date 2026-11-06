@@ -522,6 +522,14 @@ html,body{height:100%;background:radial-gradient(130% 90% at 50% 0%, #1c1008 0%,
 .homeEv .go{color:#caa45a;font-size:1.2rem;flex:none;}
 .homeEv.focus .go{font-size:.78rem;font-weight:900;color:#2a1600;background:linear-gradient(180deg,#ffd76a,#e0a92a);border-radius:999px;padding:5px 10px;white-space:nowrap;}
 .homeEv.focus{padding:12px;}
+.lkSub{font-size:.7rem;color:#a8977a;margin:-2px 0 6px;}
+.lkMini{display:flex;align-items:center;gap:10px;padding:9px 10px;margin:0 0 6px;border:1px solid rgba(202,164,90,.45);border-radius:12px;background:rgba(40,24,12,.6);cursor:pointer;}
+.lkMini:active{transform:scale(.98);}
+.lkT{flex:1;min-width:0;}
+.lkT b{display:block;color:#f5d97a;font-size:.92rem;}
+.lkT small{display:block;color:#c9b48c;font-size:.72rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.lkLine{flex:none;background:#06c755;color:#fff;font-weight:800;font-size:.78rem;border-radius:999px;padding:6px 12px;text-decoration:none;}
+.lkWait{flex:none;font-size:.7rem;color:#c9b48c;border:1px solid rgba(202,164,90,.5);border-radius:999px;padding:3px 9px;}
 .homeEv.past{padding:7px 12px;font-size:.76rem;margin-top:0;}
 .homeEv.past small{color:#a8977a;font-size:.66rem;}
 .homeEv.past .ic{font-size:1.1rem;}
@@ -1760,21 +1768,26 @@ async function respond(rid,accept){
 }
 
 /* つながり (my links) */
+var LK_CARDS=[];
+function lkOpen(i){var c=LK_CARDS[i];if(c)openDetail(c,null,{back:'links'});}
+function lkMini(c,kind){var i=LK_CARDS.push(c)-1,nt=(kind==='m')?NOTES[c.id]:null;
+  var right=kind==='o'?'<span class="lkWait">返事待ち</span>':(isLineUrl(c.line_id)?'<a class="lkLine" href="'+escAttr(c.line_id)+'" target="_blank" rel="noopener" onclick="event.stopPropagation()">💬 LINE</a>':(c.line_id?'<span class="lkWait">ID登録</span>':'<span class="lkWait">LINE未登録</span>'));
+  return '<div class="lkMini" onclick="lkOpen('+i+')">'+avaBox((c.avatar_type==='photo')?c.avatar_url:'',c.name,40)+'<div class="lkT"><b>'+escapeHtml(c.name)+'</b><small>'+escapeHtml(nt?('📝 '+(nt.length>24?nt.slice(0,24)+'…':nt)):(c.tagline||''))+'</small></div>'+right+'</div>';}
 function linkRow(c,extra){return '<div class="reqCard"><div style="display:flex;gap:11px;align-items:center"><div>'+avaBox((c.avatar_type==='photo')?c.avatar_url:'',c.name,46)+'</div><div style="min-width:0"><div style="color:#f5d97a;font-weight:700;font-size:.98rem">'+escapeHtml(c.name)+'</div><div style="color:#c9b48c;font-size:.8rem">'+escapeHtml(c.tagline||'')+'</div></div></div>'+extra+'</div>';}
 async function loadLinks(){
   var b=document.getElementById('linksBody');
   var rs=await Promise.all([api('my_links',{}),api('notes_list',{})]);var r=rs[0];
   if(rs[1].ok){NOTES={};(rs[1].notes||[]).forEach(function(n){NOTES[n.target_id]=n.body;});}
   if(!r.ok){b.innerHTML='<div class="stub">読み込めなかった…</div>';return;}
-  var h='<div class="lkH">📬 届いている「連絡のお願い」（'+r.incoming.length+'）</div>';
-  if(!r.incoming.length)h+='<div class="lkE">今は届いていないよ</div>';
-  r.incoming.forEach(function(x){h+=linkRow(x.card,'<div class="lbL">つながると、おたがいのLINEを追加できるようになるよ。</div><div style="display:flex;gap:8px;margin-top:10px"><button class="okbtn" style="flex:1;margin:0;padding:10px;font-size:.95rem" onclick="respond('+x.request_id+',true)">OKして つながる</button><button class="reqBtn" style="flex:1;margin:0" onclick="respond('+x.request_id+',false)">今回は見送る</button></div>');});
+  LK_CARDS=[];var h='';
+  if(r.incoming.length){h+='<div class="lkH">📬 届いている「連絡のお願い」（'+r.incoming.length+'）</div>';
+    r.incoming.forEach(function(x){h+=linkRow(x.card,'<div class="lbL">つながると、おたがいのLINEを追加できるようになるよ。</div><div style="display:flex;gap:8px;margin-top:10px"><button class="okbtn" style="flex:1;margin:0;padding:10px;font-size:.95rem" onclick="respond('+x.request_id+',true)">OKして つながる</button><button class="reqBtn" style="flex:1;margin:0" onclick="respond('+x.request_id+',false)">今回は見送る</button></div>');});}
   h+='<div class="lkH">🤝 つながった仲間（'+r.matched.length+'）</div>';
-  if(!r.matched.length)h+='<div class="lkE">まだいないよ。「仲間をさがす」から声をかけてみよう</div>';
-  r.matched.forEach(function(x){var nt=NOTES[x.card.id];h+=linkRow(x.card,(nt?'<div class="lkMemo">📝 '+escapeHtml(nt.length>40?nt.slice(0,40)+'…':nt)+'</div>':'')+lineIdBox(x.card.line_id,escapeHtml(x.card.name),x.card.id));});
-  h+='<div class="lkH">⏳ 申請中（'+r.outgoing.length+'）</div>';
-  if(!r.outgoing.length)h+='<div class="lkE">返事待ちの申請はないよ</div>';
-  r.outgoing.forEach(function(x){h+=linkRow(x.card,'<div class="lbL">返事を待っているよ</div>');});
+  if(!r.matched.length)h+='<div class="lkE">まだいないよ。「仲間をさがす」でカードを開いて、「連絡を取る」を送ってみよう</div>';
+  else h+='<div class="lkSub">名前をタップするとカード、緑のボタンでLINEに追加できるよ</div>';
+  r.matched.forEach(function(x){h+=lkMini(x.card,'m');});
+  if(r.outgoing.length){h+='<div class="lkH">⏳ 返事待ち（'+r.outgoing.length+'）</div>';
+    r.outgoing.forEach(function(x){h+=lkMini(x.card,'o');});}
   b.innerHTML=h;
 }
 var INCOMING=[];
