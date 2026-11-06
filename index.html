@@ -522,6 +522,9 @@ html,body{height:100%;background:radial-gradient(130% 90% at 50% 0%, #1c1008 0%,
 .homeEv .go{color:#caa45a;font-size:1.2rem;flex:none;}
 .homeEv.focus .go{font-size:.78rem;font-weight:900;color:#2a1600;background:linear-gradient(180deg,#ffd76a,#e0a92a);border-radius:999px;padding:5px 10px;white-space:nowrap;}
 .homeEv.focus{padding:12px;}
+.homeEv.past{padding:7px 12px;font-size:.76rem;margin-top:0;}
+.homeEv.past small{color:#a8977a;font-size:.66rem;}
+.homeEv.past .ic{font-size:1.1rem;}
 .evHot{color:#ffb27a;font-weight:700;}
 .evCard{display:flex;gap:12px;background:linear-gradient(180deg,#2a1810,#1b0f07);border:1.5px solid #6e4a1e;border-radius:14px;padding:11px;margin-bottom:9px;cursor:pointer;}
 .evCard.going{border-color:#3f9b6e;}
@@ -598,6 +601,10 @@ html,body{height:100%;background:radial-gradient(130% 90% at 50% 0%, #1c1008 0%,
 .fnoren{padding:6px 0 2px;}
 .nrh{padding:0 16px 6px;font-size:.8rem;font-weight:800;color:#f5d97a;}
 .nrh span{font-weight:600;color:#a8977a;font-size:.68rem;margin-left:4px;}
+.nrtog{display:flex;align-items:center;width:calc(100% - 32px);margin:0 16px 4px;padding:8px 12px;background:rgba(245,197,24,.06);border:1px solid rgba(202,164,90,.45);border-radius:10px;font-family:inherit;text-align:left;cursor:pointer;}
+.nrtog span{flex:1;}
+.nrtog i{font-style:normal;font-size:.7rem;color:#caa45a;border:1px solid rgba(202,164,90,.6);border-radius:999px;padding:1px 8px;}
+.nrhint{padding:2px 16px 4px;font-size:.68rem;color:#a8977a;}
 .nrrow{display:flex;gap:4px;overflow-x:auto;padding:2px 12px 8px;scrollbar-width:none;-webkit-overflow-scrolling:touch;}
 .nrrow::-webkit-scrollbar{display:none;}
 .nr{flex:none;position:relative;width:74px;background:none;border:0;padding:4px 2px 2px;cursor:pointer;display:flex;flex-direction:column;align-items:center;border-radius:12px;transition:transform .15s,background .2s;-webkit-tap-highlight-color:transparent;}
@@ -954,7 +961,6 @@ html,body{height:100%;background:radial-gradient(130% 90% at 50% 0%, #1c1008 0%,
       <div class="fsheet">
         <button class="grab" onclick="toggleFindSheet()" aria-label="広げる・たたむ"></button>
         <div class="fhead"><h2>仲間をさがす</h2><span class="tot" id="findTot"></span></div>
-        <div class="fhint"><b>あさやん：</b>気になる仲間をタップしてね</div>
         <div class="fsticky" id="fsticky">
           <div class="sbox" id="sbox"><span class="ic">🔍</span><input id="search" placeholder="名前・業種・キーワードでさがす" oninput="onFindSearch()" enterkeyhint="search" autocomplete="off"><button class="clr" onclick="clearFindSearch()" aria-label="消す">✕</button></div>
           <div class="chips" id="fchips"></div>
@@ -1519,7 +1525,8 @@ function nrPickerHtml(cur,fn,custom,inputId,inputFn){
   if(custom!==null&&custom!==undefined&&custom!==false&&custom!=='__off')h+='<div class="field" style="margin-top:8px"><input id="'+inputId+'" maxlength="10" value="'+escapeHtml(custom===true?'':custom)+'" placeholder="例：占い・スピリチュアル（10文字まで）" oninput="'+inputFn+'(this.value)"></div><div class="nrauto">今ある13のどれにも合わないときに書いてね。色は「そのほか」になります。人数が増えたら、あさやんが新しい色ののれんを作ってくれるよ</div>';
   return h;}
 function nrPreviewHtml(word,cat,auto,custom){var d=NOREN_BY[cat];var nm=(custom&&custom!==true)?custom:d.n;return '<div class="nrprev">'+norenImg(word?indShort(normInd(word)||word):'ほか',cat,64)+'<div class="nrpt"><b>'+escapeHtml(nm)+'</b>ののれんに並ぶよ<small>'+(custom?'あなたが書いたグループです':(auto?'業種の言葉から自動で選んでいます。違ったら下から選び直してね':'あなたが選んだグループです'))+'</small></div></div>';}
-var NR_LIST=[];
+var NR_LIST=[],NR_OPEN=false;
+function nrToggle(){var open=NR_OPEN||!!FIND_NOREN;if(open){NR_OPEN=false;if(FIND_NOREN){FIND_NOREN='';renderFind(true);return;}}else NR_OPEN=true;renderNoren();}
 function renderNoren(){
   var el=document.getElementById('fnoren');if(!el)return;
   var all=uniqFellows().filter(function(x){return passFilter(x.p);});
@@ -1528,7 +1535,10 @@ function renderNoren(){
   if(FIND_NOREN&&!(FIND_NOREN==='__none__'?map['']:map[FIND_NOREN]))FIND_NOREN='';
   if(NR_LIST.length<2&&!FIND_NOREN){el.innerHTML='';el.style.display='none';return;}
   el.style.display='';
-  el.innerHTML='<div class="nrh">🏮 業種ののれん <span>くぐると、その業種の仲間だけ並ぶよ</span></div><div class="nrrow">'+NR_LIST.map(function(x,i){
+  var open=NR_OPEN||!!FIND_NOREN;
+  el.innerHTML='<button class="nrh nrtog" onclick="nrToggle()">🏮 業種でしぼる <span>のれん '+NR_LIST.length+'種類</span><i>'+(open?'とじる ▴':'ひらく ▾')+'</i></button>'+(open?'<div class="nrhint">くぐると、その業種の仲間だけ並ぶよ</div>':'');
+  if(!open)return;
+  el.innerHTML+='<div class="nrrow">'+NR_LIST.map(function(x,i){
     var d=NOREN_BY[x.cat];
     return '<button class="nr'+((FIND_NOREN&&(FIND_NOREN===x.k||(FIND_NOREN==='__none__'&&x.k==='')))?' on':'')+'" onclick="setNoren('+i+',this)" aria-label="'+escapeHtml(x.word)+'">'+norenImg(x.k?indShort(x.word):'ほか',x.cat,62)+'<span class="nrl">'+escapeHtml(x.word)+'</span><span class="nrc">'+x.n+'</span></button>';
   }).join('')+'</div>';
@@ -1630,7 +1640,7 @@ function renderFind(quiet){
       html+='<div class="hotbar" data-gi=""><div class="hl">📬 あなたと連絡を取りたい人が <b>'+hot.length+'人</b></div><div class="hots">'+hot.map(function(x){var pal=avaPal(x.p);var ph=(x.p.avatar_type==='photo'&&x.p.avatar_url);return '<div class="pc hotp" data-id="'+escapeHtml(x.p.id)+'"><span class="hav" style="--c1:'+pal[0]+';--c2:'+pal[1]+'">'+(ph?'<img src="'+escapeHtml(safeAva(x.p.avatar_url))+'" alt="">':escapeHtml(initial(x.p.name)))+'</span><span class="hn">'+escapeHtml(x.p.name)+'</span><span class="hgo">返事する ›</span></div>';}).join('')+'</div></div>';ri++;
     }
   }
-  GROUPS.forEach(function(g,gi){
+  GROUPS.map(function(g,gi){return {g:g,gi:gi};}).sort(function(a,b){var ka=a.g.kind==='event'?0:1,kb=b.g.kind==='event'?0:1;if(ka!==kb)return ka-kb;return String(b.g.date||'').localeCompare(String(a.g.date||''));}).forEach(function(o){var g=o.g,gi=o.gi;
     var fs=sortFellows((g.fellows||[]).filter(passFilter));
     if(!fs.length)return;
     fs.forEach(function(p){if(!lookup[p.id])lookup[p.id]={p:p,g:g};});
@@ -2258,8 +2268,10 @@ function evRevealAt(e){if(e.reveal_at){var d=new Date(e.reveal_at);if(!isNaN(d))
 function evTitle(e){return cleanTitle?cleanTitle(e.name):e.name;}
 function evRefresh(){return api('events_upcoming',{}).then(function(r){if(r.ok){EVENTS=r.events||[];EV_TODAY=r.today||'';if(CUR_PANEL==='home')renderFocus();}return r;});}
 function homeEvHtml(){if(!EVENTS){if(EVENTS===null)evRefresh();return '';}
-  var mine=EVENTS.filter(function(e){return e.me_going&&evDays(e)>=-3;});var d=mine[0];
+  var mine=EVENTS.filter(function(e){return e.me_going&&evDays(e)>=-30;});var d=mine[0];
   if(!d)return '';
+  if(evDays(d)<-3){var n2=d.going.filter(function(p){return !ME||p.id!==ME.id;}).length;
+    return '<button class="homeEv past" onclick="openEventById(\''+escAttr(d.event_id)+'\')"><span class="ic">🗓</span><span class="tx"><small>過去の集まり</small><br><b>『'+escapeHtml(evTitle(d))+'』</b>'+(n2?'　来ていた仲間 '+n2+'人':'')+'</span><span class="go">›</span></button>';}
   var n=d.going.filter(function(p){return !ME||p.id!==ME.id;}).length;
   return '<button class="homeEv soon" onclick="openEventById(\''+escAttr(d.event_id)+'\')"><span class="ic">🍻</span><span class="tx"><b>『'+escapeHtml(evTitle(d))+'』おつかれさま！</b><br>'+(n?'来ていた仲間 '+n+'人の顔ぶれが見られるよ':'集まりの様子が見られるよ')+'</span><span class="go">›</span></button>';}
 /* ホームの「いまいちばん大事なこと」を1枚だけ出す：連絡のお願い → 質問の返事 → 集まりのおつかれさま → 今日の出会い */
@@ -2269,6 +2281,8 @@ function renderFocus(){var ev=document.getElementById('homeEv'),rc=document.getE
     h='<button class="homeEv soon focus" onclick="show(\'links\')"><span class="ic">📬</span><span class="tx"><b>'+escapeHtml(c.name||'仲間')+'さんから「連絡のお願い」が届いたよ</b><br>'+(more>0?'ほかに '+more+'人からも届いているよ':'OKすると、おたがいのLINEを追加できるよ')+'</span><span class="go">返事する ›</span></button>';}
   else if(ASK_UNSEEN){h='<button class="homeEv soon focus" onclick="show(\'faq\')"><span class="ic">❓</span><span class="tx"><b>あなたの質問に、返事が届いたよ</b><br>「あさやんに聞く」で見てね</span><span class="go">見る ›</span></button>';}
   else h=homeEvHtml();
+  var past=h.indexOf('homeEv past')>=0;
+  if(past){ev.innerHTML='';renderRecCard();rc.insertAdjacentHTML('beforeend',h);return;}
   ev.innerHTML=h;
   if(h)rc.innerHTML='';else renderRecCard();}
 function openEventById(id){var i=(EVENTS||[]).findIndex(function(e){return e.event_id===id;});if(i<0){show('events');return;}show('events');openEvent(i);}
