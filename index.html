@@ -925,7 +925,7 @@ html,body{height:100%;background:radial-gradient(130% 90% at 50% 0%, #1c1008 0%,
       <div class="tiles">
         <button class="tile" onclick="show('find')"><div class="ti">🍺</div><div class="tn">仲間を<br>さがす</div><div class="td">集まりで一緒だった仲間</div></button>
         <button class="tile" onclick="show('board')"><div class="ti">📜</div><div class="tn">クエスト<br>掲示板</div><div class="td">案内を見る・出す</div></button>
-        <button class="tile" onclick="show('links')"><span id="linkBadge" class="badge hidden"></span><div class="ti">📬</div><div class="tn">つながり<br>&nbsp;</div><div class="td">「会いたい」とLINE</div></button>
+        <button class="tile" onclick="show('links')"><span id="linkBadge" class="badge hidden"></span><div class="ti">📬</div><div class="tn">つながり<br>&nbsp;</div><div class="td">連絡とLINE</div></button>
         <button class="tile" onclick="openMycard()"><div class="ti">🪪</div><div class="tn">自分の<br>カード</div><div class="td">プロフィールを直す</div></button>
         <button class="tile wide" id="faqMenu" onclick="show('faq')"><span id="faqBadge" class="badge hidden"></span><div class="ti">❓</div><div><div class="tn">あさやんに聞く</div><div class="td">使い方・困ったとき・質問を送る</div></div></button>
         <button class="tile wide" id="chochoMenu" style="display:none" onclick="openChocho()"><div class="ti">🏮</div><div><div class="tn">帳場（管理）</div><div class="td">申請の様子・ひとこと・会員</div></div></button>
@@ -1717,7 +1717,7 @@ async function meet(id){
   if(MEET_BUSY)return;MEET_BUSY=true;
   toastMsg('あさやん：「ちょっと待っててね…」');
   var r;try{r=await api('want_to_meet',{target_id:id});}finally{MEET_BUSY=false;}
-  if(r.ok){toastMsg('あさやん：「'+escapeHtml(r.message||'申請したよ')+'」');if(DETAIL_P)renderLinkArea(DETAIL_P);refreshLinkBadge();}
+  if(r.ok){var msg=r.state==='matched'?(String(r.message||'').indexOf('もう')===0?'もうつながっているよ':'おたがいに連絡を取りたかったみたい！ つながったよ'):(r.message||'申請したよ');toastMsg('あさやん：「'+escapeHtml(msg)+'」');if(DETAIL_P)renderLinkArea(DETAIL_P);refreshLinkBadge();}
   else if(r.error==='contact_off'){toastMsg('この方は今、連絡の受付をお休みしているよ');}
   else if(r.error==='not_same_event'){toastMsg('一緒になった仲間にだけ、声をかけられるよ');}
   else{toastMsg('うまく届けられなかったよ。もう一度試してね');}
